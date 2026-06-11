@@ -38,7 +38,17 @@ import {
   householdTypes,
   isPincodeServiceable,
 } from "@/lib/bangalore-data";
+import { useScrapCategories } from "@/lib/scrap-categories";
 import { cn } from "@/lib/utils";
+
+// Best-effort icon match for a live category by keyword; falls back to a generic box.
+function iconForCategory(name: string) {
+  const key = name.toLowerCase();
+  const match = householdTypes.find(
+    (t) => key.includes(t.name.toLowerCase().split(" ")[0]) || t.name.toLowerCase().includes(key),
+  );
+  return match?.icon ?? Boxes;
+}
 
 export const Route = createFileRoute("/pickup")({
   head: () => ({
@@ -47,7 +57,7 @@ export const Route = createFileRoute("/pickup")({
       {
         name: "description",
         content:
-          "Book a free doorstep pickup for mixed or small household scrap across Bengaluru. No sorting, no weighing — just bags. Fair ₹ rates and instant payment.",
+          "Book a free doorstep scrap pickup across Bengaluru in a few taps. Transparent live ₹ rates, certified weighing at your door and instant payment.",
       },
       { property: "og:title", content: "Book a Doorstep Scrap Pickup in Bengaluru | HuluMart" },
       {
@@ -64,6 +74,7 @@ const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "
 const todayStr = new Date().toISOString().split("T")[0];
 
 function Pickup() {
+  const { data: categories = [] } = useScrapCategories();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
 
@@ -213,7 +224,7 @@ function Pickup() {
       <PageHeader
         eyebrow="Book a pickup · Bengaluru"
         title={<>Doorstep pickup, <span className="text-gradient">made easy</span></>}
-        subtitle="No sorting. No weighing. Just bags. We'll handle the rest across Bengaluru — and pay you on the spot."
+        subtitle="Pick a slot in a few taps. Our agent comes to your door, weighs on a certified scale at today's live ₹ rate, and pays you on the spot — across Bengaluru."
       />
 
       <section className="bg-background py-12 md:py-20">
@@ -312,13 +323,14 @@ function Pickup() {
                         className="overflow-hidden"
                       >
                         <div className="mt-5 flex flex-wrap gap-2">
-                          {householdTypes.map((t) => {
-                            const active = items.includes(t.id);
+                          {categories.map((c) => {
+                            const active = items.includes(c.name);
+                            const Icon = iconForCategory(c.name);
                             return (
                               <button
                                 type="button"
-                                key={t.id}
-                                onClick={() => toggleItem(t.id)}
+                                key={c.id}
+                                onClick={() => toggleItem(c.name)}
                                 className={cn(
                                   "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-all",
                                   active
@@ -326,8 +338,8 @@ function Pickup() {
                                     : "border-border bg-background hover:border-primary/40",
                                 )}
                               >
-                                <t.icon className="size-4" />
-                                {t.name}
+                                <Icon className="size-4" />
+                                {c.name}
                               </button>
                             );
                           })}

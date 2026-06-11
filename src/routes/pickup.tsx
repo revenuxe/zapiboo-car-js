@@ -125,12 +125,36 @@ function Pickup() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) return toast.error("Pick a date.");
     if (!slot) return toast.error("Pick a time slot.");
     if (!name.trim() || phone.trim().length < 10)
       return toast.error("Add your name and a valid phone number.");
+
+    setSaving(true);
+    const { error } = await supabase.from("leads").insert({
+      scrap_mode: scrapMode || "mixed",
+      items: scrapMode === "specific" ? items : [],
+      size_tier: size || null,
+      has_photo: !!photo,
+      locality,
+      pincode,
+      address: address.trim(),
+      name: name.trim(),
+      phone: phone.trim(),
+      preferred_date: date,
+      slot,
+      lat: geo?.lat ?? null,
+      lng: geo?.lng ?? null,
+      status: "new",
+    });
+    setSaving(false);
+
+    if (error) {
+      toast.error("Couldn't save your booking. Please try again.");
+      return;
+    }
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });

@@ -71,8 +71,9 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Book a doorstep pickup across Bengaluru in 60 seconds. No sorting, no weighing —
-              just bags. Our agent weighs on a certified scale and pays you on the spot.
+              Sell scrap online in Bengaluru and get the best rates with free doorstep pickup.
+              Newspaper, raddi, metal, plastic, e-waste & old appliances — no sorting, no weighing
+              hassle. Certified digital weighing and instant cash, paid on the spot.
             </motion.p>
 
             <motion.div

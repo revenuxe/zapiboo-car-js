@@ -149,12 +149,12 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <div className="flex min-h-screen flex-col">
-        {!isAdmin && <SiteHeader />}
+        {!chromeless && <SiteHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <main className="flex-1">
           <Outlet />
         </main>
-        {!isAdmin && <SiteFooter />}
+        {!chromeless && <SiteFooter />}
       </div>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>

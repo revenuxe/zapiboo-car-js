@@ -562,9 +562,9 @@ function Pickup() {
                     </div>
                   </div>
 
-                  <Button type="submit" variant="hero" size="xl" className="mt-8 w-full">
-                    Confirm pickup
-                    <ArrowRight />
+                  <Button type="submit" variant="hero" size="xl" className="mt-8 w-full" disabled={saving}>
+                    {saving ? "Booking…" : "Confirm pickup"}
+                    {!saving && <ArrowRight />}
                   </Button>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
                     Free to book · You approve the rate before anything is sold.

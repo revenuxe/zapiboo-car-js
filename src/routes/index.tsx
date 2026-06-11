@@ -53,23 +53,13 @@ function Home() {
 
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">
+        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
           <div className="max-w-3xl">
-            <motion.span
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full border border-navy-foreground/20 bg-navy-foreground/5 px-4 py-1.5 text-sm font-medium text-brand-green backdrop-blur"
-            >
-              <span className="size-2 rounded-full bg-brand-green" />
-              Now serving Bengaluru · free doorstep pickup
-            </motion.span>
-
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="mt-6 text-4xl font-extrabold leading-[1.05] sm:text-6xl md:text-7xl"
+              className="text-4xl font-extrabold leading-[1.05] sm:text-6xl md:text-7xl"
             >
               Turn your scrap into{" "}
               <span className="text-gradient">instant cash.</span>
@@ -79,7 +69,7 @@ function Home() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.12 }}
-              className="mt-6 max-w-xl text-lg leading-relaxed text-navy-foreground/75"
+              className="mt-5 max-w-xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
               Book a doorstep pickup across Bengaluru in 60 seconds. No sorting, no weighing —
               just bags. Our agent weighs on a certified scale and pays you on the spot.
@@ -89,7 +79,7 @@ function Home() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.18 }}
-              className="mt-9 flex flex-col gap-3 sm:flex-row"
+              className="mt-7 flex flex-col gap-3 sm:flex-row"
             >
               <Button asChild variant="hero" size="xl">
                 <Link to="/pickup">
@@ -106,7 +96,7 @@ function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-navy-foreground/70"
+              className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-navy-foreground/70"
             >
               <span className="flex items-center gap-1.5">
                 <Star className="size-4 fill-brand-green text-brand-green" /> 4.9/5 from 12,000+ pickups
@@ -121,7 +111,7 @@ function Home() {
 
       {/* STATS */}
       <section className="border-b border-border bg-background">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-8 overflow-hidden px-4 py-10 sm:px-6 md:py-12 lg:grid-cols-4 lg:px-8">
           {[
             { value: "30 min", label: "Avg. pickup ETA" },
             { value: "18+", label: "Localities covered" },

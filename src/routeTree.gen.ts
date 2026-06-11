@@ -16,6 +16,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -56,6 +57,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AccountRoute = AccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -80,6 +86,7 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
@@ -93,6 +100,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
@@ -107,6 +115,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/account': typeof AccountRoute
   '/auth': typeof AuthRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
@@ -122,6 +131,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/account'
     | '/auth'
     | '/business'
     | '/contact'
@@ -135,6 +145,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/account'
     | '/auth'
     | '/business'
     | '/contact'
@@ -148,6 +159,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/account'
     | '/auth'
     | '/business'
     | '/contact'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AccountRoute: typeof AccountRoute
   AuthRoute: typeof AuthRoute
   BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
@@ -224,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/account': {
+      id: '/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof AccountRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
@@ -258,6 +278,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AccountRoute: AccountRoute,
   AuthRoute: AuthRoute,
   BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,

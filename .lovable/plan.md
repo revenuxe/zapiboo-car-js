@@ -1,66 +1,40 @@
-# Bangalore Household & Mixed-Scrap Pickup — Plan
+## HuluMart — Admin system, dynamic rates & booking map
 
-## The core problem
-Homes don't sell like factories. A household has a few bags of newspaper, an old fan, some bottles and plastic — all mixed. They don't know material grades, can't weigh it, and just want someone to come, pay fairly, and leave. The current booking flow asks them to pick exact materials, which is friction for this audience.
+### 1. Enable Lovable Cloud (backend)
+Bookings currently only show a toast — nothing is stored, so there's nothing to manage. We enable Lovable Cloud to get a database + auth, then everything below becomes real.
 
-This plan reworks the experience for **Bangalore households selling mixed / small scrap**, keeping it dead-simple and mobile-first (most will book on a phone).
+### 2. Database
+Tables (all with proper RLS + grants):
 
-## Guiding UX principles
-- No sorting required — "Mixed scrap" is the default, recommended path.
-- No weighing required — ask for rough **size** (bags / boxes), not kilograms.
-- Speak in ₹ (INR) and Indian household terms (raddi/newspaper, cardboard, bottles, e-waste, appliances).
-- Bangalore-aware — locality + pincode picker with a "we cover your area" check.
-- Big tap targets, few steps, instant confirmation.
+- `leads` — every pickup booking: scrap type (mixed/specific), items, size tier, photo flag, locality, pincode, address, landmark, name, phone, preferred date, slot, lat/lng, status (`new` / `contacted` / `scheduled` / `done` / `cancelled`), notes, created_at.
+- `scrap_categories` — name, slug, icon, sort order, active.
+- `scrap_rates` — links to a category: item name, price (₹), unit (e.g. /kg), active, updated_at.
+- `user_roles` + `app_role` enum + `has_role()` — admin access control (no roles on profiles).
 
-## New booking flow (rebuilt /pickup)
-A friendly 3-step wizard with a progress bar, optimized for thumbs:
+Public users can INSERT a lead (booking) and SELECT active rates/categories. Only admins can read leads or write rates/categories.
 
-```text
-Step 1  What are you clearing?
-        [ Mixed household scrap ]  <- big card, recommended
-        [ Pick specific items ]   <- optional chips (raddi, metal, plastic, e-waste, appliances)
-        Rough amount:  ( ) 1-2 bags   ( ) 3-5 bags   ( ) A lot / room clear-out
-        + optional photo upload ("snap it, we'll handle the rest")
+### 3. Public booking flow changes (`/pickup`)
+- On submit, the booking is saved to `leads` (still shows the friendly success screen + WhatsApp).
+- **Interactive map card** added to the location step: an OpenStreetMap/Leaflet map with a draggable pin and a "Use my current location" button that fetches the browser's GPS, drops the pin, and stores lat/lng with the lead. (Free, no API key needed.)
+- Rates shown on Home/Materials read live from `scrap_rates` so prices stay in sync with the admin.
 
-Step 2  Where in Bangalore?
-        Locality dropdown (Koramangala, Indiranagar, Whitefield, HSR, ...)
-        Pincode -> instant "We pick up here" / "Joining soon, notify me"
-        Flat / house address + landmark
+### 4. Admin auth (`/admin/login`)
+- Email + password login on a clean, compact card.
+- Only users with the `admin` role can reach the dashboard; everyone else is redirected.
+- First admin is seeded so you can log in immediately (credentials shared after build).
 
-Step 3  When + who?
-        Date  +  slot (Today / Tomorrow / pick a day)
-        Name + phone (WhatsApp confirm)
-        -> Confirmation screen with what to expect
-```
+### 5. Admin dashboard (`/admin/dashboard`)
+Tabbed, mobile-friendly layout:
 
-### Handling "small scrap" gracefully
-- Any quantity is accepted in covered localities; for very small loads we show a friendly note: *"Small load? We'll combine your area's pickups so it's still worth the trip — usually same or next day."*
-- A soft minimum (e.g. ~₹ value or ~3 kg) is communicated as guidance, never a hard block, so nobody feels turned away.
+- **Leads** — table/list of all bookings with status chips, search & status filter, and a small **eye icon** on each row.
+  - Clicking the eye opens a **compact rounded modal** (mobile-style sheet) showing full lead details, where you can update status, add notes, and **delete** the lead.
+- **Rates** — list of scrap items grouped by category; inline edit price/unit, toggle active, add new item. Saves update the live site instantly.
+- **Categories** — add / rename / reorder / activate scrap categories.
 
-## Bangalore localization
-- Home + pickup copy tuned to Bangalore ("Doorstep scrap pickup across Bengaluru").
-- A "Serving Bengaluru" badge and a covered-localities strip.
-- Materials & Prices page switched to **₹ per kg** with household-relevant items:
-  newspaper/raddi, cardboard, mixed plastic, glass bottles, old iron/steel, aluminium, copper, e-waste, old appliances.
-- Add a household-focused "what we take from homes" section with simple icons.
+### Technical notes
+- Saving/reading leads, rates, categories goes through TanStack `createServerFn` (admin reads via `requireSupabaseAuth` + `has_role` check); public lead insert + active-rate reads via safe server functions.
+- Map uses `leaflet` + OpenStreetMap tiles (no key) and the browser Geolocation API; rendered client-only to avoid SSR issues.
+- New routes: `/admin/login`, and `/admin/dashboard` under the managed `_authenticated` layout.
+- Reverse-geocoding the pin to a readable address is optional; default is lat/lng + manual address (kept simple, no extra keys).
 
-## Pages & changes
-1. **/pickup** — rebuilt 3-step wizard: mixed-scrap-first, size-not-weight, photo upload, Bangalore locality + pincode check, instant confirmation. Mobile-first layout.
-2. **/materials** — INR rates + a dedicated "From your home" household items group; keep industrial grades below for business sellers.
-3. **/** (home) — Bangalore framing in hero/sections, "Serving Bengaluru" badge, household-friendly messaging alongside the existing business angle.
-4. **New data** — Bangalore localities + serviceable pincodes, household material rates in ₹, size-tier model.
-5. (Optional next step) **/areas** — a simple "Where we pick up in Bengaluru" page, good for local SEO.
-
-## Technical notes
-- Add `src/lib/bangalore-data.ts`: localities, serviceable pincodes, household rates (₹), and size tiers (replaces raw weight).
-- Pickup form state extends to: scrap type (mixed | specific[]), size tier, optional photo (preview only for now), locality, pincode, address, date, slot, name, phone.
-- Pincode check is a simple client-side lookup against the serviceable list (no backend needed yet).
-- Photo upload is preview-only on the client for now (no storage until backend is added).
-- All within frontend/presentation — no schema or business-logic backend in this pass.
-
-## One decision for you
-Right now bookings show a success toast but aren't saved anywhere. Two options:
-- **A — Keep it frontend-only now** (fastest; great for demo and getting the UX right).
-- **B — Add Lovable Cloud** so every booking is actually stored, with photo uploads and a simple admin/ops view to manage Bangalore pickups.
-
-I'll build the full Bangalore household experience either way — just tell me A or B for whether to persist bookings, and I'll proceed.
+Want me to proceed with this? If you'd prefer Google Maps instead of the free OpenStreetMap map, say so and I'll wire that in.

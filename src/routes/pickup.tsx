@@ -323,13 +323,14 @@ function Pickup() {
                         className="overflow-hidden"
                       >
                         <div className="mt-5 flex flex-wrap gap-2">
-                          {householdTypes.map((t) => {
-                            const active = items.includes(t.id);
+                          {categories.map((c) => {
+                            const active = items.includes(c.name);
+                            const Icon = iconForCategory(c.name);
                             return (
                               <button
                                 type="button"
-                                key={t.id}
-                                onClick={() => toggleItem(t.id)}
+                                key={c.id}
+                                onClick={() => toggleItem(c.name)}
                                 className={cn(
                                   "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-all",
                                   active
@@ -337,8 +338,8 @@ function Pickup() {
                                     : "border-border bg-background hover:border-primary/40",
                                 )}
                               >
-                                <t.icon className="size-4" />
-                                {t.name}
+                                <Icon className="size-4" />
+                                {c.name}
                               </button>
                             );
                           })}

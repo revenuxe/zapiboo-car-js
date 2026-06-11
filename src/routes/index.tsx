@@ -81,8 +81,8 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-6 max-w-xl text-lg leading-relaxed text-navy-foreground/75"
             >
-              Book a doorstep pickup in 60 seconds. We weigh on certified scales at live
-              market rates and pay you the moment we load up. No middlemen, no haggling.
+              Book a doorstep pickup across Bengaluru in 60 seconds. No sorting, no weighing —
+              just bags. Our agent weighs on a certified scale and pays you on the spot.
             </motion.p>
 
             <motion.div

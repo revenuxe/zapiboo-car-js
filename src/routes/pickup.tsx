@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/PageHeader";
+import { PickupMap } from "@/components/PickupMap";
+import { supabase } from "@/integrations/supabase/client";
 import {
   serviceLocalities,
   sizeTiers,

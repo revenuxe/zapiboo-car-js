@@ -38,7 +38,17 @@ import {
   householdTypes,
   isPincodeServiceable,
 } from "@/lib/bangalore-data";
+import { useScrapCategories } from "@/lib/scrap-categories";
 import { cn } from "@/lib/utils";
+
+// Best-effort icon match for a live category by keyword; falls back to a generic box.
+function iconForCategory(name: string) {
+  const key = name.toLowerCase();
+  const match = householdTypes.find(
+    (t) => key.includes(t.name.toLowerCase().split(" ")[0]) || t.name.toLowerCase().includes(key),
+  );
+  return match?.icon ?? Boxes;
+}
 
 export const Route = createFileRoute("/pickup")({
   head: () => ({

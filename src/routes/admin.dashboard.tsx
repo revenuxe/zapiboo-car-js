@@ -91,19 +91,25 @@ function AdminDashboard() {
           Manage pickup leads, scrap rates and categories.
         </p>
 
-        <Tabs defaultValue="leads" className="mt-6">
-          <TabsList className="grid w-full grid-cols-3 sm:w-auto sm:inline-grid">
+        <Tabs defaultValue="overview" className="mt-6">
+          <TabsList className="grid w-full grid-cols-4 sm:w-auto sm:inline-grid">
+            <TabsTrigger value="overview" className="gap-1.5">
+              <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5">
-              <ClipboardList className="size-4" /> Leads
+              <ClipboardList className="size-4" /> <span className="hidden sm:inline">Leads</span>
             </TabsTrigger>
             <TabsTrigger value="rates" className="gap-1.5">
-              <IndianRupee className="size-4" /> Rates
+              <IndianRupee className="size-4" /> <span className="hidden sm:inline">Rates</span>
             </TabsTrigger>
             <TabsTrigger value="categories" className="gap-1.5">
-              <Layers className="size-4" /> Categories
+              <Layers className="size-4" /> <span className="hidden sm:inline">Categories</span>
             </TabsTrigger>
           </TabsList>
 
+          <TabsContent value="overview" className="mt-5">
+            <OverviewPanel />
+          </TabsContent>
           <TabsContent value="leads" className="mt-5">
             <LeadsPanel />
           </TabsContent>

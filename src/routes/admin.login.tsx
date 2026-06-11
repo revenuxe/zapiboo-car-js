@@ -10,7 +10,6 @@ import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/admin/login")({
-  ssr: false,
   head: () => ({
     meta: [
       { title: "Admin Login | HuluMart" },

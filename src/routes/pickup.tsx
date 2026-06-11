@@ -78,12 +78,14 @@ function Pickup() {
   const [locality, setLocality] = useState("");
   const [pincode, setPincode] = useState("");
   const [address, setAddress] = useState("");
+  const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
 
   // step 3
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));

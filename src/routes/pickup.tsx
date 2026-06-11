@@ -30,6 +30,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/PageHeader";
+import { PickupMap } from "@/components/PickupMap";
+import { supabase } from "@/integrations/supabase/client";
 import {
   serviceLocalities,
   sizeTiers,
@@ -76,12 +78,14 @@ function Pickup() {
   const [locality, setLocality] = useState("");
   const [pincode, setPincode] = useState("");
   const [address, setAddress] = useState("");
+  const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
 
   // step 3
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
@@ -121,12 +125,36 @@ function Pickup() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const onSubmit = (e: React.FormEvent) => {
+  const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!date) return toast.error("Pick a date.");
     if (!slot) return toast.error("Pick a time slot.");
     if (!name.trim() || phone.trim().length < 10)
       return toast.error("Add your name and a valid phone number.");
+
+    setSaving(true);
+    const { error } = await supabase.from("leads").insert({
+      scrap_mode: scrapMode || "mixed",
+      items: scrapMode === "specific" ? items : [],
+      size_tier: size || null,
+      has_photo: !!photo,
+      locality,
+      pincode,
+      address: address.trim(),
+      name: name.trim(),
+      phone: phone.trim(),
+      preferred_date: date,
+      slot,
+      lat: geo?.lat ?? null,
+      lng: geo?.lng ?? null,
+      status: "new",
+    });
+    setSaving(false);
+
+    if (error) {
+      toast.error("Couldn't save your booking. Please try again.");
+      return;
+    }
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -448,6 +476,13 @@ function Pickup() {
                         onChange={(e) => setAddress(e.target.value)}
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-1.5">
+                        <MapPin className="size-4 text-primary" /> Pin your location (optional)
+                      </Label>
+                      <PickupMap value={geo} onChange={setGeo} />
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -527,9 +562,9 @@ function Pickup() {
                     </div>
                   </div>
 
-                  <Button type="submit" variant="hero" size="xl" className="mt-8 w-full">
-                    Confirm pickup
-                    <ArrowRight />
+                  <Button type="submit" variant="hero" size="xl" className="mt-8 w-full" disabled={saving}>
+                    {saving ? "Booking…" : "Confirm pickup"}
+                    {!saving && <ArrowRight />}
                   </Button>
                   <p className="mt-3 text-center text-xs text-muted-foreground">
                     Free to book · You approve the rate before anything is sold.

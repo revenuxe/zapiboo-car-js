@@ -1,17 +1,16 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { motion } from "motion/react";
 import { Loader2, Lock, ShieldCheck, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { getAdminExists, createFirstAdmin } from "@/lib/admin-setup.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
 
 export const Route = createFileRoute("/admin/login")({
+  ssr: false,
   head: () => ({
     meta: [
       { title: "Admin Login | HuluMart" },
@@ -35,9 +34,6 @@ async function isCurrentUserAdmin() {
 
 function AdminLogin() {
   const navigate = useNavigate();
-  const checkAdminExists = useServerFn(getAdminExists);
-  const setupAdmin = useServerFn(createFirstAdmin);
-
   const [mode, setMode] = useState<"loading" | "signin" | "setup">("loading");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,17 +42,12 @@ function AdminLogin() {
   useEffect(() => {
     let active = true;
     (async () => {
-      // Already signed in as admin? Skip straight to the dashboard.
       if (await isCurrentUserAdmin()) {
         navigate({ to: "/admin/dashboard" });
         return;
       }
-      try {
-        const { exists } = await checkAdminExists();
-        if (active) setMode(exists ? "signin" : "setup");
-      } catch {
-        if (active) setMode("signin");
-      }
+      const { data, error } = await supabase.rpc("admin_exists");
+      if (active) setMode(error ? "signin" : data ? "signin" : "setup");
     })();
     return () => {
       active = false;
@@ -92,12 +83,35 @@ function AdminLogin() {
       return toast.error("Use a valid email and a password of 8+ characters.");
     setBusy(true);
     try {
-      await setupAdmin({ data: { email: email.trim(), password } });
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
         email: email.trim(),
         password,
+        options: { emailRedirectTo: window.location.origin + "/admin/login" },
       });
-      if (error) throw error;
+      if (signUpError) throw signUpError;
+
+      // Ensure we have a session (auto-confirm projects return one directly).
+      if (!signUpData.session) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        if (signInError) {
+          toast.message("Check your inbox to confirm your email, then sign in.");
+          setMode("signin");
+          return;
+        }
+      }
+
+      const { data: claimed, error: claimError } = await supabase.rpc("claim_first_admin");
+      if (claimError) throw claimError;
+      if (!claimed) {
+        await supabase.auth.signOut();
+        toast.error("An admin already exists. Please sign in instead.");
+        setMode("signin");
+        return;
+      }
+
       toast.success("Admin account created!");
       navigate({ to: "/admin/dashboard" });
     } catch (err) {

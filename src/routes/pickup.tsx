@@ -74,6 +74,7 @@ const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "
 const todayStr = new Date().toISOString().split("T")[0];
 
 function Pickup() {
+  const { data: categories = [] } = useScrapCategories();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
 

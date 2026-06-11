@@ -111,7 +111,7 @@ function Home() {
 
       {/* STATS */}
       <section className="border-b border-border bg-background">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-8 overflow-hidden px-4 py-10 sm:px-6 md:py-12 lg:grid-cols-4 lg:px-8">
           {[
             { value: "30 min", label: "Avg. pickup ETA" },
             { value: "18+", label: "Localities covered" },

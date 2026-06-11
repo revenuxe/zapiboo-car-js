@@ -62,7 +62,7 @@ function Home() {
               className="inline-flex items-center gap-2 rounded-full border border-navy-foreground/20 bg-navy-foreground/5 px-4 py-1.5 text-sm font-medium text-brand-green backdrop-blur"
             >
               <span className="size-2 rounded-full bg-brand-green" />
-              Live prices · 42 countries · zero landfill
+              Now serving Bengaluru · free doorstep pickup
             </motion.span>
 
             <motion.h1

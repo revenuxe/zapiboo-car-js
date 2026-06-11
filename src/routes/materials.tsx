@@ -42,6 +42,7 @@ export const Route = createFileRoute("/materials")({
 });
 
 function Materials() {
+  const { data: rates = [] } = useScrapRates();
   return (
     <>
       <PageHeader

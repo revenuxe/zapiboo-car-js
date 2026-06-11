@@ -69,12 +69,12 @@ function Materials() {
           </Reveal>
 
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {householdRates.map((m, i) => (
-              <Reveal key={m.name} delay={(i % 4) * 0.05}>
+            {rates.map((m, i) => (
+              <Reveal key={m.id} delay={(i % 4) * 0.05}>
                 <div className="group h-full rounded-2xl border border-border bg-card p-5 shadow-soft transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-elevated">
                   <h3 className="font-bold leading-tight">{m.name}</h3>
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-2xl font-extrabold text-gradient">{m.price}</span>
+                    <span className="text-2xl font-extrabold text-gradient">{formatPrice(m.price)}</span>
                     <span className="text-sm text-muted-foreground">{m.unit}</span>
                   </div>
                   {m.note && <p className="mt-2 text-xs text-muted-foreground">{m.note}</p>}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { householdRates } from "@/lib/bangalore-data";
+import { useScrapRates, formatPrice } from "@/lib/scrap-rates";
 
 export const Route = createFileRoute("/materials")({
   head: () => ({

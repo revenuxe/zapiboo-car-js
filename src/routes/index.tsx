@@ -79,7 +79,7 @@ function Home() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.18 }}
-              className="mt-9 flex flex-col gap-3 sm:flex-row"
+              className="mt-7 flex flex-col gap-3 sm:flex-row"
             >
               <Button asChild variant="hero" size="xl">
                 <Link to="/pickup">

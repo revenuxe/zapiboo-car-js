@@ -71,9 +71,9 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Sell scrap online in Bengaluru and get the best rates with free doorstep pickup.
-              Newspaper, raddi, metal, plastic, e-waste & old appliances — no sorting, no weighing
-              hassle. Certified digital weighing and instant cash, paid on the spot.
+              Sell scrap online in Bengaluru at the best live rates with free doorstep pickup.
+              Newspaper, raddi, metal, plastic, e-waste &amp; old appliances — weighed on a
+              certified digital scale at your door, with instant cash paid on the spot.
             </motion.p>
 
             <motion.div

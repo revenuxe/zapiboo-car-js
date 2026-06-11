@@ -47,7 +47,7 @@ export const Route = createFileRoute("/pickup")({
       {
         name: "description",
         content:
-          "Book a free doorstep pickup for mixed or small household scrap across Bengaluru. No sorting, no weighing — just bags. Fair ₹ rates and instant payment.",
+          "Book a free doorstep scrap pickup across Bengaluru in a few taps. Transparent live ₹ rates, certified weighing at your door and instant payment.",
       },
       { property: "og:title", content: "Book a Doorstep Scrap Pickup in Bengaluru | HuluMart" },
       {
@@ -213,7 +213,7 @@ function Pickup() {
       <PageHeader
         eyebrow="Book a pickup · Bengaluru"
         title={<>Doorstep pickup, <span className="text-gradient">made easy</span></>}
-        subtitle="No sorting. No weighing. Just bags. We'll handle the rest across Bengaluru — and pay you on the spot."
+        subtitle="Pick a slot in a few taps. Our agent comes to your door, weighs on a certified scale at today's live ₹ rate, and pays you on the spot — across Bengaluru."
       />
 
       <section className="bg-background py-12 md:py-20">

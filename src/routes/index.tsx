@@ -3,7 +3,7 @@ import { motion } from "motion/react";
 import {
   ArrowRight,
   Star,
-  TrendingUp,
+  MapPin,
   Quote,
   CheckCircle2,
 } from "lucide-react";

@@ -96,7 +96,7 @@ function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-navy-foreground/70"
+              className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-navy-foreground/70"
             >
               <span className="flex items-center gap-1.5">
                 <Star className="size-4 fill-brand-green text-brand-green" /> 4.9/5 from 12,000+ pickups

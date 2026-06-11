@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
-import { steps, features, stats, testimonials } from "@/lib/site-data";
+import { steps, features, testimonials } from "@/lib/site-data";
 import { householdRates, serviceLocalities } from "@/lib/bangalore-data";
 import heroImg from "@/assets/hero-scrap.jpg";
 import pickupImg from "@/assets/doorstep-pickup.jpg";

@@ -3,13 +3,14 @@ import { motion } from "motion/react";
 import {
   ArrowRight,
   Star,
-  TrendingUp,
+  MapPin,
   Quote,
   CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
-import { steps, features, stats, materials, testimonials } from "@/lib/site-data";
+import { steps, features, testimonials } from "@/lib/site-data";
+import { householdRates, serviceLocalities } from "@/lib/bangalore-data";
 import heroImg from "@/assets/hero-scrap.jpg";
 import pickupImg from "@/assets/doorstep-pickup.jpg";
 
@@ -61,7 +62,7 @@ function Home() {
               className="inline-flex items-center gap-2 rounded-full border border-navy-foreground/20 bg-navy-foreground/5 px-4 py-1.5 text-sm font-medium text-brand-green backdrop-blur"
             >
               <span className="size-2 rounded-full bg-brand-green" />
-              Live prices · 42 countries · zero landfill
+              Now serving Bengaluru · free doorstep pickup
             </motion.span>
 
             <motion.h1
@@ -80,8 +81,8 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-6 max-w-xl text-lg leading-relaxed text-navy-foreground/75"
             >
-              Book a doorstep pickup in 60 seconds. We weigh on certified scales at live
-              market rates and pay you the moment we load up. No middlemen, no haggling.
+              Book a doorstep pickup across Bengaluru in 60 seconds. No sorting, no weighing —
+              just bags. Our agent weighs on a certified scale and pays you on the spot.
             </motion.p>
 
             <motion.div
@@ -121,7 +122,12 @@ function Home() {
       {/* STATS */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {stats.map((s, i) => (
+          {[
+            { value: "30 min", label: "Avg. pickup ETA" },
+            { value: "18+", label: "Localities covered" },
+            { value: "₹2.4Cr", label: "Paid to homes" },
+            { value: "4.9/5", label: "Pickup rating" },
+          ].map((s, i) => (
             <Reveal key={s.label} delay={i * 0.06} className="px-4 text-center">
               <div className="text-3xl font-extrabold text-foreground md:text-4xl">
                 <span className="text-gradient">{s.value}</span>
@@ -223,46 +229,60 @@ function Home() {
           <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-                Live prices
+                Bengaluru rates
               </p>
               <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-                Today's scrap rates, indexed to the market
+                Fair ₹ rates for everyday scrap
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Prices update daily against global commodity benchmarks. What you see is what
-                you get.
+                The same honest price for every home — sorted and weighed at your door, no
+                haggling.
               </p>
             </div>
             <Button asChild variant="outline" size="lg">
               <Link to="/materials">
-                View all materials
+                View all rates
                 <ArrowRight />
               </Link>
             </Button>
           </Reveal>
 
           <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {materials.slice(0, 8).map((m, i) => (
-              <Reveal key={m.slug} delay={(i % 4) * 0.05}>
+            {householdRates.slice(0, 8).map((m, i) => (
+              <Reveal key={m.name} delay={(i % 4) * 0.05}>
                 <div className="group h-full rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-soft">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-bold">{m.name}</h3>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2 py-0.5 text-xs font-semibold text-accent-foreground">
-                      <TrendingUp className="size-3" />
-                      {m.trend}
-                    </span>
-                  </div>
+                  <h3 className="font-bold leading-tight">{m.name}</h3>
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-2xl font-extrabold text-foreground">{m.price}</span>
+                    <span className="text-2xl font-extrabold text-gradient">{m.price}</span>
                     <span className="text-sm text-muted-foreground">{m.unit}</span>
                   </div>
-                  <p className="mt-2 text-sm text-muted-foreground">{m.blurb}</p>
                 </div>
               </Reveal>
             ))}
           </div>
+
+          {/* localities strip */}
+          <Reveal className="mt-12">
+            <div className="rounded-2xl border border-border bg-secondary/40 p-6">
+              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                <MapPin className="size-4 text-primary" />
+                Now picking up across Bengaluru
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {serviceLocalities.map((l) => (
+                  <span
+                    key={l.pincode}
+                    className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground"
+                  >
+                    {l.name}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </Reveal>
         </div>
       </section>
+
 
       {/* WHY HULUMART */}
       <section className="bg-secondary/50 py-24">

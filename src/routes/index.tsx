@@ -122,7 +122,12 @@ function Home() {
       {/* STATS */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden px-4 py-12 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {stats.map((s, i) => (
+          {[
+            { value: "30 min", label: "Avg. pickup ETA" },
+            { value: "18+", label: "Localities covered" },
+            { value: "₹2.4Cr", label: "Paid to homes" },
+            { value: "4.9/5", label: "Pickup rating" },
+          ].map((s, i) => (
             <Reveal key={s.label} delay={i * 0.06} className="px-4 text-center">
               <div className="text-3xl font-extrabold text-foreground md:text-4xl">
                 <span className="text-gradient">{s.value}</span>

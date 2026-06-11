@@ -9,12 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PickupRouteImport } from './routes/pickup'
 import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 
+const PickupRoute = PickupRouteImport.update({
+  id: '/pickup',
+  path: '/pickup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MaterialsRoute = MaterialsRouteImport.update({
   id: '/materials',
   path: '/materials',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/business': typeof BusinessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/materials': typeof MaterialsRoute
+  '/pickup': typeof PickupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/business': typeof BusinessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/materials': typeof MaterialsRoute
+  '/pickup': typeof PickupRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/business': typeof BusinessRoute
   '/how-it-works': typeof HowItWorksRoute
   '/materials': typeof MaterialsRoute
+  '/pickup': typeof PickupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/business' | '/how-it-works' | '/materials'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/business'
+    | '/how-it-works'
+    | '/materials'
+    | '/pickup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/business' | '/how-it-works' | '/materials'
-  id: '__root__' | '/' | '/about' | '/business' | '/how-it-works' | '/materials'
+  to: '/' | '/about' | '/business' | '/how-it-works' | '/materials' | '/pickup'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/business'
+    | '/how-it-works'
+    | '/materials'
+    | '/pickup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,10 +99,18 @@ export interface RootRouteChildren {
   BusinessRoute: typeof BusinessRoute
   HowItWorksRoute: typeof HowItWorksRoute
   MaterialsRoute: typeof MaterialsRoute
+  PickupRoute: typeof PickupRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/pickup': {
+      id: '/pickup'
+      path: '/pickup'
+      fullPath: '/pickup'
+      preLoaderRoute: typeof PickupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/materials': {
       id: '/materials'
       path: '/materials'
@@ -125,6 +155,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessRoute: BusinessRoute,
   HowItWorksRoute: HowItWorksRoute,
   MaterialsRoute: MaterialsRoute,
+  PickupRoute: PickupRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

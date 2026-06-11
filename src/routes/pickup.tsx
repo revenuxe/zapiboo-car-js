@@ -476,6 +476,13 @@ function Pickup() {
                         onChange={(e) => setAddress(e.target.value)}
                       />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label className="flex items-center gap-1.5">
+                        <MapPin className="size-4 text-primary" /> Pin your location (optional)
+                      </Label>
+                      <PickupMap value={geo} onChange={setGeo} />
+                    </div>
                   </div>
                 </motion.div>
               )}

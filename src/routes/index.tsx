@@ -48,7 +48,8 @@ function Home() {
             height={1080}
             className="h-full w-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-gradient-navy/40" />
+          <div className="absolute inset-0 bg-navy/40" />
+
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-32 lg:px-8">

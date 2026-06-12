@@ -10,10 +10,13 @@ import {
   Calendar,
   Camera,
   Boxes,
+  Mail,
+  MessageSquareText,
   Loader2,
   Inbox,
   ExternalLink,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -48,6 +51,7 @@ import { cn } from "@/lib/utils";
 
 type Lead = {
   id: string;
+  lead_type: string | null;
   scrap_mode: string;
   items: string[];
   size_tier: string | null;
@@ -57,6 +61,8 @@ type Lead = {
   pincode: string | null;
   address: string | null;
   name: string;
+  email: string | null;
+  subject: string | null;
   phone: string;
   preferred_date: string | null;
   slot: string | null;
@@ -90,6 +96,20 @@ function StatusChip({ status }: { status: string }) {
   );
 }
 
+function isQueryLead(lead: Lead) {
+  return lead.lead_type === "query" || lead.scrap_mode === "query";
+}
+
+function LeadTypeChip({ lead }: { lead: Lead }) {
+  if (!isQueryLead(lead)) return null;
+
+  return (
+    <span className="inline-flex rounded-full bg-sky-500/15 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-sky-600 dark:text-sky-300">
+      query
+    </span>
+  );
+}
+
 export function LeadsPanel() {
   const qc = useQueryClient();
   const [query, setQuery] = useState("");
@@ -118,6 +138,9 @@ export function LeadsPanel() {
       return (
         l.name.toLowerCase().includes(q) ||
         l.phone.includes(q) ||
+        (l.email ?? "").toLowerCase().includes(q) ||
+        (l.subject ?? "").toLowerCase().includes(q) ||
+        (l.notes ?? "").toLowerCase().includes(q) ||
         (l.locality ?? "").toLowerCase().includes(q) ||
         (l.pincode ?? "").includes(q)
       );
@@ -212,10 +235,13 @@ export function LeadsPanel() {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
                   <p className="truncate font-semibold">{lead.name}</p>
+                  <LeadTypeChip lead={lead} />
                   <StatusChip status={lead.status} />
                 </div>
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
-                  {lead.phone} · {lead.locality ?? "—"} · {lead.preferred_date ?? "no date"}
+                  {isQueryLead(lead)
+                    ? `${lead.email ?? lead.phone} - ${lead.subject ?? "Contact query"}`
+                    : `${lead.phone} - ${lead.locality ?? "-"} - ${lead.preferred_date ?? "no date"}`}
                 </p>
               </div>
               <Button
@@ -239,20 +265,32 @@ export function LeadsPanel() {
             {selected && (
               <div className="flex max-h-[88dvh] flex-col">
                 <DialogHeader className="shrink-0 bg-gradient-brand px-4 pb-4 pt-5 text-left text-primary-foreground sm:px-5 sm:pb-5 sm:pt-6">
-                  <DialogTitle className="pr-8 text-base sm:text-lg">{selected.name}</DialogTitle>
-                  <p className="text-xs text-primary-foreground/80 sm:text-sm">{selected.phone}</p>
+                  <div className="flex items-center gap-2 pr-8">
+                    <DialogTitle className="text-base sm:text-lg">{selected.name}</DialogTitle>
+                    <LeadTypeChip lead={selected} />
+                  </div>
+                  <p className="text-xs text-primary-foreground/80 sm:text-sm">
+                    {isQueryLead(selected) ? selected.email ?? selected.phone : selected.phone}
+                  </p>
                 </DialogHeader>
 
                 <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:space-y-4 sm:px-5 sm:py-5">
                   <div className="grid gap-2 text-sm sm:gap-2.5">
-                    <Row icon={Boxes} label={
-                      selected.scrap_mode === "specific" && selected.items.length
-                        ? selected.items.join(", ")
-                        : "Mixed scrap"
-                    } sub={selected.size_tier ?? undefined} />
-                    <Row icon={MapPin} label={`${selected.locality ?? "—"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
-                    <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />
-                    <Row icon={Phone} label={selected.phone} />
+                    {isQueryLead(selected) ? (
+                      <>
+                        <Row icon={Boxes} label="Contact query" sub={selected.subject ?? undefined} />
+                        <Row icon={Mail} label={selected.email ?? "No email"} />
+                        <Row icon={Phone} label={selected.phone} />
+                        <Row icon={MessageSquareText} label={selected.subject ?? "No subject"} sub={selected.notes ?? undefined} />
+                      </>
+                    ) : (
+                      <>
+                        <Row icon={Boxes} label={selected.scrap_mode === "specific" && selected.items.length ? selected.items.join(", ") : "Mixed scrap"} sub={selected.size_tier ?? undefined} />
+                        <Row icon={MapPin} label={`${selected.locality ?? "-"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
+                        <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />
+                        <Row icon={Phone} label={selected.phone} />
+                      </>
+                    )}
                     {selected.photo_url && (
                       <div className="space-y-2">
                         <p className="flex items-center gap-2 text-sm font-medium text-foreground">
@@ -355,7 +393,7 @@ function Row({
   label,
   sub,
 }: {
-  icon: typeof MapPin;
+  icon: LucideIcon;
   label: string;
   sub?: string;
 }) {

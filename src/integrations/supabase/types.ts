@@ -23,9 +23,12 @@ export type Database = {
           items: string[]
           landmark: string | null
           lat: number | null
+          lead_type: string
           lng: number | null
           locality: string | null
           name: string
+          email: string | null
+          subject: string | null
           notes: string | null
           phone: string
           photo_url: string | null
@@ -46,9 +49,12 @@ export type Database = {
           items?: string[]
           landmark?: string | null
           lat?: number | null
+          lead_type?: string
           lng?: number | null
           locality?: string | null
           name: string
+          email?: string | null
+          subject?: string | null
           notes?: string | null
           phone: string
           photo_url?: string | null
@@ -69,9 +75,12 @@ export type Database = {
           items?: string[]
           landmark?: string | null
           lat?: number | null
+          lead_type?: string
           lng?: number | null
           locality?: string | null
           name?: string
+          email?: string | null
+          subject?: string | null
           notes?: string | null
           phone?: string
           photo_url?: string | null

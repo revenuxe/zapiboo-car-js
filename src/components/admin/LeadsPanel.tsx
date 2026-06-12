@@ -234,17 +234,17 @@ export function LeadsPanel() {
 
       {/* compact lead modal */}
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-        <DialogContent className="max-w-sm gap-0 overflow-hidden rounded-3xl p-0">
+        <DialogContent className="max-h-[88dvh] w-[calc(100vw-2rem)] max-w-[22rem] gap-0 overflow-hidden rounded-3xl border-0 p-0 sm:max-w-sm">
           <AnimatePresence>
             {selected && (
-              <div>
-                <DialogHeader className="bg-gradient-brand px-5 pb-5 pt-6 text-primary-foreground">
-                  <DialogTitle className="text-lg">{selected.name}</DialogTitle>
-                  <p className="text-sm text-primary-foreground/80">{selected.phone}</p>
+              <div className="flex max-h-[88dvh] flex-col">
+                <DialogHeader className="shrink-0 bg-gradient-brand px-4 pb-4 pt-5 text-left text-primary-foreground sm:px-5 sm:pb-5 sm:pt-6">
+                  <DialogTitle className="pr-8 text-base sm:text-lg">{selected.name}</DialogTitle>
+                  <p className="text-xs text-primary-foreground/80 sm:text-sm">{selected.phone}</p>
                 </DialogHeader>
 
-                <div className="space-y-4 px-5 py-5">
-                  <div className="grid gap-2.5 text-sm">
+                <div className="min-h-0 flex-1 space-y-3 overflow-y-auto px-4 py-4 sm:space-y-4 sm:px-5 sm:py-5">
+                  <div className="grid gap-2 text-sm sm:gap-2.5">
                     <Row icon={Boxes} label={
                       selected.scrap_mode === "specific" && selected.items.length
                         ? selected.items.join(", ")
@@ -262,7 +262,7 @@ export function LeadsPanel() {
                           <img
                             src={selected.photo_url}
                             alt="Uploaded scrap"
-                            className="max-h-64 w-full rounded-xl border border-border object-cover"
+                            className="max-h-44 w-full rounded-2xl border border-border object-cover sm:max-h-64"
                           />
                         </a>
                       </div>
@@ -282,7 +282,7 @@ export function LeadsPanel() {
                   <div className="space-y-1.5">
                     <Label>Status</Label>
                     <Select value={draftStatus} onValueChange={setDraftStatus}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-10 rounded-2xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -300,6 +300,7 @@ export function LeadsPanel() {
                     <Textarea
                       rows={3}
                       placeholder="Internal notes about this pickup…"
+                      className="min-h-20 rounded-2xl"
                       value={draftNotes}
                       onChange={(e) => setDraftNotes(e.target.value)}
                     />
@@ -308,7 +309,7 @@ export function LeadsPanel() {
                   <div className="flex items-center gap-2 pt-1">
                     <Button
                       variant="hero"
-                      className="flex-1"
+                      className="h-10 flex-1 rounded-2xl"
                       onClick={() => saveMutation.mutate()}
                       disabled={saveMutation.isPending}
                     >
@@ -316,7 +317,7 @@ export function LeadsPanel() {
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="icon" className="size-10 shrink-0 text-destructive">
+                        <Button variant="outline" size="icon" className="size-10 shrink-0 rounded-2xl text-destructive">
                           <Trash2 className="size-4" />
                         </Button>
                       </AlertDialogTrigger>

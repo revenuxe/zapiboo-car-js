@@ -64,20 +64,20 @@ export const stats = [
 export const testimonials = [
   {
     quote:
-      "Booked newspaper and metal scrap pickup in the morning. The agent weighed everything clearly and paid immediately.",
-    name: "Rohit Sharma",
-    role: "Household seller, HSR Layout",
+      "Booked a raddi and iron pickup from our HSR Layout apartment. The agent came in the selected slot, showed the weight clearly, and paid on the spot.",
+    name: "Nikhil Rao",
+    role: "Resident, HSR Layout",
   },
   {
     quote:
-      "We use HuluMart for apartment scrap collection because scheduling is simple and the weighing is transparent.",
-    name: "Priya Nandakumar",
-    role: "Apartment association, Whitefield",
+      "We had cardboard, old wires, and a broken appliance after shifting in Whitefield. HuluMart handled everything in one visit without bargaining.",
+    name: "Ananya Shetty",
+    role: "Homeowner, Whitefield",
   },
   {
     quote:
-      "Old appliances and mixed scrap were collected from our shop without any back-and-forth negotiation.",
-    name: "Imran Khan",
+      "Our shop near Indiranagar uses them for mixed scrap because the rate is told before pickup and the weighing is done in front of us.",
+    name: "Faisal Ahmed",
     role: "Shop owner, Indiranagar",
   },
 ];

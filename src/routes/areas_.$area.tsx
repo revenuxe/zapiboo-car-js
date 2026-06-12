@@ -13,7 +13,7 @@ import {
 } from "@/lib/seo";
 import heroImg from "@/assets/hero-scrap.webp";
 
-export const Route = createFileRoute("/areas/$area")({
+export const Route = createFileRoute("/areas_/$area")({
   loader: ({ params }) => {
     const area = getAreaBySlug(params.area);
     if (!area) throw notFound();

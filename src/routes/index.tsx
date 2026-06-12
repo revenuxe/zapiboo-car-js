@@ -197,13 +197,17 @@ function Home() {
                 <Link
                   to="/pickup"
                   search={card.search}
-                  className="group flex h-full min-h-36 flex-col rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-elevated sm:p-5"
+                  className="group relative flex h-full min-h-36 flex-col overflow-hidden rounded-2xl border border-primary/20 bg-gradient-brand p-4 text-primary-foreground shadow-green transition-all hover:-translate-y-1 hover:brightness-105 hover:shadow-elevated sm:p-5"
                 >
-                  <span className="flex size-11 items-center justify-center rounded-2xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <span
+                    aria-hidden
+                    className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full bg-white/15 blur-2xl transition-transform group-hover:scale-125"
+                  />
+                  <span className="relative flex size-11 items-center justify-center rounded-2xl bg-white/95 text-primary shadow-soft transition-transform group-hover:scale-105">
                     <card.icon className="size-5" />
                   </span>
-                  <span className="mt-4 font-bold leading-tight">{card.title}</span>
-                  <span className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  <span className="relative mt-4 font-bold leading-tight">{card.title}</span>
+                  <span className="relative mt-2 text-xs leading-relaxed text-primary-foreground/80">
                     {card.text}
                   </span>
                 </Link>

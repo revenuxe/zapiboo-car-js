@@ -1,6 +1,6 @@
 import { serviceLocalities } from "@/lib/bangalore-data";
 
-export const siteUrl = "https://doorstep-delight.vercel.app";
+export const siteUrl = "https://www.hulumart.com";
 
 export const businessContact = {
   name: "HuluMart",

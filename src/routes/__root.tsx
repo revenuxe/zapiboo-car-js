@@ -14,6 +14,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
+import { FloatingWhatsApp } from "../components/FloatingWhatsApp";
 import { Toaster } from "../components/ui/sonner";
 import { absoluteUrl, organizationSchema, websiteSchema } from "../lib/seo";
 
@@ -158,6 +159,7 @@ function RootComponent() {
           <Outlet />
         </main>
         {!chromeless && <SiteFooter />}
+        {!chromeless && <FloatingWhatsApp />}
       </div>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>

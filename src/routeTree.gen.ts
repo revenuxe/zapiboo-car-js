@@ -23,6 +23,7 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
+import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 
@@ -96,6 +97,11 @@ const AreasAreaRoute = AreasAreaRouteImport.update({
   path: '/areas/$area',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiKeepaliveRoute = ApiKeepaliveRouteImport.update({
+  id: '/api/keepalive',
+  path: '/api/keepalive',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
   path: '/admin/login',
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/terms': typeof TermsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
+  '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
 }
 export interface FileRoutesByTo {
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
+  '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
 }
 export interface FileRoutesById {
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/terms': typeof TermsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
+  '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas_/$area': typeof AreasAreaRoute
 }
 export interface FileRouteTypes {
@@ -180,6 +189,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/dashboard'
     | '/admin/login'
+    | '/api/keepalive'
     | '/areas/$area'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -198,6 +208,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/dashboard'
     | '/admin/login'
+    | '/api/keepalive'
     | '/areas/$area'
   id:
     | '__root__'
@@ -216,6 +227,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/admin/dashboard'
     | '/admin/login'
+    | '/api/keepalive'
     | '/areas_/$area'
   fileRoutesById: FileRoutesById
 }
@@ -235,6 +247,7 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  ApiKeepaliveRoute: typeof ApiKeepaliveRoute
   AreasAreaRoute: typeof AreasAreaRoute
 }
 
@@ -338,6 +351,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AreasAreaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/keepalive': {
+      id: '/api/keepalive'
+      path: '/api/keepalive'
+      fullPath: '/api/keepalive'
+      preLoaderRoute: typeof ApiKeepaliveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/admin/login'
@@ -371,6 +391,7 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
+  ApiKeepaliveRoute: ApiKeepaliveRoute,
   AreasAreaRoute: AreasAreaRoute,
 }
 export const routeTree = rootRouteImport

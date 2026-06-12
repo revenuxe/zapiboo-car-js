@@ -25,7 +25,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PageHeader } from "@/components/PageHeader";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
 import { householdTypes } from "@/lib/bangalore-data";
@@ -344,14 +343,14 @@ function Pickup() {
 
   return (
     <>
-      <PageHeader
-        eyebrow="Book a pickup · Bengaluru"
-        title={<>Doorstep pickup, <span className="text-gradient">made easy</span></>}
-        subtitle="Pick a slot in a few taps. Our agent comes to your door, weighs on a certified scale at today's live ₹ rate, and pays you on the spot — across Bengaluru."
-      />
-
-      <section className="bg-background py-12 md:py-20">
+      <section className="bg-background py-8 md:py-12">
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
+          <div className="mb-6">
+            <h1 className="text-left text-2xl font-bold tracking-normal text-foreground sm:text-3xl">
+              Booking
+            </h1>
+          </div>
+
           {/* progress */}
           <div className="mb-8 flex items-center gap-2">
             {progressSteps.map((stepNumber, index) => {

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/PageHeader";
+import { businessContact } from "@/lib/seo";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -53,9 +54,9 @@ function Contact() {
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.4fr] lg:px-8">
           <div className="space-y-5">
             {[
-              { icon: Mail, label: "Email", value: "hello@hulumart.com", href: "mailto:hello@hulumart.com" },
-              { icon: Phone, label: "Phone", value: "+1 (800) 555-0142", href: "tel:+18005550142" },
-              { icon: MapPin, label: "Global HQ", value: "Marina Bay, Singapore", href: undefined },
+              { icon: Mail, label: "Email", value: businessContact.email, href: businessContact.emailHref },
+              { icon: Phone, label: "Phone", value: businessContact.phone, href: businessContact.phoneHref },
+              { icon: MapPin, label: "HQ", value: businessContact.address, href: undefined },
             ].map((c) => (
               <div key={c.label} className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-soft">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">

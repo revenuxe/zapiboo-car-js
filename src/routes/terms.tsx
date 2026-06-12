@@ -78,7 +78,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "9. Contact us",
     body: [
-      "For any questions about these terms, email hello@hulumart.com or use our Contact page.",
+      "For any questions about these terms, email hulumart.com@gmail.com or use our Contact page.",
     ],
   },
 ];

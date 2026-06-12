@@ -80,7 +80,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "9. Contact us",
     body: [
-      "Questions about this policy or your data? Email us at hello@hulumart.com or reach out through our Contact page.",
+      "Questions about this policy or your data? Email us at hulumart.com@gmail.com or reach out through our Contact page.",
     ],
   },
 ];

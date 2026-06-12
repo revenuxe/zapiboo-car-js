@@ -1,79 +1,91 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import {
-  ArrowRight,
-  Star,
-  MapPin,
-  Quote,
-  CheckCircle2,
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin, Quote, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { steps, features, testimonials } from "@/lib/site-data";
-import { householdRates, serviceLocalities } from "@/lib/bangalore-data";
-import heroImg from "@/assets/hero-scrap.jpg";
-import pickupImg from "@/assets/doorstep-pickup.jpg";
+import { householdRates } from "@/lib/bangalore-data";
+import {
+  absoluteUrl,
+  breadcrumbSchema,
+  featuredServiceAreas,
+  organizationSchema,
+  serviceAreas,
+  serviceSchema,
+  websiteSchema,
+} from "@/lib/seo";
+import heroImg from "@/assets/hero-scrap.webp";
+import pickupImg from "@/assets/doorstep-pickup.webp";
+
+const homepageTitle = "Best Scrap Buyers in Bangalore | Doorstep Scrap Collection";
+const homepageDescription =
+  "HuluMart is one of the best scrap buyers in Bangalore for doorstep scrap collection, live scrap prices, certified weighing and instant payment across major Bangalore areas.";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "HuluMart — Sell Scrap with Live Prices & Doorstep Pickup" },
-      {
-        name: "description",
-        content:
-          "Book doorstep scrap pickup in 60 seconds. Certified weighing, transparent live commodity prices, and instant payment. HuluMart powers global scrap commerce.",
-      },
-      { property: "og:title", content: "HuluMart — Sell Scrap with Live Prices & Doorstep Pickup" },
-      {
-        property: "og:description",
-        content:
-          "Transparent live pricing, certified weighing, and doorstep scrap pickup. Get paid instantly.",
-      },
+      { title: homepageTitle },
+      { name: "description", content: homepageDescription },
+      { property: "og:title", content: homepageTitle },
+      { property: "og:description", content: homepageDescription },
+      { property: "og:url", content: absoluteUrl("/") },
       { property: "og:image", content: heroImg },
+      { name: "twitter:title", content: homepageTitle },
+      { name: "twitter:description", content: homepageDescription },
     ],
     links: [{ rel: "canonical", href: "/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify([
+          organizationSchema("/"),
+          websiteSchema(),
+          serviceSchema("/"),
+          breadcrumbSchema([{ name: "Home", path: "/" }]),
+        ]),
+      },
+    ],
   }),
   component: Home,
 });
 
 function Home() {
+  const featuredAreas = serviceAreas.filter((area) => featuredServiceAreas.includes(area.slug));
+
   return (
     <>
-      {/* HERO */}
       <section className="relative overflow-hidden bg-gradient-navy text-navy-foreground">
         <div className="absolute inset-0">
           <img
             src={heroImg}
-            alt="Sorted bales of recyclable scrap metal at a HuluMart yard"
+            alt="Sorted recyclable scrap ready for professional pickup in Bangalore"
             width={1920}
             height={1080}
             className="h-full w-full object-cover opacity-30"
           />
-          <div className="absolute inset-0 bg-navy/40" />
-
+          <div className="absolute inset-0 bg-navy/45" />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
-          <div className="max-w-3xl">
+          <div className="max-w-4xl">
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-4xl font-extrabold leading-[1.05] sm:text-6xl md:text-7xl"
             >
-              Turn your scrap into{" "}
-              <span className="text-gradient">instant cash.</span>
+              Best Scrap Buyers in Bangalore, Doorstep Scrap Collection
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.12 }}
-              className="mt-5 max-w-xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
+              className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Sell scrap online in Bengaluru at the best live rates with free doorstep pickup.
-              Newspaper, raddi, metal, plastic, e-waste &amp; old appliances — weighed on a
-              certified digital scale at your door, with instant cash paid on the spot.
+              Sell scrap online in Bangalore at transparent live rates with free doorstep pickup.
+              Newspaper, raddi, metal, plastic, e-waste and old appliances are weighed on a
+              certified digital scale at your door, with instant payment on the spot.
             </motion.p>
 
             <motion.div
@@ -105,17 +117,19 @@ function Home() {
               <span className="flex items-center gap-1.5">
                 <CheckCircle2 className="size-4 text-brand-green" /> Certified digital weighing
               </span>
+              <span className="flex items-center gap-1.5">
+                <MapPin className="size-4 text-brand-green" /> Bangalore-wide pickup
+              </span>
             </motion.div>
           </div>
         </div>
       </section>
 
-      {/* STATS */}
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-8 overflow-hidden px-4 py-10 sm:px-6 md:py-12 lg:grid-cols-4 lg:px-8">
           {[
-            { value: "30 min", label: "Avg. pickup ETA" },
-            { value: "18+", label: "Localities covered" },
+            { value: "30 min", label: "Avg. callback time" },
+            { value: "18+", label: "Bangalore areas" },
             { value: "₹2.4Cr", label: "Paid to homes" },
             { value: "4.9/5", label: "Pickup rating" },
           ].map((s, i) => (
@@ -129,7 +143,6 @@ function Home() {
         </div>
       </section>
 
-      {/* HOW IT WORKS */}
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
@@ -140,7 +153,7 @@ function Home() {
               Selling scrap, finally made simple
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Three steps from clutter to cash — no gatekeepers in between.
+              Three steps from clutter to cash, with no haggling and no hidden charges.
             </p>
           </Reveal>
 
@@ -151,9 +164,7 @@ function Home() {
                   <div className="flex size-14 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
                     <step.icon className="size-7" />
                   </div>
-                  <div className="mt-6 text-sm font-semibold text-primary">
-                    Step {i + 1}
-                  </div>
+                  <div className="mt-6 text-sm font-semibold text-primary">Step {i + 1}</div>
                   <h3 className="mt-1 text-xl font-bold">{step.title}</h3>
                   <p className="mt-3 text-muted-foreground">{step.text}</p>
                 </div>
@@ -163,14 +174,13 @@ function Home() {
         </div>
       </section>
 
-      {/* DOORSTEP PICKUP FEATURE */}
       <section className="bg-secondary/50 py-24">
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
           <Reveal>
             <div className="relative overflow-hidden rounded-3xl shadow-elevated">
               <img
                 src={pickupImg}
-                alt="A HuluMart agent weighing scrap at a customer's doorstep"
+                alt="HuluMart doorstep scrap pickup with certified weighing in Bangalore"
                 width={1200}
                 height={1000}
                 loading="lazy"
@@ -184,19 +194,19 @@ function Home() {
               Doorstep pickup
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              We bring the scrapyard to your front door
+              We bring trusted scrap buying to your front door
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Whether it's a single box of cables or a warehouse of off-cuts, a vetted agent
-              comes to you. Watch the live weight, see the live rate, and approve your payout
-              right there.
+              Whether it is a single box of newspapers or a full home clean-out, a vetted
+              HuluMart agent comes to you. Watch the live weight, see the live rate and approve
+              your payout right there.
             </p>
             <ul className="mt-8 space-y-4">
               {[
-                "Same-week slots, including weekends",
-                "Live weighing on tamper-proof scales",
-                "Instant payment to wallet or bank",
-                "Digital receipt and carbon-saved report",
+                "Same-day and next-day pickup slots",
+                "Live weighing on certified digital scales",
+                "Instant payment after pickup",
+                "Digital receipt for your scrap sale",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
@@ -214,20 +224,18 @@ function Home() {
         </div>
       </section>
 
-      {/* MATERIALS / PRICES */}
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-                Bengaluru rates
+                Bangalore scrap rates
               </p>
               <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-                Fair ₹ rates for everyday scrap
+                Fair rates for everyday household scrap
               </h2>
               <p className="mt-4 text-muted-foreground">
-                The same honest price for every home — sorted and weighed at your door, no
-                haggling.
+                The same honest price for every home, sorted and weighed at your door.
               </p>
             </div>
             <Button asChild variant="outline" size="lg">
@@ -251,31 +259,40 @@ function Home() {
               </Reveal>
             ))}
           </div>
-
-          {/* localities strip */}
-          <Reveal className="mt-12">
-            <div className="rounded-2xl border border-border bg-secondary/40 p-6">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <MapPin className="size-4 text-primary" />
-                Now picking up across Bengaluru
-              </div>
-              <div className="mt-4 flex flex-wrap gap-2">
-                {serviceLocalities.map((l) => (
-                  <span
-                    key={l.pincode}
-                    className="rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground"
-                  >
-                    {l.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
 
+      <section className="bg-accent/25 py-20">
+        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <Reveal className="mx-auto max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.32em] text-primary">
+              Service area
+            </p>
+            <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
+              Serving All Areas of <span className="text-primary">Bangalore</span>
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground">
+              Free doorstep scrap pickup across every major Bangalore neighbourhood.
+            </p>
+          </Reveal>
 
-      {/* WHY HULUMART */}
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+            {featuredAreas.map((area) => (
+              <Link
+                key={area.slug}
+                to="/areas/$area"
+                params={{ area: area.slug }}
+                className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-4 text-left font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary"
+              >
+                <MapPin className="size-4 shrink-0 text-primary" />
+                <span>{area.name}</span>
+              </Link>
+            ))}
+          </div>
+          <p className="mt-8 text-muted-foreground">And many more areas across Bangalore.</p>
+        </div>
+      </section>
+
       <section className="bg-secondary/50 py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
@@ -283,7 +300,7 @@ function Home() {
               Why HuluMart
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              A trustworthy backbone for scrap commerce
+              A reliable scrap buyer for Bangalore homes
             </h2>
           </Reveal>
 
@@ -303,11 +320,10 @@ function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">Loved by sellers worldwide</h2>
+            <h2 className="text-3xl font-bold sm:text-4xl">Trusted by Bangalore sellers</h2>
           </Reveal>
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {testimonials.map((t, i) => (
@@ -323,36 +339,6 @@ function Home() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="bg-background pb-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Reveal>
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-navy px-8 py-16 text-center text-navy-foreground shadow-elevated md:px-16 md:py-20">
-              <div className="relative mx-auto max-w-2xl">
-                <h2 className="text-3xl font-bold sm:text-4xl md:text-5xl">
-                  Ready to clear the clutter and{" "}
-                  <span className="text-gradient">get paid?</span>
-                </h2>
-                <p className="mt-5 text-lg text-navy-foreground/75">
-                  Join thousands turning scrap into cash with HuluMart's doorstep pickup.
-                </p>
-                <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
-                  <Button asChild variant="hero" size="xl">
-                    <Link to="/pickup">
-                      Book your first pickup
-                      <ArrowRight />
-                    </Link>
-                  </Button>
-                  <Button asChild variant="outlineLight" size="xl">
-                    <Link to="/business">Sell at scale</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </Reveal>
         </div>
       </section>
     </>

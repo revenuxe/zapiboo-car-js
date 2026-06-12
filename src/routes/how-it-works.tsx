@@ -54,11 +54,11 @@ const faqs = [
   },
   {
     q: "How are prices set?",
-    a: "Every rate is indexed daily to global commodity benchmarks. You always see the exact per-kilogram price before you approve a pickup.",
+    a: "Rates are kept transparent for common Bangalore household scrap categories. You see the per-kilogram price before you approve a pickup.",
   },
   {
     q: "What areas do you cover?",
-    a: "HuluMart operates across 42 countries and is expanding fast. Enter your address at booking to confirm same-week availability.",
+    a: "HuluMart serves major Bangalore areas including Whitefield, HSR Layout, Koramangala, Indiranagar, JP Nagar, Hebbal and more.",
   },
   {
     q: "How do I get paid?",

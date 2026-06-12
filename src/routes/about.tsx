@@ -8,16 +8,16 @@ import { stats } from "@/lib/site-data";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About HuluMart — Powering Global Scrap Commerce" },
+      { title: "About HuluMart | Doorstep Scrap Collection in Bangalore" },
       {
         name: "description",
         content:
-          "HuluMart is building a transparent, traceable marketplace for the circular economy — connecting scrap sellers to the world's best recyclers.",
+          "HuluMart provides doorstep scrap collection in Bangalore with transparent rates, certified weighing and instant payment.",
       },
-      { property: "og:title", content: "About HuluMart — Powering Global Scrap Commerce" },
+      { property: "og:title", content: "About HuluMart | Doorstep Scrap Collection in Bangalore" },
       {
         property: "og:description",
-        content: "Our mission: make recycling rewarding and scrap commerce transparent at global scale.",
+        content: "Our mission: make scrap selling in Bangalore transparent, convenient and rewarding.",
       },
     ],
     links: [{ rel: "canonical", href: "/about" }],
@@ -26,10 +26,10 @@ export const Route = createFileRoute("/about")({
 });
 
 const values = [
-  { icon: Target, title: "Transparency first", text: "Every weight, rate and payout is visible and verifiable. No black boxes, no gate games." },
-  { icon: Leaf, title: "Circular by design", text: "We divert materials from landfill and back into industry — with a carbon report for every load." },
-  { icon: Globe2, title: "Global reach, local trust", text: "A worldwide buyer network powered by vetted agents who show up in your neighborhood." },
-  { icon: HeartHandshake, title: "Fair to everyone", text: "Households and factories get the same honest pricing and the same instant settlements." },
+  { icon: Target, title: "Transparency first", text: "Every weight, rate and payout is visible and verifiable." },
+  { icon: Leaf, title: "Circular by design", text: "We divert recoverable materials from landfill and back into responsible recycling." },
+  { icon: Globe2, title: "Bangalore coverage", text: "A local pickup network powered by verified agents who show up at your doorstep." },
+  { icon: HeartHandshake, title: "Fair to everyone", text: "Homes, apartments and businesses get honest pricing and simple settlements." },
 ];
 
 function About() {
@@ -37,8 +37,8 @@ function About() {
     <>
       <PageHeader
         eyebrow="About us"
-        title={<>Making the world's scrap <span className="text-gradient">flow freely</span></>}
-        subtitle="HuluMart connects the people who have scrap with the recyclers who need it — transparently, traceably, and at global scale."
+        title={<>Making Bangalore scrap selling <span className="text-gradient">simple</span></>}
+        subtitle="HuluMart connects homes, apartments and businesses with verified scrap collection, transparent rates and responsible recycling."
       />
 
       <section className="bg-background py-24">
@@ -47,19 +47,17 @@ function About() {
             <h2 className="text-3xl font-bold sm:text-4xl">Our story</h2>
             <div className="mt-6 space-y-5 text-lg leading-relaxed text-muted-foreground">
               <p>
-                Scrap has always been valuable — but for most people, selling it has been
-                opaque, inconvenient, and unfair. Prices were hidden, scales were doubted, and
-                a chain of middlemen quietly skimmed the value.
+                Scrap has always been valuable, but for most people selling it has been
+                inconvenient. Prices were unclear, scales were doubted, and scheduling was messy.
               </p>
               <p>
-                We built HuluMart to change that. By bringing certified weighing, live
-                market pricing, and instant payment to your doorstep, we cut out the guesswork
-                and the gatekeepers. What's left is simple: recycling that actually rewards you.
+                HuluMart was built to change that for Bangalore. We bring certified weighing,
+                clear scrap rates, and doorstep collection into one simple booking flow.
               </p>
               <p>
-                Today HuluMart powers scrap commerce across 42 countries, routing every
-                kilogram to the highest-paying verified recycler — and keeping it out of
-                landfill for good.
+                Today HuluMart focuses on reliable doorstep scrap collection across Bangalore,
+                routing recovered material to responsible recycling partners and keeping it out
+                of landfill.
               </p>
             </div>
           </Reveal>
@@ -97,14 +95,21 @@ function About() {
               </Reveal>
             ))}
           </div>
-          <Reveal className="mt-14 text-center">
-            <Button asChild variant="hero" size="xl">
-              <Link to="/pickup">
-                Join the movement
-                <ArrowRight />
-              </Link>
-            </Button>
-          </Reveal>
+        </div>
+      </section>
+
+      <section className="bg-secondary/40 py-20">
+        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <h2 className="text-3xl font-bold">Ready to sell scrap from your doorstep?</h2>
+          <p className="mt-4 text-muted-foreground">
+            Book a pickup and get transparent rates, certified weighing and instant payment.
+          </p>
+          <Button asChild variant="hero" size="lg" className="mt-8">
+            <Link to="/pickup">
+              Book a pickup
+              <ArrowRight />
+            </Link>
+          </Button>
         </div>
       </section>
     </>

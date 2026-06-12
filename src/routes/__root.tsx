@@ -15,6 +15,11 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/SiteHeader";
 import { SiteFooter } from "../components/SiteFooter";
 import { Toaster } from "../components/ui/sonner";
+import { absoluteUrl, organizationSchema, websiteSchema } from "../lib/seo";
+
+const rootTitle = "HuluMart | Best Scrap Buyers in Bangalore";
+const rootDescription =
+  "Book doorstep scrap collection in Bangalore with HuluMart. Sell paper, metal, plastic, e-waste and appliances with certified weighing and instant payment.";
 
 function NotFoundComponent() {
   return (
@@ -81,23 +86,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "HuluMart — Powering Global Scrap Commerce" },
+      { title: rootTitle },
       {
         name: "description",
         content:
-          "Sell scrap metal, e-waste and recyclables at fair, live market prices with effortless doorstep pickup. HuluMart powers global scrap commerce.",
+          rootDescription,
       },
       { name: "author", content: "HuluMart" },
-      { property: "og:title", content: "HuluMart — Powering Global Scrap Commerce" },
+      { property: "og:title", content: rootTitle },
       {
         property: "og:description",
         content:
-          "Transparent live pricing, certified weighing, and doorstep scrap pickup. Get paid instantly for your scrap.",
+          rootDescription,
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "HuluMart" },
+      { property: "og:url", content: absoluteUrl("/") },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "HuluMart — Powering Global Scrap Commerce" },
+      { name: "twitter:title", content: rootTitle },
+      { name: "twitter:description", content: rootDescription },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
@@ -113,13 +120,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     scripts: [
       {
         type: "application/ld+json",
-        children: JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "HuluMart",
-          description: "Powering global scrap commerce with live pricing and doorstep pickup.",
-          slogan: "Powering Global Scrap Commerce",
-        }),
+        children: JSON.stringify([organizationSchema("/"), websiteSchema()]),
       },
     ],
   }),

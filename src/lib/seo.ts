@@ -31,6 +31,8 @@ const toSlug = (value: string) =>
     .replace(/(^-|-$)/g, "");
 
 const nearbyByArea: Record<string, string[]> = {
+  "HBR Layout": ["Kalyan Nagar", "Banaswadi", "Hennur"],
+  Nagawara: ["Manyata Tech Park", "Thanisandra", "HBR Layout"],
   Whitefield: ["Brookefield", "Kadugodi", "ITPL"],
   "Electronic City": ["Neeladri Nagar", "Hosa Road", "Bommasandra"],
   "HSR Layout": ["Agara", "Sector 1", "Sector 7"],
@@ -43,6 +45,29 @@ const nearbyByArea: Record<string, string[]> = {
   Jayanagar: ["Basavanagudi", "South End Circle", "4th Block"],
   Banashankari: ["Kathriguppe", "Padmanabhanagar", "Uttarahalli"],
   "Sarjapur Road": ["Kaikondrahalli", "Doddakannelli", "Carmelaram"],
+  "Kalyan Nagar": ["HBR Layout", "Kammanahalli", "Banaswadi"],
+  Banaswadi: ["HRBR Layout", "Kalyan Nagar", "Ramamurthy Nagar"],
+  "RT Nagar": ["Hebbal", "Sultanpalya", "Ganganagar"],
+  "Sahakar Nagar": ["Hebbal", "Jakkur", "Kodigehalli"],
+  Jakkur: ["Yelahanka", "Sahakar Nagar", "Thanisandra"],
+  Kothanur: ["Hennur", "Thanisandra", "Narayanapura"],
+  Thanisandra: ["Nagawara", "Manyata Tech Park", "Kothanur"],
+  Horamavu: ["Banaswadi", "Ramamurthy Nagar", "Hennur"],
+  "Ramamurthy Nagar": ["KR Puram", "Horamavu", "Banaswadi"],
+  Mahadevapura: ["KR Puram", "Whitefield", "Marathahalli"],
+  Brookefield: ["Whitefield", "Kundalahalli", "Marathahalli"],
+  Kundalahalli: ["Brookefield", "Marathahalli", "Whitefield"],
+  Kadugodi: ["Whitefield", "ITPL", "Hope Farm"],
+  Domlur: ["Indiranagar", "Old Airport Road", "Ejipura"],
+  "Cox Town": ["Frazer Town", "Cooke Town", "Benson Town"],
+  "Frazer Town": ["Cox Town", "Pulikeshi Nagar", "Shivajinagar"],
+  Basavanagudi: ["Jayanagar", "Gandhi Bazaar", "NR Colony"],
+  Vijayanagar: ["Rajajinagar", "Nagarbhavi", "Attiguppe"],
+  Yeshwanthpur: ["Malleswaram", "Rajajinagar", "Peenya"],
+  Peenya: ["Yeshwanthpur", "Jalahalli", "Nagasandra"],
+  Hennur: ["HBR Layout", "Kothanur", "Nagawara"],
+  Kammanahalli: ["Kalyan Nagar", "HBR Layout", "Banaswadi"],
+  "Manyata Tech Park": ["Nagawara", "Thanisandra", "Hebbal"],
 };
 
 export const serviceAreas: ServiceArea[] = serviceLocalities.map((area) => ({
@@ -53,6 +78,8 @@ export const serviceAreas: ServiceArea[] = serviceLocalities.map((area) => ({
 }));
 
 export const featuredServiceAreas = [
+  "hbr-layout",
+  "nagawara",
   "whitefield",
   "electronic-city",
   "hsr-layout",
@@ -65,6 +92,10 @@ export const featuredServiceAreas = [
   "jayanagar",
   "banashankari",
   "sarjapur-road",
+  "kalyan-nagar",
+  "btm-layout",
+  "bellandur",
+  "kr-puram",
 ];
 
 export function getAreaBySlug(slug: string) {

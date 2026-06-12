@@ -34,6 +34,12 @@ import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availa
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
+type PickupSearch = {
+  mode?: "mixed" | "specific";
+  item?: string;
+  bookingAuth?: "1";
+};
+
 // Best-effort icon match for a live category by keyword; falls back to a generic box.
 function iconForCategory(name: string) {
   const key = name.toLowerCase();
@@ -44,6 +50,13 @@ function iconForCategory(name: string) {
 }
 
 export const Route = createFileRoute("/pickup")({
+  validateSearch: (search: Record<string, unknown>): PickupSearch => {
+    const parsed: PickupSearch = {};
+    if (search.mode === "mixed" || search.mode === "specific") parsed.mode = search.mode;
+    if (typeof search.item === "string") parsed.item = search.item;
+    if (search.bookingAuth === "1") parsed.bookingAuth = "1";
+    return parsed;
+  },
   head: () => ({
     meta: [
       { title: "Book a Doorstep Scrap Pickup in Bengaluru | HuluMart" },
@@ -97,6 +110,7 @@ function imageToDataUrl(file: File): Promise<string> {
 }
 
 function Pickup() {
+  const pickupSearch = Route.useSearch();
   const { data: categories = [] } = useScrapCategories();
   const { data: availability } = useServiceAvailability();
   const { user, loading: authLoading } = useAuth();
@@ -159,7 +173,7 @@ function Pickup() {
     if (typeof window === "undefined") return;
 
     const params = new URLSearchParams(window.location.search);
-    const returningFromBookingAuth = params.get("bookingAuth") === "1";
+    const returningFromBookingAuth = pickupSearch.bookingAuth === "1";
     const rawDraft = window.sessionStorage.getItem(pickupDraftKey);
 
     if (rawDraft) {
@@ -195,7 +209,28 @@ function Pickup() {
       const query = params.toString();
       window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
     }
-  }, [user]);
+  }, [pickupSearch.bookingAuth, user]);
+
+  useEffect(() => {
+    if (!pickupSearch.mode) return;
+
+    if (pickupSearch.mode === "mixed") {
+      setScrapMode("mixed");
+      setItems([]);
+      return;
+    }
+
+    setScrapMode("specific");
+    if (!pickupSearch.item) return;
+
+    const requested = pickupSearch.item.toLowerCase();
+    const matchedCategory =
+      categories.find((category) => category.name.toLowerCase() === requested) ??
+      categories.find((category) => category.name.toLowerCase().includes(requested)) ??
+      categories.find((category) => requested.includes(category.name.toLowerCase()));
+
+    setItems([matchedCategory?.name ?? pickupSearch.item]);
+  }, [categories, pickupSearch.item, pickupSearch.mode]);
 
   useEffect(() => {
     if (!user) return;

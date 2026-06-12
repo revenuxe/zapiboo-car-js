@@ -18,6 +18,7 @@ import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessRouteImport } from './routes/business'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -70,6 +71,11 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AreasRoute = AreasRouteImport.update({
+  id: '/areas',
+  path: '/areas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AccountRoute = AccountRouteImport.update({
   id: '/account',
   path: '/account',
@@ -86,9 +92,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AreasAreaRoute = AreasAreaRouteImport.update({
-  id: '/areas/$area',
-  path: '/areas/$area',
-  getParentRoute: () => rootRouteImport,
+  id: '/$area',
+  path: '/$area',
+  getParentRoute: () => AreasRoute,
 } as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/admin/login',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
+  '/areas': typeof AreasRouteWithChildren
   '/auth': typeof AuthRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
+  '/areas': typeof AreasRouteWithChildren
   '/auth': typeof AuthRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/account': typeof AccountRoute
+  '/areas': typeof AreasRouteWithChildren
   '/auth': typeof AuthRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/account'
+    | '/areas'
     | '/auth'
     | '/business'
     | '/contact'
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/account'
+    | '/areas'
     | '/auth'
     | '/business'
     | '/contact'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/account'
+    | '/areas'
     | '/auth'
     | '/business'
     | '/contact'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AccountRoute: typeof AccountRoute
+  AreasRoute: typeof AreasRouteWithChildren
   AuthRoute: typeof AuthRoute
   BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
@@ -222,7 +235,6 @@ export interface RootRouteChildren {
   TermsRoute: typeof TermsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
-  AreasAreaRoute: typeof AreasAreaRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -290,6 +302,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/areas': {
+      id: '/areas'
+      path: '/areas'
+      fullPath: '/areas'
+      preLoaderRoute: typeof AreasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/account': {
       id: '/account'
       path: '/account'
@@ -313,10 +332,10 @@ declare module '@tanstack/react-router' {
     }
     '/areas/$area': {
       id: '/areas/$area'
-      path: '/areas/$area'
+      path: '/$area'
       fullPath: '/areas/$area'
       preLoaderRoute: typeof AreasAreaRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AreasRoute
     }
     '/admin/login': {
       id: '/admin/login'
@@ -335,10 +354,21 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AreasRouteChildren {
+  AreasAreaRoute: typeof AreasAreaRoute
+}
+
+const AreasRouteChildren: AreasRouteChildren = {
+  AreasAreaRoute: AreasAreaRoute,
+}
+
+const AreasRouteWithChildren = AreasRoute._addFileChildren(AreasRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AccountRoute: AccountRoute,
+  AreasRoute: AreasRouteWithChildren,
   AuthRoute: AuthRoute,
   BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,
@@ -350,7 +380,6 @@ const rootRouteChildren: RootRouteChildren = {
   TermsRoute: TermsRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
-  AreasAreaRoute: AreasAreaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -79,7 +79,7 @@ function AreaLandingPage() {
               Scrap pickup in {area.name}
             </p>
             <h1 className="mt-4 text-4xl font-extrabold leading-[1.05] sm:text-6xl">
-              Best Scrap Buyers in {area.name}, Doorstep Scrap Collection
+              Best Scrap Buyers in <span className="text-gradient">{area.name}</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg">
               HuluMart offers doorstep scrap collection in {area.name}, Bangalore for paper,

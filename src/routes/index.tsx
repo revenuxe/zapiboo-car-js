@@ -1,6 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { ArrowRight, CheckCircle2, MapPin, Quote, Star } from "lucide-react";
+import {
+  ArrowRight,
+  Boxes,
+  CheckCircle2,
+  Cpu,
+  MapPin,
+  Package,
+  Quote,
+  Recycle,
+  Star,
+  Wrench,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { steps, features, testimonials } from "@/lib/site-data";
@@ -20,6 +31,45 @@ import pickupImg from "@/assets/doorstep-pickup.webp";
 const homepageTitle = "Best Scrap Buyers in Bangalore | Doorstep Scrap Collection";
 const homepageDescription =
   "HuluMart is one of the best scrap buyers in Bangalore for doorstep scrap collection, live scrap prices, certified weighing and instant payment across major Bangalore areas.";
+
+const scrapSelectionCards = [
+  {
+    title: "Mixed scrap",
+    text: "Raddi, plastic, bottles and metal together.",
+    icon: Boxes,
+    search: { mode: "mixed" as const },
+  },
+  {
+    title: "Metal",
+    text: "Iron, steel, aluminium, brass and copper.",
+    icon: Wrench,
+    search: { mode: "specific" as const, item: "Iron & Metal" },
+  },
+  {
+    title: "Plastic",
+    text: "PET bottles, mixed plastic and containers.",
+    icon: Recycle,
+    search: { mode: "specific" as const, item: "Plastic & Bottles" },
+  },
+  {
+    title: "Paper / raddi",
+    text: "Newspapers, books, cartons and cardboard.",
+    icon: Package,
+    search: { mode: "specific" as const, item: "Newspaper / Raddi" },
+  },
+  {
+    title: "E-waste",
+    text: "Small devices, wires, chargers and boards.",
+    icon: Cpu,
+    search: { mode: "specific" as const, item: "E-Waste" },
+  },
+  {
+    title: "Other items",
+    text: "Appliances, glass bottles and shop scrap.",
+    icon: CheckCircle2,
+    search: { mode: "specific" as const, item: "Old Appliances" },
+  },
+];
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -72,9 +122,9 @@ function Home() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="text-4xl font-extrabold leading-[1.05] sm:text-6xl md:text-7xl"
+              className="text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl"
             >
-              Best Scrap Buyers in Bangalore, Doorstep Scrap Collection
+              Best Scrap Buyers in <span className="text-gradient">Bangalore</span>
             </motion.h1>
 
             <motion.p
@@ -83,9 +133,9 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Sell scrap online in Bangalore at transparent live rates with free doorstep pickup.
-              Newspaper, raddi, metal, plastic, e-waste and old appliances are weighed on a
-              certified digital scale at your door, with instant payment on the spot.
+              Doorstep scrap collection for newspaper, raddi, metal, plastic, e-waste and old
+              appliances. Book a pickup, see transparent rates, and get paid after certified
+              weighing at your door.
             </motion.p>
 
             <motion.div
@@ -125,12 +175,50 @@ function Home() {
         </div>
       </section>
 
+      <section className="border-b border-border bg-background py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+            <div>
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+                Select scrap to sell
+              </p>
+              <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
+                Start with what you have
+              </h2>
+            </div>
+            <p className="max-w-md text-sm text-muted-foreground">
+              Choose a category and the booking flow opens with your scrap type already selected.
+            </p>
+          </Reveal>
+
+          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+            {scrapSelectionCards.map((card, index) => (
+              <Reveal key={card.title} delay={(index % 3) * 0.05}>
+                <Link
+                  to="/pickup"
+                  search={card.search}
+                  className="group flex h-full min-h-36 flex-col rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-1 hover:border-primary/50 hover:shadow-elevated sm:p-5"
+                >
+                  <span className="flex size-11 items-center justify-center rounded-2xl bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                    <card.icon className="size-5" />
+                  </span>
+                  <span className="mt-4 font-bold leading-tight">{card.title}</span>
+                  <span className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                    {card.text}
+                  </span>
+                </Link>
+              </Reveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-8 overflow-hidden px-4 py-10 sm:px-6 md:py-12 lg:grid-cols-4 lg:px-8">
           {[
             { value: "30 min", label: "Avg. callback time" },
-            { value: "18+", label: "Bangalore areas" },
-            { value: "₹2.4Cr", label: "Paid to homes" },
+            { value: "40+", label: "Bangalore areas" },
+            { value: "24 hr", label: "Pickup support" },
             { value: "4.9/5", label: "Pickup rating" },
           ].map((s, i) => (
             <Reveal key={s.label} delay={i * 0.06} className="px-4 text-center">
@@ -276,20 +364,32 @@ function Home() {
             </p>
           </Reveal>
 
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+          <div className="mt-12 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
             {featuredAreas.map((area) => (
               <Link
                 key={area.slug}
                 to="/areas/$area"
                 params={{ area: area.slug }}
-                className="flex items-center gap-3 rounded-xl border border-border bg-card px-5 py-4 text-left font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary"
+                className="group flex min-h-20 items-center gap-3 rounded-2xl border border-border bg-card px-4 py-4 text-left font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary sm:px-5"
               >
-                <MapPin className="size-4 shrink-0 text-primary" />
-                <span>{area.name}</span>
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <MapPin className="size-4" />
+                </span>
+                <span className="leading-tight">{area.name}</span>
               </Link>
             ))}
           </div>
-          <p className="mt-8 text-muted-foreground">And many more areas across Bangalore.</p>
+          <div className="mt-8 flex flex-col items-center gap-4">
+            <p className="text-muted-foreground">
+              From HBR Layout and Nagawara to Whitefield, HSR Layout, JP Nagar and beyond.
+            </p>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/areas">
+                View all Bangalore areas
+                <ArrowRight />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
 

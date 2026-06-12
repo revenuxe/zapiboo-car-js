@@ -21,7 +21,7 @@ export function PageHeader({
         <p className="text-sm font-semibold uppercase tracking-wider text-brand-green">
           {eyebrow}
         </p>
-        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold leading-tight sm:text-5xl md:text-6xl">
+        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold leading-tight text-gradient drop-shadow-sm sm:text-5xl md:text-6xl">
           {title}
         </h1>
         {subtitle && (

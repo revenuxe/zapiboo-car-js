@@ -55,9 +55,9 @@ export const features = [
 ];
 
 export const stats = [
-  { value: "18+", label: "Bangalore areas" },
+  { value: "40+", label: "Bangalore areas" },
   { value: "12K+", label: "Pickups completed" },
-  { value: "₹2.4Cr", label: "Paid to sellers" },
+  { value: "24 hr", label: "Pickup support" },
   { value: "4.9/5", label: "Pickup rating" },
 ];
 
@@ -85,6 +85,7 @@ export const testimonials = [
 export const navLinks = [
   { to: "/how-it-works", label: "How it works" },
   { to: "/materials", label: "Materials & Prices" },
+  { to: "/areas", label: "Areas" },
   { to: "/business", label: "For Business" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },

@@ -67,6 +67,35 @@ const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "
 const todayStr = new Date().toISOString().split("T")[0];
 const pickupDraftKey = "hulumart-pickup-draft";
 
+function imageToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Couldn't read the photo."));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error("Couldn't process the photo."));
+      img.onload = () => {
+        const maxSide = 1200;
+        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+        const width = Math.max(1, Math.round(img.width * scale));
+        const height = Math.max(1, Math.round(img.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Couldn't prepare the photo."));
+          return;
+        }
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", 0.78));
+      };
+      img.src = String(reader.result);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 function Pickup() {
   const { data: categories = [] } = useScrapCategories();
   const { data: availability } = useServiceAvailability();
@@ -260,9 +289,18 @@ function Pickup() {
     }
   };
 
-  const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onPhoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setPhoto(URL.createObjectURL(file));
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please upload an image file.");
+      return;
+    }
+    try {
+      setPhoto(await imageToDataUrl(file));
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Couldn't process the photo.");
+    }
   };
 
   const pincodeOk = pincode.length === 6 && isPincodeAvailable(pincode, availability);
@@ -312,6 +350,7 @@ function Pickup() {
       items: scrapMode === "specific" ? items : [],
       size_tier: null,
       has_photo: !!photo,
+      photo_url: photo,
       locality: null,
       pincode,
       address: address.trim(),
@@ -552,28 +591,6 @@ function Pickup() {
                               </button>
                             );
                           })}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-
-                  <AnimatePresence>
-                    {scrapMode && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="mt-6 flex items-start gap-3 rounded-2xl border border-primary/20 bg-accent/50 p-5"
-                      >
-                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
-                          <ShieldCheck className="size-5" />
-                        </div>
-                        <div>
-                          <p className="font-semibold">Leave the rest to us</p>
-                          <p className="mt-1 text-sm text-muted-foreground">
-                            No need to sort, bag or weigh a thing. Our agent comes to your door,
-                            weighs everything on a certified digital scale at today's live ₹ rate,
-                            bags it up, and pays you on the spot.
-                          </p>
                         </div>
                       </motion.div>
                     )}

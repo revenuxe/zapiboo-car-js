@@ -8,6 +8,7 @@ import {
   Phone,
   MapPin,
   Calendar,
+  Camera,
   Boxes,
   Loader2,
   Inbox,
@@ -51,6 +52,7 @@ type Lead = {
   items: string[];
   size_tier: string | null;
   has_photo: boolean;
+  photo_url: string | null;
   locality: string | null;
   pincode: string | null;
   address: string | null;
@@ -251,6 +253,20 @@ export function LeadsPanel() {
                     <Row icon={MapPin} label={`${selected.locality ?? "—"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
                     <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />
                     <Row icon={Phone} label={selected.phone} />
+                    {selected.photo_url && (
+                      <div className="space-y-2">
+                        <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+                          <Camera className="size-4 text-primary" /> Uploaded photo
+                        </p>
+                        <a href={selected.photo_url} target="_blank" rel="noreferrer" className="block">
+                          <img
+                            src={selected.photo_url}
+                            alt="Uploaded scrap"
+                            className="max-h-64 w-full rounded-xl border border-border object-cover"
+                          />
+                        </a>
+                      </div>
+                    )}
                     {selected.lat != null && selected.lng != null && (
                       <a
                         href={`https://www.google.com/maps?q=${selected.lat},${selected.lng}`}

@@ -28,6 +28,7 @@ export type Database = {
           name: string
           notes: string | null
           phone: string
+          photo_url: string | null
           pincode: string | null
           preferred_date: string | null
           scrap_mode: string
@@ -50,6 +51,7 @@ export type Database = {
           name: string
           notes?: string | null
           phone: string
+          photo_url?: string | null
           pincode?: string | null
           preferred_date?: string | null
           scrap_mode?: string
@@ -72,6 +74,7 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string
+          photo_url?: string | null
           pincode?: string | null
           preferred_date?: string | null
           scrap_mode?: string

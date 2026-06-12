@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { Loader2, ArrowLeft, Recycle } from "lucide-react";
+import { Chrome, Loader2, ArrowLeft, Recycle } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -35,12 +35,18 @@ function AuthPage() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const redirectPath =
+    typeof window !== "undefined"
+      ? new URLSearchParams(window.location.search).get("redirectTo") || "/account"
+      : "/account";
+  const redirectTo =
+    typeof window !== "undefined" ? `${window.location.origin}${redirectPath}` : undefined;
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => {
-      if (data.session) navigate({ to: "/account" });
+      if (data.session) navigate({ to: redirectPath });
     });
-  }, [navigate]);
+  }, [navigate, redirectPath]);
 
   const signIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +58,7 @@ function AuthPage() {
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Welcome back!");
-    navigate({ to: "/account" });
+    navigate({ to: redirectPath });
   };
 
   const signUp = async (e: React.FormEvent) => {
@@ -68,14 +74,26 @@ function AuthPage() {
       email: em.data,
       password: pw.data,
       options: {
-        emailRedirectTo: window.location.origin + "/account",
+        emailRedirectTo: redirectTo,
         data: { full_name: nm.data, phone: phone.trim() },
       },
     });
     setBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Account created! You're all set.");
-    navigate({ to: "/account" });
+    navigate({ to: redirectPath });
+  };
+
+  const signInWithGoogle = async () => {
+    setBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo },
+    });
+    if (error) {
+      setBusy(false);
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -111,6 +129,15 @@ function AuthPage() {
           </TabsList>
 
           <TabsContent value="signin" className="mt-5">
+            <Button type="button" variant="outline" size="lg" className="mb-4 w-full" disabled={busy} onClick={signInWithGoogle}>
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Chrome className="size-4" />}
+              Sign in with Google
+            </Button>
+            <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="h-px flex-1 bg-border" />
+              or
+              <span className="h-px flex-1 bg-border" />
+            </div>
             <form onSubmit={signIn} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="si-email">Email</Label>
@@ -127,6 +154,15 @@ function AuthPage() {
           </TabsContent>
 
           <TabsContent value="signup" className="mt-5">
+            <Button type="button" variant="outline" size="lg" className="mb-4 w-full" disabled={busy} onClick={signInWithGoogle}>
+              {busy ? <Loader2 className="size-4 animate-spin" /> : <Chrome className="size-4" />}
+              Sign up with Google
+            </Button>
+            <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+              <span className="h-px flex-1 bg-border" />
+              or
+              <span className="h-px flex-1 bg-border" />
+            </div>
             <form onSubmit={signUp} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="su-name">Full name</Label>

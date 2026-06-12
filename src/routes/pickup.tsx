@@ -16,6 +16,7 @@ import {
   Boxes,
   Info,
   Phone,
+  Chrome,
   Loader2,
   Recycle,
 } from "lucide-react";
@@ -64,6 +65,7 @@ export const Route = createFileRoute("/pickup")({
 
 const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "Evening (5–8)"];
 const todayStr = new Date().toISOString().split("T")[0];
+const pickupDraftKey = "hulumart-pickup-draft";
 
 function Pickup() {
   const { data: categories = [] } = useScrapCategories();
@@ -100,9 +102,71 @@ function Pickup() {
 
   const progressSteps = user ? [1, 2, 4] : [1, 2, 3, 4];
   const currentProgress = user && step === 4 ? 3 : step;
+  const bookingRedirectTo =
+    typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
 
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+
+  const savePickupDraft = () => {
+    if (typeof window === "undefined") return;
+    window.sessionStorage.setItem(
+      pickupDraftKey,
+      JSON.stringify({
+        scrapMode,
+        items,
+        pincode,
+        address,
+        geo,
+        date,
+        slot,
+        name,
+        phone,
+      }),
+    );
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    const returningFromBookingAuth = params.get("bookingAuth") === "1";
+    const rawDraft = window.sessionStorage.getItem(pickupDraftKey);
+
+    if (rawDraft) {
+      try {
+        const draft = JSON.parse(rawDraft) as {
+          scrapMode?: "mixed" | "specific" | "";
+          items?: string[];
+          pincode?: string;
+          address?: string;
+          geo?: { lat: number; lng: number } | null;
+          date?: string;
+          slot?: string;
+          name?: string;
+          phone?: string;
+        };
+        if (draft.scrapMode) setScrapMode(draft.scrapMode);
+        if (Array.isArray(draft.items)) setItems(draft.items);
+        if (draft.pincode) setPincode(draft.pincode);
+        if (draft.address) setAddress(draft.address);
+        if (draft.geo) setGeo(draft.geo);
+        if (draft.date) setDate(draft.date);
+        if (draft.slot) setSlot(draft.slot);
+        if (draft.name) setName(draft.name);
+        if (draft.phone) setPhone(draft.phone);
+      } catch {
+        window.sessionStorage.removeItem(pickupDraftKey);
+      }
+    }
+
+    if (returningFromBookingAuth) {
+      setStep(user ? 4 : 3);
+      params.delete("bookingAuth");
+      const query = params.toString();
+      window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+    }
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -152,6 +216,19 @@ function Pickup() {
     setStep(4);
   };
 
+  const signInWithGoogleDuringBooking = async () => {
+    savePickupDraft();
+    setAuthBusy(true);
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: bookingRedirectTo },
+    });
+    if (error) {
+      setAuthBusy(false);
+      toast.error(error.message);
+    }
+  };
+
   const signUpDuringBooking = async (e: React.FormEvent) => {
     e.preventDefault();
     if (authName.trim().length < 2) return toast.error("Enter your name.");
@@ -159,12 +236,13 @@ function Pickup() {
     if (!authEmail.trim()) return toast.error("Enter your email.");
     if (authPassword.length < 6) return toast.error("Password must be at least 6 characters.");
 
+    savePickupDraft();
     setAuthBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email: authEmail.trim(),
       password: authPassword,
       options: {
-        emailRedirectTo: window.location.origin + "/pickup",
+        emailRedirectTo: bookingRedirectTo,
         data: { full_name: authName.trim(), phone: authPhone.trim() },
       },
     });
@@ -264,6 +342,7 @@ function Pickup() {
       console.error(profileError);
       toast.warning("Pickup saved, but we couldn't save these details for next time.");
     }
+    if (typeof window !== "undefined") window.sessionStorage.removeItem(pickupDraftKey);
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -623,14 +702,32 @@ function Pickup() {
                       <Loader2 className="size-6 animate-spin text-primary" />
                     </div>
                   ) : (
-                    <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as "signin" | "signup")}>
-                      <TabsList className="grid w-full grid-cols-2">
-                        <TabsTrigger value="signin">Sign in</TabsTrigger>
-                        <TabsTrigger value="signup">Create account</TabsTrigger>
-                      </TabsList>
+                    <div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="lg"
+                        className="mb-4 w-full"
+                        disabled={authBusy}
+                        onClick={signInWithGoogleDuringBooking}
+                      >
+                        {authBusy ? <Loader2 className="size-4 animate-spin" /> : <Chrome className="size-4" />}
+                        Continue with Google
+                      </Button>
+                      <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="h-px flex-1 bg-border" />
+                        or
+                        <span className="h-px flex-1 bg-border" />
+                      </div>
 
-                      <TabsContent value="signin" className="mt-5">
-                        <form onSubmit={signInDuringBooking} className="space-y-4">
+                      <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as "signin" | "signup")}>
+                        <TabsList className="grid w-full grid-cols-2">
+                          <TabsTrigger value="signin">Sign in</TabsTrigger>
+                          <TabsTrigger value="signup">Create account</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="signin" className="mt-5">
+                          <form onSubmit={signInDuringBooking} className="space-y-4">
                           <div className="space-y-2">
                             <Label htmlFor="booking-si-email">Email</Label>
                             <Input
@@ -656,11 +753,11 @@ function Pickup() {
                           <Button type="submit" variant="hero" size="lg" className="w-full" disabled={authBusy}>
                             {authBusy ? <Loader2 className="size-4 animate-spin" /> : "Sign in and continue"}
                           </Button>
-                        </form>
-                      </TabsContent>
+                          </form>
+                        </TabsContent>
 
-                      <TabsContent value="signup" className="mt-5">
-                        <form onSubmit={signUpDuringBooking} className="space-y-4">
+                        <TabsContent value="signup" className="mt-5">
+                          <form onSubmit={signUpDuringBooking} className="space-y-4">
                           <div className="grid gap-4 sm:grid-cols-2">
                             <div className="space-y-2">
                               <Label htmlFor="booking-su-name">Full name</Label>
@@ -709,9 +806,10 @@ function Pickup() {
                           <Button type="submit" variant="hero" size="lg" className="w-full" disabled={authBusy}>
                             {authBusy ? <Loader2 className="size-4 animate-spin" /> : "Create account and continue"}
                           </Button>
-                        </form>
-                      </TabsContent>
-                    </Tabs>
+                          </form>
+                        </TabsContent>
+                      </Tabs>
+                    </div>
                   )}
                 </motion.div>
               )}

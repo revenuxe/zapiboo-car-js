@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -16,28 +16,22 @@ import {
   Boxes,
   Info,
   Phone,
+  Loader2,
+  Recycle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageHeader } from "@/components/PageHeader";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  serviceLocalities,
-  householdTypes,
-  isPincodeServiceable,
-} from "@/lib/bangalore-data";
+import { householdTypes } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
+import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
+import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 // Best-effort icon match for a live category by keyword; falls back to a generic box.
@@ -74,6 +68,8 @@ const todayStr = new Date().toISOString().split("T")[0];
 
 function Pickup() {
   const { data: categories = [] } = useScrapCategories();
+  const { data: availability } = useServiceAvailability();
+  const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
 
@@ -84,25 +80,107 @@ function Pickup() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   // step 2
-  const [locality, setLocality] = useState("");
   const [pincode, setPincode] = useState("");
   const [address, setAddress] = useState("");
   const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
 
-  // step 3
+  // step 3 auth gate
+  const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
+  const [authEmail, setAuthEmail] = useState("");
+  const [authPassword, setAuthPassword] = useState("");
+  const [authName, setAuthName] = useState("");
+  const [authPhone, setAuthPhone] = useState("");
+  const [authBusy, setAuthBusy] = useState(false);
+
+  // final step
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
+  const progressSteps = user ? [1, 2, 4] : [1, 2, 3, 4];
+  const currentProgress = user && step === 4 ? 3 : step;
+
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
 
-  const onLocality = (val: string) => {
-    setLocality(val);
-    const match = serviceLocalities.find((l) => l.name === val);
-    if (match) setPincode(match.pincode);
+  useEffect(() => {
+    if (!user) return;
+
+    if (step === 3) setStep(4);
+    if (!authEmail && user.email) setAuthEmail(user.email);
+    if (!name) setName(displayName(user));
+
+    const meta = user.user_metadata as { phone?: string; full_name?: string } | undefined;
+    if (!phone && meta?.phone) setPhone(meta.phone);
+    if (!authName && meta?.full_name) setAuthName(meta.full_name);
+    if (!authPhone && meta?.phone) setAuthPhone(meta.phone);
+
+    let ignore = false;
+    supabase
+      .from("user_profiles")
+      .select("full_name, whatsapp, address, pincode, lat, lng")
+      .eq("user_id", user.id)
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (ignore || error || !data) return;
+        if (!name && data.full_name) setName(data.full_name);
+        if (!phone && data.whatsapp) setPhone(data.whatsapp);
+        if (!address && data.address) setAddress(data.address);
+        if (!pincode && data.pincode) setPincode(data.pincode);
+        if (!geo && data.lat != null && data.lng != null) setGeo({ lat: data.lat, lng: data.lng });
+      });
+
+    return () => {
+      ignore = true;
+    };
+  }, [address, authEmail, authName, authPhone, geo, name, phone, pincode, step, user]);
+
+  const signInDuringBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!authEmail.trim()) return toast.error("Enter your email.");
+    if (!authPassword) return toast.error("Enter your password.");
+
+    setAuthBusy(true);
+    const { error } = await supabase.auth.signInWithPassword({
+      email: authEmail.trim(),
+      password: authPassword,
+    });
+    setAuthBusy(false);
+    if (error) return toast.error(error.message);
+    toast.success("Signed in. Let's finish your booking.");
+    setStep(4);
+  };
+
+  const signUpDuringBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (authName.trim().length < 2) return toast.error("Enter your name.");
+    if (authPhone.trim().length < 10) return toast.error("Enter a valid WhatsApp number.");
+    if (!authEmail.trim()) return toast.error("Enter your email.");
+    if (authPassword.length < 6) return toast.error("Password must be at least 6 characters.");
+
+    setAuthBusy(true);
+    const { data, error } = await supabase.auth.signUp({
+      email: authEmail.trim(),
+      password: authPassword,
+      options: {
+        emailRedirectTo: window.location.origin + "/pickup",
+        data: { full_name: authName.trim(), phone: authPhone.trim() },
+      },
+    });
+    setAuthBusy(false);
+    if (error) return toast.error(error.message);
+
+    setName(authName.trim());
+    setPhone(authPhone.trim());
+    if (data.session) {
+      toast.success("Account created. Let's finish your booking.");
+      setStep(4);
+    } else {
+      toast.success("Account created. Please verify your email, then sign in here.");
+      setAuthTab("signin");
+    }
   };
 
   const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,7 +188,7 @@ function Pickup() {
     if (file) setPhoto(URL.createObjectURL(file));
   };
 
-  const pincodeOk = pincode.length === 6 && isPincodeServiceable(pincode);
+  const pincodeOk = pincode.length === 6 && isPincodeAvailable(pincode, availability);
   const pincodeBad = pincode.length === 6 && !pincodeOk;
 
   const goNext = () => {
@@ -120,21 +198,32 @@ function Pickup() {
         return toast.error("Pick at least one item, or choose Mixed scrap.");
     }
     if (step === 2) {
-      if (!locality) return toast.error("Select your locality.");
       if (!pincodeOk) return toast.error("Enter a serviceable 6-digit pincode.");
       if (!address.trim()) return toast.error("Add your flat / house address.");
     }
-    setStep((s) => Math.min(3, s + 1));
+    if (step === 2) {
+      setStep(user ? 4 : 3);
+    } else {
+      setStep((s) => Math.min(4, s + 1));
+    }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
-    setStep((s) => Math.max(1, s - 1));
+    setStep((s) => {
+      if (s === 4) return user ? 2 : 3;
+      return Math.max(1, s - 1);
+    });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      toast.error("Please sign in before confirming your pickup.");
+      setStep(3);
+      return;
+    }
     if (!date) return toast.error("Pick a date.");
     if (!slot) return toast.error("Pick a time slot.");
     if (!name.trim() || phone.trim().length < 10)
@@ -146,7 +235,7 @@ function Pickup() {
       items: scrapMode === "specific" ? items : [],
       size_tier: null,
       has_photo: !!photo,
-      locality,
+      locality: null,
       pincode,
       address: address.trim(),
       name: name.trim(),
@@ -162,6 +251,19 @@ function Pickup() {
     if (error) {
       toast.error("Couldn't save your booking. Please try again.");
       return;
+    }
+    const { error: profileError } = await supabase.from("user_profiles").upsert({
+      user_id: user.id,
+      full_name: name.trim(),
+      whatsapp: phone.trim(),
+      address: address.trim(),
+      pincode,
+      lat: geo?.lat ?? null,
+      lng: geo?.lng ?? null,
+    });
+    if (profileError) {
+      console.error(profileError);
+      toast.warning("Pickup saved, but we couldn't save these details for next time.");
     }
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
     setSubmitted(true);
@@ -211,7 +313,7 @@ function Pickup() {
 
           <div className="mt-8 rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-5 text-left text-sm">
             <p className="flex items-center gap-2">
-              <MapPin className="size-4 text-brand-green" /> {locality}, Bengaluru {pincode}
+              <MapPin className="size-4 text-brand-green" /> Bengaluru {pincode}
             </p>
             <p className="mt-2 flex items-center gap-2">
               <Clock className="size-4 text-brand-green" /> {date} · {slot}
@@ -252,30 +354,33 @@ function Pickup() {
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
           {/* progress */}
           <div className="mb-8 flex items-center gap-2">
-            {[1, 2, 3].map((n) => (
-              <div key={n} className="flex flex-1 items-center gap-2">
+            {progressSteps.map((stepNumber, index) => {
+              const visualStep = index + 1;
+              return (
+              <div key={stepNumber} className="flex flex-1 items-center gap-2">
                 <div
                   className={cn(
                     "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors",
-                    step > n
+                    currentProgress > visualStep
                       ? "bg-gradient-brand text-primary-foreground"
-                      : step === n
+                      : currentProgress === visualStep
                         ? "bg-foreground text-background"
                         : "bg-secondary text-muted-foreground",
                   )}
                 >
-                  {step > n ? <Check className="size-4" /> : n}
+                  {currentProgress > visualStep ? <Check className="size-4" /> : visualStep}
                 </div>
-                {n < 3 && (
+                {index < progressSteps.length - 1 && (
                   <div
                     className={cn(
                       "h-1 flex-1 rounded-full transition-colors",
-                      step > n ? "bg-primary" : "bg-secondary",
+                      currentProgress > visualStep ? "bg-primary" : "bg-secondary",
                     )}
                   />
                 )}
               </div>
-            ))}
+              );
+            })}
           </div>
 
           <div className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-8">
@@ -449,22 +554,6 @@ function Pickup() {
 
                   <div className="mt-6 space-y-5">
                     <div className="space-y-2">
-                      <Label>Locality</Label>
-                      <Select value={locality} onValueChange={onLocality}>
-                        <SelectTrigger className="h-11">
-                          <SelectValue placeholder="Select your locality" />
-                        </SelectTrigger>
-                        <SelectContent className="max-h-72">
-                          {serviceLocalities.map((l) => (
-                            <SelectItem key={l.pincode} value={l.name}>
-                              {l.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
                       <Label htmlFor="pin">Pincode</Label>
                       <Input
                         id="pin"
@@ -511,8 +600,127 @@ function Pickup() {
 
               {/* STEP 3 */}
               {step === 3 && (
+                <motion.div
+                  key="s3-auth"
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
+                      <Recycle className="size-6" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-bold">Sign in to continue</h2>
+                      <p className="text-sm text-muted-foreground">
+                        We'll save your address and WhatsApp number for next time.
+                      </p>
+                    </div>
+                  </div>
+
+                  {authLoading ? (
+                    <div className="flex items-center justify-center rounded-2xl border border-border bg-background py-12">
+                      <Loader2 className="size-6 animate-spin text-primary" />
+                    </div>
+                  ) : (
+                    <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as "signin" | "signup")}>
+                      <TabsList className="grid w-full grid-cols-2">
+                        <TabsTrigger value="signin">Sign in</TabsTrigger>
+                        <TabsTrigger value="signup">Create account</TabsTrigger>
+                      </TabsList>
+
+                      <TabsContent value="signin" className="mt-5">
+                        <form onSubmit={signInDuringBooking} className="space-y-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="booking-si-email">Email</Label>
+                            <Input
+                              id="booking-si-email"
+                              type="email"
+                              autoComplete="email"
+                              value={authEmail}
+                              onChange={(e) => setAuthEmail(e.target.value)}
+                              placeholder="you@example.com"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="booking-si-password">Password</Label>
+                            <Input
+                              id="booking-si-password"
+                              type="password"
+                              autoComplete="current-password"
+                              value={authPassword}
+                              onChange={(e) => setAuthPassword(e.target.value)}
+                              placeholder="At least 6 characters"
+                            />
+                          </div>
+                          <Button type="submit" variant="hero" size="lg" className="w-full" disabled={authBusy}>
+                            {authBusy ? <Loader2 className="size-4 animate-spin" /> : "Sign in and continue"}
+                          </Button>
+                        </form>
+                      </TabsContent>
+
+                      <TabsContent value="signup" className="mt-5">
+                        <form onSubmit={signUpDuringBooking} className="space-y-4">
+                          <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="space-y-2">
+                              <Label htmlFor="booking-su-name">Full name</Label>
+                              <Input
+                                id="booking-su-name"
+                                value={authName}
+                                onChange={(e) => setAuthName(e.target.value)}
+                                placeholder="Your name"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="booking-su-phone">WhatsApp</Label>
+                              <Input
+                                id="booking-su-phone"
+                                type="tel"
+                                inputMode="numeric"
+                                maxLength={10}
+                                value={authPhone}
+                                onChange={(e) => setAuthPhone(e.target.value.replace(/\D/g, ""))}
+                                placeholder="10-digit mobile"
+                              />
+                            </div>
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="booking-su-email">Email</Label>
+                            <Input
+                              id="booking-su-email"
+                              type="email"
+                              autoComplete="email"
+                              value={authEmail}
+                              onChange={(e) => setAuthEmail(e.target.value)}
+                              placeholder="you@example.com"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="booking-su-password">Password</Label>
+                            <Input
+                              id="booking-su-password"
+                              type="password"
+                              autoComplete="new-password"
+                              value={authPassword}
+                              onChange={(e) => setAuthPassword(e.target.value)}
+                              placeholder="At least 6 characters"
+                            />
+                          </div>
+                          <Button type="submit" variant="hero" size="lg" className="w-full" disabled={authBusy}>
+                            {authBusy ? <Loader2 className="size-4 animate-spin" /> : "Create account and continue"}
+                          </Button>
+                        </form>
+                      </TabsContent>
+                    </Tabs>
+                  )}
+                </motion.div>
+              )}
+
+              {/* STEP 4 */}
+              {step === 4 && (
                 <motion.form
-                  key="s3"
+                  key="s4"
                   onSubmit={onSubmit}
                   initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -612,7 +820,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
-            {step === 3 && (
+            {step >= 3 && (
               <div className="mt-4">
                 <Button type="button" variant="ghost" onClick={goBack}>
                   <ArrowLeft />

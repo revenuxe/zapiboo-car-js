@@ -83,6 +83,75 @@ export type Database = {
         }
         Relationships: []
       }
+      service_locations: {
+        Row: {
+          active: boolean
+          area: string | null
+          created_at: string
+          id: string
+          location_type: "pincode" | "area"
+          pincode: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          area?: string | null
+          created_at?: string
+          id?: string
+          location_type: "pincode" | "area"
+          pincode?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          area?: string | null
+          created_at?: string
+          id?: string
+          location_type?: "pincode" | "area"
+          pincode?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          full_name: string | null
+          lat: number | null
+          lng: number | null
+          pincode: string | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          full_name?: string | null
+          lat?: number | null
+          lng?: number | null
+          pincode?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          full_name?: string | null
+          lat?: number | null
+          lng?: number | null
+          pincode?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
       scrap_categories: {
         Row: {
           active: boolean

@@ -329,15 +329,20 @@ function Pickup() {
       toast.error("Couldn't save your booking. Please try again.");
       return;
     }
-    const { error: profileError } = await supabase.from("user_profiles").upsert({
-      user_id: user.id,
-      full_name: name.trim(),
-      whatsapp: phone.trim(),
-      address: address.trim(),
-      pincode,
-      lat: geo?.lat ?? null,
-      lng: geo?.lng ?? null,
-    });
+    const { error: profileError } = await supabase
+      .from("user_profiles")
+      .upsert(
+        {
+          user_id: user.id,
+          full_name: name.trim(),
+          whatsapp: phone.trim(),
+          address: address.trim(),
+          pincode,
+          lat: geo?.lat ?? null,
+          lng: geo?.lng ?? null,
+        },
+        { onConflict: "user_id" },
+      );
     if (profileError) {
       console.error(profileError);
       toast.warning("Pickup saved, but we couldn't save these details for next time.");

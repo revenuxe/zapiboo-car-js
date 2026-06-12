@@ -34,7 +34,6 @@ import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
 import {
   serviceLocalities,
-  sizeTiers,
   householdTypes,
   isPincodeServiceable,
 } from "@/lib/bangalore-data";
@@ -81,7 +80,6 @@ function Pickup() {
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
   const [items, setItems] = useState<string[]>([]);
-  const [size, setSize] = useState("");
   const [photo, setPhoto] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -120,7 +118,6 @@ function Pickup() {
       if (!scrapMode) return toast.error("Tell us what you're clearing.");
       if (scrapMode === "specific" && items.length === 0)
         return toast.error("Pick at least one item, or choose Mixed scrap.");
-      if (!size) return toast.error("Give us a rough amount.");
     }
     if (step === 2) {
       if (!locality) return toast.error("Select your locality.");
@@ -147,7 +144,7 @@ function Pickup() {
     const { error } = await supabase.from("leads").insert({
       scrap_mode: scrapMode || "mixed",
       items: scrapMode === "specific" ? items : [],
-      size_tier: size || null,
+      size_tier: null,
       has_photo: !!photo,
       locality,
       pincode,
@@ -173,8 +170,10 @@ function Pickup() {
 
   if (submitted) {
     return (
-      <section className="bg-background py-24">
-        <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
+      <section className="relative overflow-hidden bg-gradient-navy py-24 text-navy-foreground">
+        <div className="pointer-events-none absolute -left-24 -top-24 size-72 rounded-full bg-brand-green/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 size-72 rounded-full bg-brand-green/10 blur-3xl" />
+        <div className="relative mx-auto max-w-xl px-4 text-center sm:px-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -183,20 +182,42 @@ function Pickup() {
           >
             <PartyPopper className="size-10" />
           </motion.div>
-          <h1 className="mt-8 text-3xl font-bold sm:text-4xl">Pickup booked!</h1>
-          <p className="mt-4 text-muted-foreground">
-            Thanks, {name.split(" ")[0] || "friend"}! Our nearest Bengaluru agent will confirm your
-            slot on WhatsApp, arrive with a certified weighing scale, and pay you on the spot.
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mt-8 text-3xl font-bold sm:text-4xl"
+          >
+            Thank you, {name.split(" ")[0] || "friend"}!
+          </motion.h1>
+          <p className="mt-4 text-navy-foreground/80">
+            Your pickup is booked. Our nearest Bengaluru agent will confirm your slot on WhatsApp,
+            arrive with a certified weighing scale, bag everything for you, and pay you on the spot.
           </p>
-          <div className="mt-6 rounded-2xl border border-border bg-secondary/50 p-5 text-left text-sm">
-            <p className="flex items-center gap-2 text-foreground">
-              <MapPin className="size-4 text-primary" /> {locality}, Bengaluru {pincode}
+
+          <motion.blockquote
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mx-auto mt-8 max-w-md rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-6"
+          >
+            <p className="text-lg font-semibold italic leading-relaxed text-gradient">
+              “The greatest threat to our planet is the belief that someone else will save it.”
             </p>
-            <p className="mt-2 flex items-center gap-2 text-foreground">
-              <Clock className="size-4 text-primary" /> {date} · {slot}
+            <footer className="mt-3 text-sm text-navy-foreground/60">
+              You just took your turn — every kilo you recycle keeps Bengaluru cleaner. 🌱
+            </footer>
+          </motion.blockquote>
+
+          <div className="mt-8 rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-5 text-left text-sm">
+            <p className="flex items-center gap-2">
+              <MapPin className="size-4 text-brand-green" /> {locality}, Bengaluru {pincode}
             </p>
-            <p className="mt-2 flex items-center gap-2 text-foreground">
-              <Phone className="size-4 text-primary" /> {phone}
+            <p className="mt-2 flex items-center gap-2">
+              <Clock className="size-4 text-brand-green" /> {date} · {slot}
+            </p>
+            <p className="mt-2 flex items-center gap-2">
+              <Phone className="size-4 text-brand-green" /> {phone}
             </p>
           </div>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -210,7 +231,7 @@ function Pickup() {
             >
               Book another pickup
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outlineLight" size="lg">
               <Link to="/materials">See ₹ rates</Link>
             </Button>
           </div>
@@ -348,38 +369,27 @@ function Pickup() {
                     )}
                   </AnimatePresence>
 
-                  <div className="mt-8">
-                    <h3 className="font-bold">Roughly how much?</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">
-                      No need to weigh — our agent weighs on a certified scale at pickup.
-                    </p>
-                    <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                      {sizeTiers.map((t) => (
-                        <button
-                          type="button"
-                          key={t.id}
-                          onClick={() => setSize(t.id)}
-                          className={cn(
-                            "rounded-xl border-2 p-4 text-left transition-all",
-                            size === t.id
-                              ? "border-primary bg-accent"
-                              : "border-border hover:border-primary/40",
-                          )}
-                        >
-                          <div className="font-semibold">{t.label}</div>
-                          <div className="mt-1 text-xs text-muted-foreground">{t.hint}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {size === "small" && (
-                    <div className="mt-4 flex items-start gap-2.5 rounded-xl bg-secondary/60 p-4 text-sm text-muted-foreground">
-                      <Info className="mt-0.5 size-4 shrink-0 text-primary" />
-                      Small load? No problem — we club nearby pickups in your area, so it's usually
-                      same or next day.
-                    </div>
-                  )}
+                  <AnimatePresence>
+                    {scrapMode && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="mt-6 flex items-start gap-3 rounded-2xl border border-primary/20 bg-accent/50 p-5"
+                      >
+                        <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
+                          <ShieldCheck className="size-5" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">Leave the rest to us</p>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            No need to sort, bag or weigh a thing. Our agent comes to your door,
+                            weighs everything on a certified digital scale at today's live ₹ rate,
+                            bags it up, and pays you on the spot.
+                          </p>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
 
                   <div className="mt-8">
                     <h3 className="font-bold">Add a photo (optional)</h3>

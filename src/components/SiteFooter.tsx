@@ -51,7 +51,11 @@ export function SiteFooter() {
 
         <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-navy-foreground/15 pt-8 text-sm text-navy-foreground/60 sm:flex-row">
           <p>© {new Date().getFullYear()} HuluMart. Powering global scrap commerce.</p>
-          <p className="text-navy-foreground/50">Built for a circular economy.</p>
+          <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <Link to="/privacy" className="transition-colors hover:text-brand-green">Privacy Policy</Link>
+            <Link to="/terms" className="transition-colors hover:text-brand-green">Terms &amp; Conditions</Link>
+            <Link to="/contact" className="transition-colors hover:text-brand-green">Contact</Link>
+          </div>
         </div>
       </div>
     </footer>

@@ -170,8 +170,10 @@ function Pickup() {
 
   if (submitted) {
     return (
-      <section className="bg-background py-24">
-        <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
+      <section className="relative overflow-hidden bg-gradient-navy py-24 text-navy-foreground">
+        <div className="pointer-events-none absolute -left-24 -top-24 size-72 rounded-full bg-brand-green/20 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -right-24 size-72 rounded-full bg-brand-green/10 blur-3xl" />
+        <div className="relative mx-auto max-w-xl px-4 text-center sm:px-6">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -180,20 +182,42 @@ function Pickup() {
           >
             <PartyPopper className="size-10" />
           </motion.div>
-          <h1 className="mt-8 text-3xl font-bold sm:text-4xl">Pickup booked!</h1>
-          <p className="mt-4 text-muted-foreground">
-            Thanks, {name.split(" ")[0] || "friend"}! Our nearest Bengaluru agent will confirm your
-            slot on WhatsApp, arrive with a certified weighing scale, and pay you on the spot.
+          <motion.h1
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="mt-8 text-3xl font-bold sm:text-4xl"
+          >
+            Thank you, {name.split(" ")[0] || "friend"}!
+          </motion.h1>
+          <p className="mt-4 text-navy-foreground/80">
+            Your pickup is booked. Our nearest Bengaluru agent will confirm your slot on WhatsApp,
+            arrive with a certified weighing scale, bag everything for you, and pay you on the spot.
           </p>
-          <div className="mt-6 rounded-2xl border border-border bg-secondary/50 p-5 text-left text-sm">
-            <p className="flex items-center gap-2 text-foreground">
-              <MapPin className="size-4 text-primary" /> {locality}, Bengaluru {pincode}
+
+          <motion.blockquote
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+            className="mx-auto mt-8 max-w-md rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-6"
+          >
+            <p className="text-lg font-semibold italic leading-relaxed text-gradient">
+              “The greatest threat to our planet is the belief that someone else will save it.”
             </p>
-            <p className="mt-2 flex items-center gap-2 text-foreground">
-              <Clock className="size-4 text-primary" /> {date} · {slot}
+            <footer className="mt-3 text-sm text-navy-foreground/60">
+              You just took your turn — every kilo you recycle keeps Bengaluru cleaner. 🌱
+            </footer>
+          </motion.blockquote>
+
+          <div className="mt-8 rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-5 text-left text-sm">
+            <p className="flex items-center gap-2">
+              <MapPin className="size-4 text-brand-green" /> {locality}, Bengaluru {pincode}
             </p>
-            <p className="mt-2 flex items-center gap-2 text-foreground">
-              <Phone className="size-4 text-primary" /> {phone}
+            <p className="mt-2 flex items-center gap-2">
+              <Clock className="size-4 text-brand-green" /> {date} · {slot}
+            </p>
+            <p className="mt-2 flex items-center gap-2">
+              <Phone className="size-4 text-brand-green" /> {phone}
             </p>
           </div>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
@@ -207,7 +231,7 @@ function Pickup() {
             >
               Book another pickup
             </Button>
-            <Button asChild variant="outline" size="lg">
+            <Button asChild variant="outlineLight" size="lg">
               <Link to="/materials">See ₹ rates</Link>
             </Button>
           </div>

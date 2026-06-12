@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/hulumart-logo.webp.asset.json";
+import logo from "@/assets/hulumart-logo.webp";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -12,7 +12,7 @@ export function Logo({
   return (
     <Link to="/" aria-label="HuluMart home" className={cn("inline-flex items-center", className)}>
       <img
-        src={logo.url}
+        src={logo}
         alt="HuluMart — Powering Global Scrap Commerce"
         width={1760}
         height={300}

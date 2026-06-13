@@ -18,7 +18,6 @@ import {
   Phone,
   Chrome,
   Loader2,
-  Recycle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -745,33 +744,29 @@ function Pickup() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <div className="mb-6 rounded-3xl bg-gradient-to-br from-accent to-background p-4 sm:p-5">
-                    <div className="flex items-center gap-3">
-                      <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-green">
-                        <Recycle className="size-6" />
-                      </div>
-                      <div className="min-w-0">
-                        <h2 className="text-xl font-extrabold leading-tight">
-                          Sign in to continue
-                        </h2>
-                        <p className="mt-1 text-sm text-muted-foreground">
-                          Save your address and WhatsApp number for faster pickups.
-                        </p>
-                      </div>
-                    </div>
+                  <div className="mb-4">
+                    <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
+                      Customer account
+                    </p>
+                    <h2 className="mt-1 text-2xl font-extrabold leading-tight">
+                      {authTab === "signin" ? "Sign in to continue" : "Create your account"}
+                    </h2>
+                    <p className="mt-1 text-sm text-muted-foreground">
+                      Save your address and WhatsApp number for faster pickups.
+                    </p>
                   </div>
 
                   {authLoading ? (
-                    <div className="flex items-center justify-center rounded-3xl border border-border bg-background py-12">
+                    <div className="flex items-center justify-center rounded-2xl border border-border bg-background py-10">
                       <Loader2 className="size-6 animate-spin text-primary" />
                     </div>
                   ) : (
-                    <div className="rounded-3xl border border-border bg-background p-4 shadow-soft sm:p-5">
+                    <div className="rounded-2xl border border-border bg-background p-3 shadow-soft sm:p-4">
                       <Button
                         type="button"
                         variant="google"
                         size="lg"
-                        className="mb-4 h-12 w-full rounded-2xl"
+                        className="mb-3 h-11 w-full rounded-xl text-sm"
                         disabled={authBusy}
                         onClick={signInWithGoogleDuringBooking}
                       >
@@ -782,7 +777,7 @@ function Pickup() {
                         )}
                         Continue with Google
                       </Button>
-                      <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+                      <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="h-px flex-1 bg-border" />
                         or
                         <span className="h-px flex-1 bg-border" />
@@ -792,7 +787,7 @@ function Pickup() {
                         value={authTab}
                         onValueChange={(v) => setAuthTab(v as "signin" | "signup")}
                       >
-                        <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl bg-muted p-1.5">
+                        <TabsList className="grid h-10 w-full grid-cols-2 rounded-xl bg-muted p-1">
                           <TabsTrigger value="signin" className="rounded-xl">
                             Sign in
                           </TabsTrigger>
@@ -801,9 +796,9 @@ function Pickup() {
                           </TabsTrigger>
                         </TabsList>
 
-                        <TabsContent value="signin" className="mt-5">
-                          <form onSubmit={signInDuringBooking} className="space-y-4">
-                            <div className="space-y-2">
+                        <TabsContent value="signin" className="mt-4">
+                          <form onSubmit={signInDuringBooking} className="space-y-3">
+                            <div className="space-y-1.5">
                               <Label htmlFor="booking-si-email">Email</Label>
                               <Input
                                 id="booking-si-email"
@@ -812,10 +807,10 @@ function Pickup() {
                                 value={authEmail}
                                 onChange={(e) => setAuthEmail(e.target.value)}
                                 placeholder="you@example.com"
-                                className="h-12 rounded-2xl bg-background px-4"
+                                className="h-11 rounded-xl bg-background px-3"
                               />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                               <Label htmlFor="booking-si-password">Password</Label>
                               <Input
                                 id="booking-si-password"
@@ -824,14 +819,14 @@ function Pickup() {
                                 value={authPassword}
                                 onChange={(e) => setAuthPassword(e.target.value)}
                                 placeholder="Password"
-                                className="h-12 rounded-2xl bg-background px-4"
+                                className="h-11 rounded-xl bg-background px-3"
                               />
                             </div>
                             <Button
                               type="submit"
                               variant="hero"
                               size="lg"
-                              className="h-12 w-full rounded-2xl"
+                              className="h-11 w-full rounded-xl text-sm"
                               disabled={authBusy}
                             >
                               {authBusy ? (
@@ -843,20 +838,20 @@ function Pickup() {
                           </form>
                         </TabsContent>
 
-                        <TabsContent value="signup" className="mt-5">
-                          <form onSubmit={signUpDuringBooking} className="space-y-4">
-                            <div className="grid gap-4 sm:grid-cols-2">
-                              <div className="space-y-2">
+                        <TabsContent value="signup" className="mt-4">
+                          <form onSubmit={signUpDuringBooking} className="space-y-3">
+                            <div className="grid gap-3 sm:grid-cols-2">
+                              <div className="space-y-1.5">
                                 <Label htmlFor="booking-su-name">Full name</Label>
                                 <Input
                                   id="booking-su-name"
                                   value={authName}
                                   onChange={(e) => setAuthName(e.target.value)}
                                   placeholder="Your name"
-                                  className="h-12 rounded-2xl bg-background px-4"
+                                  className="h-11 rounded-xl bg-background px-3"
                                 />
                               </div>
-                              <div className="space-y-2">
+                              <div className="space-y-1.5">
                                 <Label htmlFor="booking-su-phone">WhatsApp</Label>
                                 <Input
                                   id="booking-su-phone"
@@ -866,11 +861,11 @@ function Pickup() {
                                   value={authPhone}
                                   onChange={(e) => setAuthPhone(e.target.value.replace(/\D/g, ""))}
                                   placeholder="10-digit mobile"
-                                  className="h-12 rounded-2xl bg-background px-4"
+                                  className="h-11 rounded-xl bg-background px-3"
                                 />
                               </div>
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                               <Label htmlFor="booking-su-email">Email</Label>
                               <Input
                                 id="booking-su-email"
@@ -879,10 +874,10 @@ function Pickup() {
                                 value={authEmail}
                                 onChange={(e) => setAuthEmail(e.target.value)}
                                 placeholder="you@example.com"
-                                className="h-12 rounded-2xl bg-background px-4"
+                                className="h-11 rounded-xl bg-background px-3"
                               />
                             </div>
-                            <div className="space-y-2">
+                            <div className="space-y-1.5">
                               <Label htmlFor="booking-su-password">Password</Label>
                               <Input
                                 id="booking-su-password"
@@ -891,14 +886,14 @@ function Pickup() {
                                 value={authPassword}
                                 onChange={(e) => setAuthPassword(e.target.value)}
                                 placeholder="At least 6 characters"
-                                className="h-12 rounded-2xl bg-background px-4"
+                                className="h-11 rounded-xl bg-background px-3"
                               />
                             </div>
                             <Button
                               type="submit"
                               variant="hero"
                               size="lg"
-                              className="h-12 w-full rounded-2xl"
+                              className="h-11 w-full rounded-xl text-sm"
                               disabled={authBusy}
                             >
                               {authBusy ? (

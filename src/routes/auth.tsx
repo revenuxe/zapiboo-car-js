@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { ArrowLeft, Chrome, Loader2, Recycle, ShieldCheck, Truck, Wallet } from "lucide-react";
+import { ArrowLeft, Chrome, Loader2, Recycle } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -98,12 +98,12 @@ function AuthPage() {
   const googleLabel = tab === "signin" ? "Sign in with Google" : "Sign up with Google";
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-navy px-4 py-5 text-navy-foreground sm:px-6 lg:px-8">
-      <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] w-full max-w-6xl flex-col">
-        <div className="mb-6 flex items-center justify-between gap-4">
+    <div className="relative min-h-screen overflow-hidden bg-gradient-navy px-4 py-4 text-navy-foreground sm:px-6">
+      <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-md flex-col">
+        <div className="mb-4 flex items-center justify-between gap-4">
           <Link to="/" className="flex min-w-0 items-center gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-green">
-              <Recycle className="size-6" />
+            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
+              <Recycle className="size-5" />
             </div>
             <div className="min-w-0">
               <p className="text-sm font-extrabold leading-tight">HuluMart</p>
@@ -117,74 +117,29 @@ function AuthPage() {
           </Button>
         </div>
 
-        <div className="grid flex-1 items-center gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:gap-12">
+        <div className="flex flex-1 items-center">
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-            className="hidden lg:block"
+            transition={{ duration: 0.4 }}
+            className="w-full rounded-3xl border border-white/15 bg-background p-4 text-foreground shadow-elevated sm:p-5"
           >
-            <p className="text-sm font-bold uppercase tracking-[0.28em] text-primary">
-              Customer account
-            </p>
-            <h1 className="mt-4 max-w-xl text-5xl font-extrabold leading-tight">
-              Faster pickups, saved addresses, cleaner payments.
-            </h1>
-            <p className="mt-5 max-w-lg text-lg leading-8 text-navy-foreground/72">
-              Sign in once and keep your doorstep scrap pickups organized with HuluMart.
-            </p>
-            <div className="mt-8 grid gap-4">
-              {[
-                { icon: Truck, title: "Book quicker", text: "Reuse saved pickup details." },
-                {
-                  icon: ShieldCheck,
-                  title: "Secure access",
-                  text: "Your account is protected by Supabase auth.",
-                },
-                {
-                  icon: Wallet,
-                  title: "Easy tracking",
-                  text: "Track requests and pickup history.",
-                },
-              ].map((item) => (
-                <div
-                  key={item.title}
-                  className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/7 p-4 backdrop-blur"
-                >
-                  <div className="flex size-11 items-center justify-center rounded-xl bg-white/10 text-primary">
-                    <item.icon className="size-5" />
-                  </div>
-                  <div>
-                    <h2 className="text-base font-bold">{item.title}</h2>
-                    <p className="text-sm text-navy-foreground/65">{item.text}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="w-full justify-self-center rounded-[2rem] border border-white/15 bg-background p-5 text-foreground shadow-elevated sm:max-w-lg sm:p-7 lg:max-w-xl"
-          >
-            <div className="mb-6 rounded-3xl bg-gradient-to-br from-accent to-background p-5">
-              <div className="flex items-center gap-3">
-                <div className="flex size-12 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-green">
-                  <Recycle className="size-6" />
-                </div>
-                <div>
-                  <h1 className="text-2xl font-extrabold leading-tight">Your HuluMart account</h1>
-                  <p className="text-sm text-muted-foreground">
-                    Track pickups and get paid faster.
-                  </p>
-                </div>
-              </div>
+            <div className="mb-4">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-primary">
+                Customer account
+              </p>
+              <h1 className="mt-1 text-2xl font-extrabold leading-tight">
+                {tab === "signin" ? "Welcome back" : "Create your account"}
+              </h1>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {tab === "signin"
+                  ? "Sign in to track pickups faster."
+                  : "Save your details for quicker scrap pickups."}
+              </p>
             </div>
 
             <Tabs value={tab} onValueChange={(v) => setTab(v as "signin" | "signup")}>
-              <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl bg-muted p-1.5">
+              <TabsList className="grid h-10 w-full grid-cols-2 rounded-xl bg-muted p-1">
                 <TabsTrigger value="signin" className="rounded-xl">
                   Sign in
                 </TabsTrigger>
@@ -198,7 +153,7 @@ function AuthPage() {
                   type="button"
                   variant="google"
                   size="lg"
-                  className="mb-4 h-12 w-full rounded-2xl"
+                  className="mb-3 h-11 w-full rounded-xl text-sm"
                   disabled={busy}
                   onClick={signInWithGoogle}
                 >
@@ -209,13 +164,13 @@ function AuthPage() {
                   )}
                   {googleLabel}
                 </Button>
-                <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+                <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="h-px flex-1 bg-border" />
                   or
                   <span className="h-px flex-1 bg-border" />
                 </div>
-                <form onSubmit={signIn} className="space-y-4">
-                  <div className="space-y-2">
+                <form onSubmit={signIn} className="space-y-3">
+                  <div className="space-y-1.5">
                     <Label htmlFor="si-email">Email</Label>
                     <Input
                       id="si-email"
@@ -224,10 +179,10 @@ function AuthPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="h-12 rounded-2xl bg-background px-4"
+                      className="h-11 rounded-xl bg-background px-3"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="si-pw">Password</Label>
                     <Input
                       id="si-pw"
@@ -236,14 +191,14 @@ function AuthPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Password"
-                      className="h-12 rounded-2xl bg-background px-4"
+                      className="h-11 rounded-xl bg-background px-3"
                     />
                   </div>
                   <Button
                     type="submit"
                     variant="hero"
                     size="lg"
-                    className="h-12 w-full rounded-2xl"
+                    className="h-11 w-full rounded-xl text-sm"
                     disabled={busy}
                   >
                     {busy ? <Loader2 className="size-4 animate-spin" /> : "Sign in"}
@@ -256,7 +211,7 @@ function AuthPage() {
                   type="button"
                   variant="google"
                   size="lg"
-                  className="mb-4 h-12 w-full rounded-2xl"
+                  className="mb-3 h-11 w-full rounded-xl text-sm"
                   disabled={busy}
                   onClick={signInWithGoogle}
                 >
@@ -267,23 +222,23 @@ function AuthPage() {
                   )}
                   {googleLabel}
                 </Button>
-                <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
+                <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="h-px flex-1 bg-border" />
                   or
                   <span className="h-px flex-1 bg-border" />
                 </div>
-                <form onSubmit={signUp} className="space-y-4">
-                  <div className="space-y-2">
+                <form onSubmit={signUp} className="space-y-3">
+                  <div className="space-y-1.5">
                     <Label htmlFor="su-name">Full name</Label>
                     <Input
                       id="su-name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
-                      className="h-12 rounded-2xl bg-background px-4"
+                      className="h-11 rounded-xl bg-background px-3"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="su-phone">Phone (WhatsApp)</Label>
                     <Input
                       id="su-phone"
@@ -293,10 +248,10 @@ function AuthPage() {
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, ""))}
                       placeholder="10-digit mobile"
                       maxLength={10}
-                      className="h-12 rounded-2xl bg-background px-4"
+                      className="h-11 rounded-xl bg-background px-3"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="su-email">Email</Label>
                     <Input
                       id="su-email"
@@ -305,10 +260,10 @@ function AuthPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
-                      className="h-12 rounded-2xl bg-background px-4"
+                      className="h-11 rounded-xl bg-background px-3"
                     />
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     <Label htmlFor="su-pw">Password</Label>
                     <Input
                       id="su-pw"
@@ -317,14 +272,14 @@ function AuthPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="At least 6 characters"
-                      className="h-12 rounded-2xl bg-background px-4"
+                      className="h-11 rounded-xl bg-background px-3"
                     />
                   </div>
                   <Button
                     type="submit"
                     variant="hero"
                     size="lg"
-                    className="h-12 w-full rounded-2xl"
+                    className="h-11 w-full rounded-xl text-sm"
                     disabled={busy}
                   >
                     {busy ? <Loader2 className="size-4 animate-spin" /> : "Create account"}
@@ -333,7 +288,7 @@ function AuthPage() {
               </TabsContent>
             </Tabs>
 
-            <p className="mt-6 text-center text-xs text-muted-foreground">
+            <p className="mt-4 text-center text-xs text-muted-foreground">
               By continuing you agree to HuluMart's fair-pricing terms.
             </p>
           </motion.div>

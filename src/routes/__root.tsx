@@ -90,15 +90,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: rootTitle },
       {
         name: "description",
-        content:
-          rootDescription,
+        content: rootDescription,
       },
       { name: "author", content: "HuluMart" },
       { property: "og:title", content: rootTitle },
       {
         property: "og:description",
-        content:
-          rootDescription,
+        content: rootDescription,
       },
       { property: "og:type", content: "website" },
       { property: "og:site_name", content: "HuluMart" },
@@ -149,6 +147,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const chromeless = pathname.startsWith("/admin") || pathname.startsWith("/auth");
+  const hideFloatingWhatsApp = chromeless || pathname.startsWith("/pickup");
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -159,7 +158,7 @@ function RootComponent() {
           <Outlet />
         </main>
         {!chromeless && <SiteFooter />}
-        {!chromeless && <FloatingWhatsApp />}
+        {!hideFloatingWhatsApp && <FloatingWhatsApp />}
       </div>
       <Toaster position="top-center" richColors />
     </QueryClientProvider>

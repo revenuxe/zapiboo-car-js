@@ -68,7 +68,8 @@ export const Route = createFileRoute("/pickup")({
       { property: "og:title", content: "Book a Doorstep Scrap Pickup in Bengaluru | HuluMart" },
       {
         property: "og:description",
-        content: "Free doorstep pickup for household scrap in Bengaluru. Fair rates, instant payment.",
+        content:
+          "Free doorstep pickup for household scrap in Bengaluru. Fair rates, instant payment.",
       },
     ],
     links: [{ rel: "canonical", href: "/pickup" }],
@@ -207,7 +208,11 @@ function Pickup() {
       setStep(user ? 4 : 3);
       params.delete("bookingAuth");
       const query = params.toString();
-      window.history.replaceState(null, "", `${window.location.pathname}${query ? `?${query}` : ""}`);
+      window.history.replaceState(
+        null,
+        "",
+        `${window.location.pathname}${query ? `?${query}` : ""}`,
+      );
     }
   }, [pickupSearch.bookingAuth, user]);
 
@@ -403,20 +408,18 @@ function Pickup() {
       toast.error("Couldn't save your booking. Please try again.");
       return;
     }
-    const { error: profileError } = await supabase
-      .from("user_profiles")
-      .upsert(
-        {
-          user_id: user.id,
-          full_name: name.trim(),
-          whatsapp: phone.trim(),
-          address: address.trim(),
-          pincode,
-          lat: geo?.lat ?? null,
-          lng: geo?.lng ?? null,
-        },
-        { onConflict: "user_id" },
-      );
+    const { error: profileError } = await supabase.from("user_profiles").upsert(
+      {
+        user_id: user.id,
+        full_name: name.trim(),
+        whatsapp: phone.trim(),
+        address: address.trim(),
+        pincode,
+        lat: geo?.lat ?? null,
+        lng: geo?.lng ?? null,
+      },
+      { onConflict: "user_id" },
+    );
     if (profileError) {
       console.error(profileError);
       toast.warning("Pickup saved, but we couldn't save these details for next time.");
@@ -514,28 +517,28 @@ function Pickup() {
             {progressSteps.map((stepNumber, index) => {
               const visualStep = index + 1;
               return (
-              <div key={stepNumber} className="flex flex-1 items-center gap-2">
-                <div
-                  className={cn(
-                    "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors",
-                    currentProgress > visualStep
-                      ? "bg-gradient-brand text-primary-foreground"
-                      : currentProgress === visualStep
-                        ? "bg-foreground text-background"
-                        : "bg-secondary text-muted-foreground",
-                  )}
-                >
-                  {currentProgress > visualStep ? <Check className="size-4" /> : visualStep}
-                </div>
-                {index < progressSteps.length - 1 && (
+                <div key={stepNumber} className="flex flex-1 items-center gap-2">
                   <div
                     className={cn(
-                      "h-1 flex-1 rounded-full transition-colors",
-                      currentProgress > visualStep ? "bg-primary" : "bg-secondary",
+                      "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors",
+                      currentProgress > visualStep
+                        ? "bg-gradient-brand text-primary-foreground"
+                        : currentProgress === visualStep
+                          ? "bg-foreground text-background"
+                          : "bg-secondary text-muted-foreground",
                     )}
-                  />
-                )}
-              </div>
+                  >
+                    {currentProgress > visualStep ? <Check className="size-4" /> : visualStep}
+                  </div>
+                  {index < progressSteps.length - 1 && (
+                    <div
+                      className={cn(
+                        "h-1 flex-1 rounded-full transition-colors",
+                        currentProgress > visualStep ? "bg-primary" : "bg-secondary",
+                      )}
+                    />
+                  )}
+                </div>
               );
             })}
           </div>
@@ -742,33 +745,41 @@ function Pickup() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <div className="mb-6 flex items-center gap-3">
-                    <div className="flex size-11 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
-                      <Recycle className="size-6" />
-                    </div>
-                    <div>
-                      <h2 className="text-xl font-bold">Sign in to continue</h2>
-                      <p className="text-sm text-muted-foreground">
-                        We'll save your address and WhatsApp number for next time.
-                      </p>
+                  <div className="mb-6 rounded-3xl bg-gradient-to-br from-accent to-background p-4 sm:p-5">
+                    <div className="flex items-center gap-3">
+                      <div className="flex size-12 shrink-0 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-green">
+                        <Recycle className="size-6" />
+                      </div>
+                      <div className="min-w-0">
+                        <h2 className="text-xl font-extrabold leading-tight">
+                          Sign in to continue
+                        </h2>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          Save your address and WhatsApp number for faster pickups.
+                        </p>
+                      </div>
                     </div>
                   </div>
 
                   {authLoading ? (
-                    <div className="flex items-center justify-center rounded-2xl border border-border bg-background py-12">
+                    <div className="flex items-center justify-center rounded-3xl border border-border bg-background py-12">
                       <Loader2 className="size-6 animate-spin text-primary" />
                     </div>
                   ) : (
-                    <div>
+                    <div className="rounded-3xl border border-border bg-background p-4 shadow-soft sm:p-5">
                       <Button
                         type="button"
-                        variant="outline"
+                        variant="google"
                         size="lg"
-                        className="mb-4 w-full"
+                        className="mb-4 h-12 w-full rounded-2xl"
                         disabled={authBusy}
                         onClick={signInWithGoogleDuringBooking}
                       >
-                        {authBusy ? <Loader2 className="size-4 animate-spin" /> : <Chrome className="size-4" />}
+                        {authBusy ? (
+                          <Loader2 className="size-4 animate-spin" />
+                        ) : (
+                          <Chrome className="size-4" />
+                        )}
                         Continue with Google
                       </Button>
                       <div className="mb-4 flex items-center gap-3 text-xs text-muted-foreground">
@@ -777,92 +788,125 @@ function Pickup() {
                         <span className="h-px flex-1 bg-border" />
                       </div>
 
-                      <Tabs value={authTab} onValueChange={(v) => setAuthTab(v as "signin" | "signup")}>
-                        <TabsList className="grid w-full grid-cols-2">
-                          <TabsTrigger value="signin">Sign in</TabsTrigger>
-                          <TabsTrigger value="signup">Create account</TabsTrigger>
+                      <Tabs
+                        value={authTab}
+                        onValueChange={(v) => setAuthTab(v as "signin" | "signup")}
+                      >
+                        <TabsList className="grid h-12 w-full grid-cols-2 rounded-2xl bg-muted p-1.5">
+                          <TabsTrigger value="signin" className="rounded-xl">
+                            Sign in
+                          </TabsTrigger>
+                          <TabsTrigger value="signup" className="rounded-xl">
+                            Create account
+                          </TabsTrigger>
                         </TabsList>
 
                         <TabsContent value="signin" className="mt-5">
                           <form onSubmit={signInDuringBooking} className="space-y-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="booking-si-email">Email</Label>
-                            <Input
-                              id="booking-si-email"
-                              type="email"
-                              autoComplete="email"
-                              value={authEmail}
-                              onChange={(e) => setAuthEmail(e.target.value)}
-                              placeholder="you@example.com"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="booking-si-password">Password</Label>
-                            <Input
-                              id="booking-si-password"
-                              type="password"
-                              autoComplete="current-password"
-                              value={authPassword}
-                              onChange={(e) => setAuthPassword(e.target.value)}
-                              placeholder="At least 6 characters"
-                            />
-                          </div>
-                          <Button type="submit" variant="hero" size="lg" className="w-full" disabled={authBusy}>
-                            {authBusy ? <Loader2 className="size-4 animate-spin" /> : "Sign in and continue"}
-                          </Button>
+                            <div className="space-y-2">
+                              <Label htmlFor="booking-si-email">Email</Label>
+                              <Input
+                                id="booking-si-email"
+                                type="email"
+                                autoComplete="email"
+                                value={authEmail}
+                                onChange={(e) => setAuthEmail(e.target.value)}
+                                placeholder="you@example.com"
+                                className="h-12 rounded-2xl bg-background px-4"
+                              />
+                            </div>
+                            <div className="space-y-2">
+                              <Label htmlFor="booking-si-password">Password</Label>
+                              <Input
+                                id="booking-si-password"
+                                type="password"
+                                autoComplete="current-password"
+                                value={authPassword}
+                                onChange={(e) => setAuthPassword(e.target.value)}
+                                placeholder="Password"
+                                className="h-12 rounded-2xl bg-background px-4"
+                              />
+                            </div>
+                            <Button
+                              type="submit"
+                              variant="hero"
+                              size="lg"
+                              className="h-12 w-full rounded-2xl"
+                              disabled={authBusy}
+                            >
+                              {authBusy ? (
+                                <Loader2 className="size-4 animate-spin" />
+                              ) : (
+                                "Sign in and continue"
+                              )}
+                            </Button>
                           </form>
                         </TabsContent>
 
                         <TabsContent value="signup" className="mt-5">
                           <form onSubmit={signUpDuringBooking} className="space-y-4">
-                          <div className="grid gap-4 sm:grid-cols-2">
+                            <div className="grid gap-4 sm:grid-cols-2">
+                              <div className="space-y-2">
+                                <Label htmlFor="booking-su-name">Full name</Label>
+                                <Input
+                                  id="booking-su-name"
+                                  value={authName}
+                                  onChange={(e) => setAuthName(e.target.value)}
+                                  placeholder="Your name"
+                                  className="h-12 rounded-2xl bg-background px-4"
+                                />
+                              </div>
+                              <div className="space-y-2">
+                                <Label htmlFor="booking-su-phone">WhatsApp</Label>
+                                <Input
+                                  id="booking-su-phone"
+                                  type="tel"
+                                  inputMode="numeric"
+                                  maxLength={10}
+                                  value={authPhone}
+                                  onChange={(e) => setAuthPhone(e.target.value.replace(/\D/g, ""))}
+                                  placeholder="10-digit mobile"
+                                  className="h-12 rounded-2xl bg-background px-4"
+                                />
+                              </div>
+                            </div>
                             <div className="space-y-2">
-                              <Label htmlFor="booking-su-name">Full name</Label>
+                              <Label htmlFor="booking-su-email">Email</Label>
                               <Input
-                                id="booking-su-name"
-                                value={authName}
-                                onChange={(e) => setAuthName(e.target.value)}
-                                placeholder="Your name"
+                                id="booking-su-email"
+                                type="email"
+                                autoComplete="email"
+                                value={authEmail}
+                                onChange={(e) => setAuthEmail(e.target.value)}
+                                placeholder="you@example.com"
+                                className="h-12 rounded-2xl bg-background px-4"
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label htmlFor="booking-su-phone">WhatsApp</Label>
+                              <Label htmlFor="booking-su-password">Password</Label>
                               <Input
-                                id="booking-su-phone"
-                                type="tel"
-                                inputMode="numeric"
-                                maxLength={10}
-                                value={authPhone}
-                                onChange={(e) => setAuthPhone(e.target.value.replace(/\D/g, ""))}
-                                placeholder="10-digit mobile"
+                                id="booking-su-password"
+                                type="password"
+                                autoComplete="new-password"
+                                value={authPassword}
+                                onChange={(e) => setAuthPassword(e.target.value)}
+                                placeholder="At least 6 characters"
+                                className="h-12 rounded-2xl bg-background px-4"
                               />
                             </div>
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="booking-su-email">Email</Label>
-                            <Input
-                              id="booking-su-email"
-                              type="email"
-                              autoComplete="email"
-                              value={authEmail}
-                              onChange={(e) => setAuthEmail(e.target.value)}
-                              placeholder="you@example.com"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="booking-su-password">Password</Label>
-                            <Input
-                              id="booking-su-password"
-                              type="password"
-                              autoComplete="new-password"
-                              value={authPassword}
-                              onChange={(e) => setAuthPassword(e.target.value)}
-                              placeholder="At least 6 characters"
-                            />
-                          </div>
-                          <Button type="submit" variant="hero" size="lg" className="w-full" disabled={authBusy}>
-                            {authBusy ? <Loader2 className="size-4 animate-spin" /> : "Create account and continue"}
-                          </Button>
+                            <Button
+                              type="submit"
+                              variant="hero"
+                              size="lg"
+                              className="h-12 w-full rounded-2xl"
+                              disabled={authBusy}
+                            >
+                              {authBusy ? (
+                                <Loader2 className="size-4 animate-spin" />
+                              ) : (
+                                "Create account and continue"
+                              )}
+                            </Button>
                           </form>
                         </TabsContent>
                       </Tabs>
@@ -946,7 +990,13 @@ function Pickup() {
                     </div>
                   </div>
 
-                  <Button type="submit" variant="hero" size="xl" className="mt-8 w-full" disabled={saving}>
+                  <Button
+                    type="submit"
+                    variant="hero"
+                    size="xl"
+                    className="mt-8 w-full"
+                    disabled={saving}
+                  >
                     {saving ? "Booking…" : "Confirm pickup"}
                     {!saving && <ArrowRight />}
                   </Button>

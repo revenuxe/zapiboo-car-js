@@ -36,6 +36,7 @@ import { cn } from "@/lib/utils";
 type PickupSearch = {
   mode?: "mixed" | "specific";
   item?: string;
+  pincode?: string;
   bookingAuth?: "1";
 };
 
@@ -53,6 +54,9 @@ export const Route = createFileRoute("/pickup")({
     const parsed: PickupSearch = {};
     if (search.mode === "mixed" || search.mode === "specific") parsed.mode = search.mode;
     if (typeof search.item === "string") parsed.item = search.item;
+    if (typeof search.pincode === "string" && /^\d{6}$/.test(search.pincode)) {
+      parsed.pincode = search.pincode;
+    }
     if (search.bookingAuth === "1") parsed.bookingAuth = "1";
     return parsed;
   },
@@ -124,7 +128,7 @@ function Pickup() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   // step 2
-  const [pincode, setPincode] = useState("");
+  const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
   const [address, setAddress] = useState("");
   const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
 

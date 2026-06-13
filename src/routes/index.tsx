@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
@@ -7,7 +8,6 @@ import {
   Cpu,
   MapPin,
   Package,
-  Phone,
   Quote,
   Recycle,
   Wrench,
@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { steps, features, testimonials } from "@/lib/site-data";
 import { householdRates } from "@/lib/bangalore-data";
+import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import {
   absoluteUrl,
   breadcrumbSchema,
@@ -102,6 +103,18 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featuredAreas = serviceAreas.filter((area) => featuredServiceAreas.includes(area.slug));
+  const { data: availability } = useServiceAvailability();
+  const [heroPincode, setHeroPincode] = useState("");
+  const [pincodeChecked, setPincodeChecked] = useState(false);
+  const cleanHeroPincode = heroPincode.replace(/\D/g, "").slice(0, 6);
+  const pincodeReady = cleanHeroPincode.length === 6;
+  const pincodeAvailable = pincodeReady && isPincodeAvailable(cleanHeroPincode, availability);
+  const pincodeUnavailable =
+    pincodeChecked &&
+    pincodeReady &&
+    availability &&
+    !isPincodeAvailable(cleanHeroPincode, availability);
+  const pincodeIncomplete = pincodeChecked && !pincodeReady;
 
   return (
     <>
@@ -143,20 +156,83 @@ function Home() {
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.18 }}
-              className="mt-7 flex flex-col gap-3 sm:flex-row"
+              className="mt-7 max-w-2xl"
             >
-              <Button asChild variant="hero" size="xl">
-                <Link to="/pickup">
-                  Book a pickup
-                  <ArrowRight />
-                </Link>
-              </Button>
-              <Button asChild variant="outlineLight" size="xl">
-                <a href={businessContact.phoneHref}>
-                  Call Now
-                  <Phone />
-                </a>
-              </Button>
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <Button asChild variant="hero" size="xl">
+                  <Link to="/pickup">
+                    Book a pickup
+                    <ArrowRight />
+                  </Link>
+                </Button>
+                <form
+                  className="flex min-w-0 flex-1 rounded-2xl border border-white/20 bg-white/10 p-1.5 shadow-elevated backdrop-blur"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    setPincodeChecked(true);
+                  }}
+                >
+                  <label className="flex min-w-0 flex-1 items-center gap-2 px-3 text-navy-foreground">
+                    <MapPin className="size-4 shrink-0 text-primary" />
+                    <span className="sr-only">Check pincode availability</span>
+                    <input
+                      type="tel"
+                      inputMode="numeric"
+                      value={cleanHeroPincode}
+                      maxLength={6}
+                      onChange={(event) => {
+                        setHeroPincode(event.target.value);
+                        setPincodeChecked(false);
+                      }}
+                      placeholder="Enter pincode"
+                      className="h-11 min-w-0 flex-1 bg-transparent text-base font-bold outline-none placeholder:text-navy-foreground/55"
+                    />
+                  </label>
+                  {pincodeChecked && pincodeAvailable ? (
+                    <Button
+                      asChild
+                      variant="hero"
+                      size="lg"
+                      className="h-11 rounded-xl px-4 text-sm"
+                    >
+                      <Link to="/pickup" search={{ pincode: cleanHeroPincode }}>
+                        Book
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      variant="outlineLight"
+                      size="lg"
+                      className="h-11 rounded-xl px-4 text-sm"
+                    >
+                      Check
+                    </Button>
+                  )}
+                </form>
+              </div>
+              <div className="mt-3 min-h-5 text-sm font-medium">
+                {!pincodeChecked && (
+                  <span className="text-navy-foreground/70">
+                    Check if doorstep pickup is available in your 6-digit pincode.
+                  </span>
+                )}
+                {pincodeIncomplete && (
+                  <span className="text-navy-foreground/75">
+                    Enter a valid 6-digit Bangalore pincode.
+                  </span>
+                )}
+                {pincodeChecked && pincodeAvailable && (
+                  <span className="text-primary">
+                    Pickup available in {cleanHeroPincode}. You can book now.
+                  </span>
+                )}
+                {pincodeUnavailable && (
+                  <span className="text-navy-foreground/75">
+                    Not available in {cleanHeroPincode} yet. Call {businessContact.phone} for help.
+                  </span>
+                )}
+              </div>
             </motion.div>
           </div>
         </div>

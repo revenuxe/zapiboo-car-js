@@ -5,7 +5,6 @@ import {
   Cpu,
   Info,
   Newspaper,
-  Plug,
   Recycle,
   Refrigerator,
   Wrench,
@@ -160,47 +159,46 @@ function Materials() {
             </div>
           </Reveal>
 
-          <div className="mt-10 grid gap-6 lg:grid-cols-2">
+          <div className="mt-10 space-y-10">
             {pricingCategories.map((category, index) => (
-              <Reveal key={category.title} delay={(index % 2) * 0.06}>
-                <article className="h-full overflow-hidden rounded-3xl border border-border bg-card shadow-soft">
-                  <div className="flex items-center justify-between gap-4 border-b border-border bg-accent/35 p-5 sm:p-7">
-                    <div className="flex min-w-0 items-center gap-4">
-                      <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-green">
-                        <category.icon className="size-7" />
-                      </div>
-                      <div className="min-w-0">
-                        <div className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
-                          Category {String(index + 1).padStart(2, "0")}
-                        </div>
-                        <h2 className="mt-1 text-2xl font-bold leading-tight">{category.title}</h2>
-                      </div>
+              <Reveal key={category.title} delay={(index % 3) * 0.05}>
+                <div className="grid gap-5 md:grid-cols-[220px_1fr] md:gap-8">
+                  <div className="flex items-center gap-4 md:block">
+                    <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-brand text-primary-foreground shadow-green md:size-16">
+                      <category.icon className="size-7 md:size-8" />
                     </div>
-                    <div className="hidden shrink-0 items-center gap-1 rounded-full bg-primary/10 px-3 py-1 text-sm font-bold text-primary sm:inline-flex">
-                      <Plug className="size-4" />
-                      {category.items.length} items
+                    <div className="min-w-0 md:mt-5">
+                      <div className="text-xs font-semibold uppercase tracking-[0.24em] text-primary/80">
+                        Category {String(index + 1).padStart(2, "0")}
+                      </div>
+                      <h2 className="mt-1 text-2xl font-bold leading-tight md:text-3xl">
+                        {category.title}
+                      </h2>
+                      <p className="mt-2 hidden text-sm text-muted-foreground md:block">
+                        {category.items.length} current rate items
+                      </p>
                     </div>
                   </div>
 
-                  <div className="divide-y divide-border">
+                  <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     {category.items.map((item) => (
                       <div
                         key={item.name}
-                        className="grid min-h-16 grid-cols-[minmax(0,1fr)] gap-3 px-5 py-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:px-7"
+                        className="group min-w-0 rounded-2xl border border-border bg-card p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-elevated"
                       >
-                        <div className="flex min-w-0 items-start gap-3">
-                          <span className="mt-2 size-2 shrink-0 rounded-full bg-primary/55" />
-                          <span className="min-w-0 text-base font-medium leading-snug break-words">
+                        <div className="flex items-start gap-3">
+                          <span className="mt-1.5 size-2.5 shrink-0 rounded-full bg-primary/50 transition-colors group-hover:bg-primary" />
+                          <h3 className="min-w-0 flex-1 text-base font-bold leading-snug break-words">
                             {item.name}
-                          </span>
+                          </h3>
                         </div>
-                        <span className="w-fit rounded-full bg-primary/10 px-3 py-1.5 text-sm font-extrabold text-primary sm:justify-self-end sm:text-base">
+                        <div className="mt-4 inline-flex rounded-xl bg-accent px-3 py-2 text-sm font-extrabold leading-none text-primary">
                           {item.price}
-                        </span>
+                        </div>
                       </div>
                     ))}
                   </div>
-                </article>
+                </div>
               </Reveal>
             ))}
           </div>

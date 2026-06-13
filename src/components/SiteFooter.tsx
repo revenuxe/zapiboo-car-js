@@ -25,8 +25,8 @@ export function SiteFooter() {
               Ready to clear out the clutter?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/80">
-              Book a HuluMart pickup in under a minute. We will handle the weighing, collection,
-              and payment at your doorstep.
+              Book a HuluMart pickup in under a minute. We will handle the weighing, collection, and
+              payment at your doorstep.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="xl" variant="secondary">
@@ -80,11 +80,22 @@ export function SiteFooter() {
               <ul className="mt-5 space-y-3 text-sm">
                 {navLinks.map((l) => (
                   <li key={l.to}>
-                    <Link to={l.to} className="text-navy-foreground/80 transition-colors hover:text-brand-green">
+                    <Link
+                      to={l.to}
+                      className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                    >
                       {l.label}
                     </Link>
                   </li>
                 ))}
+                <li>
+                  <Link
+                    to="/top-scrap-buyers"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Top Scrap Buyers
+                  </Link>
+                </li>
               </ul>
             </div>
 
@@ -112,10 +123,38 @@ export function SiteFooter() {
                 Get started
               </h4>
               <ul className="mt-5 space-y-3 text-sm">
-                <li><Link to="/pickup" className="text-navy-foreground/80 transition-colors hover:text-brand-green">Book a pickup</Link></li>
-                <li><Link to="/business" className="text-navy-foreground/80 transition-colors hover:text-brand-green">Sell at scale</Link></li>
-                <li><Link to="/materials" className="text-navy-foreground/80 transition-colors hover:text-brand-green">Today's prices</Link></li>
-                <li><Link to="/contact" className="text-navy-foreground/80 transition-colors hover:text-brand-green">Talk to us</Link></li>
+                <li>
+                  <Link
+                    to="/pickup"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Book a pickup
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/business"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Sell at scale
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/materials"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Today's prices
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/contact"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Talk to us
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
@@ -123,9 +162,15 @@ export function SiteFooter() {
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-navy-foreground/15 pt-8 text-sm text-navy-foreground/60 sm:flex-row">
             <p>© {new Date().getFullYear()} HuluMart. Doorstep scrap collection in Bangalore.</p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-              <Link to="/privacy" className="transition-colors hover:text-brand-green">Privacy Policy</Link>
-              <Link to="/terms" className="transition-colors hover:text-brand-green">Terms &amp; Conditions</Link>
-              <Link to="/contact" className="transition-colors hover:text-brand-green">Contact</Link>
+              <Link to="/privacy" className="transition-colors hover:text-brand-green">
+                Privacy Policy
+              </Link>
+              <Link to="/terms" className="transition-colors hover:text-brand-green">
+                Terms &amp; Conditions
+              </Link>
+              <Link to="/contact" className="transition-colors hover:text-brand-green">
+                Contact
+              </Link>
             </div>
           </div>
         </div>

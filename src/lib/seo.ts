@@ -96,6 +96,8 @@ export const featuredServiceAreas = [
   "btm-layout",
   "bellandur",
   "kr-puram",
+  "rajajinagar",
+  "malleshwaram",
 ];
 
 export function getAreaBySlug(slug: string) {

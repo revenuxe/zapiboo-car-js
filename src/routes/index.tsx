@@ -7,9 +7,9 @@ import {
   Cpu,
   MapPin,
   Package,
+  Phone,
   Quote,
   Recycle,
-  Star,
   Wrench,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import {
   absoluteUrl,
   breadcrumbSchema,
   featuredServiceAreas,
+  businessContact,
   organizationSchema,
   serviceAreas,
   serviceSchema,
@@ -151,25 +152,11 @@ function Home() {
                 </Link>
               </Button>
               <Button asChild variant="outlineLight" size="xl">
-                <Link to="/materials">See today's prices</Link>
+                <a href={businessContact.phoneHref}>
+                  Call Now
+                  <Phone />
+                </a>
               </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-navy-foreground/70"
-            >
-              <span className="flex items-center gap-1.5">
-                <Star className="size-4 fill-brand-green text-brand-green" /> 4.9/5 from 12,000+ pickups
-              </span>
-              <span className="flex items-center gap-1.5">
-                <CheckCircle2 className="size-4 text-brand-green" /> Certified digital weighing
-              </span>
-              <span className="flex items-center gap-1.5">
-                <MapPin className="size-4 text-brand-green" /> Bangalore-wide pickup
-              </span>
             </motion.div>
           </div>
         </div>
@@ -182,9 +169,7 @@ function Home() {
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
                 Select scrap to sell
               </p>
-              <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
-                Start with what you have
-              </h2>
+              <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Start with what you have</h2>
             </div>
             <p className="max-w-md text-sm text-muted-foreground">
               Choose a category and the booking flow opens with your scrap type already selected.
@@ -289,9 +274,9 @@ function Home() {
               We bring trusted scrap buying to your front door
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Whether it is a single box of newspapers or a full home clean-out, a vetted
-              HuluMart agent comes to you. Watch the live weight, see the live rate and approve
-              your payout right there.
+              Whether it is a single box of newspapers or a full home clean-out, a vetted HuluMart
+              agent comes to you. Watch the live weight, see the live rate and approve your payout
+              right there.
             </p>
             <ul className="mt-8 space-y-4">
               {[
@@ -374,12 +359,14 @@ function Home() {
                 key={area.slug}
                 to="/areas/$area"
                 params={{ area: area.slug }}
-                className="group flex min-h-20 items-center gap-3 rounded-2xl border border-border bg-card px-4 py-4 text-left font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary sm:px-5"
+                className="group flex min-h-24 min-w-0 flex-col items-start gap-3 rounded-2xl border border-border bg-card px-3 py-4 text-left font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary sm:min-h-20 sm:flex-row sm:items-center sm:px-5"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
                   <MapPin className="size-4" />
                 </span>
-                <span className="leading-tight">{area.name}</span>
+                <span className="min-w-0 text-sm leading-tight break-words sm:text-base">
+                  {area.name}
+                </span>
               </Link>
             ))}
           </div>

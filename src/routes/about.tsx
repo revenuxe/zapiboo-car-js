@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
-import { stats } from "@/lib/site-data";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -127,17 +126,6 @@ function About() {
               </Reveal>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="bg-gradient-navy py-20 text-navy-foreground">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-8 px-4 sm:px-6 lg:grid-cols-4 lg:px-8">
-          {stats.map((s, i) => (
-            <Reveal key={s.label} delay={i * 0.06} className="text-center">
-              <div className="text-4xl font-extrabold text-gradient md:text-5xl">{s.value}</div>
-              <div className="mt-2 text-sm text-navy-foreground/70">{s.label}</div>
-            </Reveal>
-          ))}
         </div>
       </section>
 

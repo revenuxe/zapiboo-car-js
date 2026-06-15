@@ -195,7 +195,7 @@ function ListingDetailPage() {
                 </Button>
               </div>
               <Button asChild variant="ghost" size="sm" className="mt-2">
-                <a href={`tel:${businessContact.phone.replace(/\s/g, "")}`}>
+                <a href={businessContact.phoneHref}>
                   <Phone className="size-4" /> Call {businessContact.phone}
                 </a>
               </Button>

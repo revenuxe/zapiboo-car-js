@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           address: string | null
           created_at: string
+          email: string | null
           has_photo: boolean
           id: string
           items: string[]
@@ -27,8 +28,6 @@ export type Database = {
           lng: number | null
           locality: string | null
           name: string
-          email: string | null
-          subject: string | null
           notes: string | null
           phone: string
           photo_url: string | null
@@ -38,12 +37,14 @@ export type Database = {
           size_tier: string | null
           slot: string | null
           status: string
+          subject: string | null
           updated_at: string
           user_id: string | null
         }
         Insert: {
           address?: string | null
           created_at?: string
+          email?: string | null
           has_photo?: boolean
           id?: string
           items?: string[]
@@ -53,8 +54,6 @@ export type Database = {
           lng?: number | null
           locality?: string | null
           name: string
-          email?: string | null
-          subject?: string | null
           notes?: string | null
           phone: string
           photo_url?: string | null
@@ -64,12 +63,14 @@ export type Database = {
           size_tier?: string | null
           slot?: string | null
           status?: string
+          subject?: string | null
           updated_at?: string
           user_id?: string | null
         }
         Update: {
           address?: string | null
           created_at?: string
+          email?: string | null
           has_photo?: boolean
           id?: string
           items?: string[]
@@ -79,8 +80,6 @@ export type Database = {
           lng?: number | null
           locality?: string | null
           name?: string
-          email?: string | null
-          subject?: string | null
           notes?: string | null
           phone?: string
           photo_url?: string | null
@@ -90,77 +89,9 @@ export type Database = {
           size_tier?: string | null
           slot?: string | null
           status?: string
+          subject?: string | null
           updated_at?: string
           user_id?: string | null
-        }
-        Relationships: []
-      }
-      service_locations: {
-        Row: {
-          active: boolean
-          area: string | null
-          created_at: string
-          id: string
-          location_type: "pincode" | "area"
-          pincode: string | null
-          sort_order: number
-          updated_at: string
-        }
-        Insert: {
-          active?: boolean
-          area?: string | null
-          created_at?: string
-          id?: string
-          location_type: "pincode" | "area"
-          pincode?: string | null
-          sort_order?: number
-          updated_at?: string
-        }
-        Update: {
-          active?: boolean
-          area?: string | null
-          created_at?: string
-          id?: string
-          location_type?: "pincode" | "area"
-          pincode?: string | null
-          sort_order?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      user_profiles: {
-        Row: {
-          address: string | null
-          created_at: string
-          full_name: string | null
-          lat: number | null
-          lng: number | null
-          pincode: string | null
-          updated_at: string
-          user_id: string
-          whatsapp: string | null
-        }
-        Insert: {
-          address?: string | null
-          created_at?: string
-          full_name?: string | null
-          lat?: number | null
-          lng?: number | null
-          pincode?: string | null
-          updated_at?: string
-          user_id: string
-          whatsapp?: string | null
-        }
-        Update: {
-          address?: string | null
-          created_at?: string
-          full_name?: string | null
-          lat?: number | null
-          lng?: number | null
-          pincode?: string | null
-          updated_at?: string
-          user_id?: string
-          whatsapp?: string | null
         }
         Relationships: []
       }
@@ -243,6 +174,75 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      service_locations: {
+        Row: {
+          active: boolean
+          area: string | null
+          created_at: string
+          id: string
+          location_type: string
+          pincode: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          area?: string | null
+          created_at?: string
+          id?: string
+          location_type: string
+          pincode?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          area?: string | null
+          created_at?: string
+          id?: string
+          location_type?: string
+          pincode?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          full_name: string | null
+          lat: number | null
+          lng: number | null
+          pincode: string | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          full_name?: string | null
+          lat?: number | null
+          lng?: number | null
+          pincode?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          full_name?: string | null
+          lat?: number | null
+          lng?: number | null
+          pincode?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
       }
       user_roles: {
         Row: {

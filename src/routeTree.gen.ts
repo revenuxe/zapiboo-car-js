@@ -24,6 +24,7 @@ import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ListingsSlugRouteImport } from './routes/listings.$slug'
 import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -104,6 +105,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ListingsSlugRoute = ListingsSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => ListingsRoute,
+} as any)
 const AreasAreaRoute = AreasAreaRouteImport.update({
   id: '/areas_/$area',
   path: '/areas/$area',
@@ -134,7 +140,7 @@ export interface FileRoutesByFullPath {
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/listings': typeof ListingsRoute
+  '/listings': typeof ListingsRouteWithChildren
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -145,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
+  '/listings/$slug': typeof ListingsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -155,7 +162,7 @@ export interface FileRoutesByTo {
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/listings': typeof ListingsRoute
+  '/listings': typeof ListingsRouteWithChildren
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
+  '/listings/$slug': typeof ListingsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -177,7 +185,7 @@ export interface FileRoutesById {
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
-  '/listings': typeof ListingsRoute
+  '/listings': typeof ListingsRouteWithChildren
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -188,6 +196,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas_/$area': typeof AreasAreaRoute
+  '/listings/$slug': typeof ListingsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -211,6 +220,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/keepalive'
     | '/areas/$area'
+    | '/listings/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -232,6 +242,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/keepalive'
     | '/areas/$area'
+    | '/listings/$slug'
   id:
     | '__root__'
     | '/'
@@ -253,6 +264,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/keepalive'
     | '/areas_/$area'
+    | '/listings/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -264,7 +276,7 @@ export interface RootRouteChildren {
   BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
   HowItWorksRoute: typeof HowItWorksRoute
-  ListingsRoute: typeof ListingsRoute
+  ListingsRoute: typeof ListingsRouteWithChildren
   MaterialsRoute: typeof MaterialsRoute
   PickupRoute: typeof PickupRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -384,6 +396,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/listings/$slug': {
+      id: '/listings/$slug'
+      path: '/$slug'
+      fullPath: '/listings/$slug'
+      preLoaderRoute: typeof ListingsSlugRouteImport
+      parentRoute: typeof ListingsRoute
+    }
     '/areas_/$area': {
       id: '/areas_/$area'
       path: '/areas/$area'
@@ -415,6 +434,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface ListingsRouteChildren {
+  ListingsSlugRoute: typeof ListingsSlugRoute
+}
+
+const ListingsRouteChildren: ListingsRouteChildren = {
+  ListingsSlugRoute: ListingsSlugRoute,
+}
+
+const ListingsRouteWithChildren = ListingsRoute._addFileChildren(
+  ListingsRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -424,7 +455,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,
   HowItWorksRoute: HowItWorksRoute,
-  ListingsRoute: ListingsRoute,
+  ListingsRoute: ListingsRouteWithChildren,
   MaterialsRoute: MaterialsRoute,
   PickupRoute: PickupRoute,
   PrivacyRoute: PrivacyRoute,

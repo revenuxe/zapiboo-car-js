@@ -162,7 +162,7 @@ function AreaLandingPage() {
                 <div className="mt-6 border-t border-border pt-5">
                   <p className="text-sm font-semibold">Nearby localities</p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                    {area.nearby.map((nearby) => (
+                    {area.nearby.map((nearby: string) => (
                       <span key={nearby} className="rounded-full bg-secondary px-3 py-1 text-xs font-medium">
                         {nearby}
                       </span>

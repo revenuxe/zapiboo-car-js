@@ -15,6 +15,7 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PickupRouteImport } from './routes/pickup'
 import { Route as MaterialsRouteImport } from './routes/materials'
+import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessRouteImport } from './routes/business'
@@ -56,6 +57,11 @@ const PickupRoute = PickupRouteImport.update({
 const MaterialsRoute = MaterialsRouteImport.update({
   id: '/materials',
   path: '/materials',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ListingsRoute = ListingsRouteImport.update({
+  id: '/listings',
+  path: '/listings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HowItWorksRoute = HowItWorksRouteImport.update({
@@ -128,6 +134,7 @@ export interface FileRoutesByFullPath {
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/listings': typeof ListingsRoute
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/listings': typeof ListingsRoute
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -169,6 +177,7 @@ export interface FileRoutesById {
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
+  '/listings': typeof ListingsRoute
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -191,6 +200,7 @@ export interface FileRouteTypes {
     | '/business'
     | '/contact'
     | '/how-it-works'
+    | '/listings'
     | '/materials'
     | '/pickup'
     | '/privacy'
@@ -211,6 +221,7 @@ export interface FileRouteTypes {
     | '/business'
     | '/contact'
     | '/how-it-works'
+    | '/listings'
     | '/materials'
     | '/pickup'
     | '/privacy'
@@ -231,6 +242,7 @@ export interface FileRouteTypes {
     | '/business'
     | '/contact'
     | '/how-it-works'
+    | '/listings'
     | '/materials'
     | '/pickup'
     | '/privacy'
@@ -252,6 +264,7 @@ export interface RootRouteChildren {
   BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
   HowItWorksRoute: typeof HowItWorksRoute
+  ListingsRoute: typeof ListingsRoute
   MaterialsRoute: typeof MaterialsRoute
   PickupRoute: typeof PickupRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -306,6 +319,13 @@ declare module '@tanstack/react-router' {
       path: '/materials'
       fullPath: '/materials'
       preLoaderRoute: typeof MaterialsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/listings': {
+      id: '/listings'
+      path: '/listings'
+      fullPath: '/listings'
+      preLoaderRoute: typeof ListingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/how-it-works': {
@@ -404,6 +424,7 @@ const rootRouteChildren: RootRouteChildren = {
   BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,
   HowItWorksRoute: HowItWorksRoute,
+  ListingsRoute: ListingsRoute,
   MaterialsRoute: MaterialsRoute,
   PickupRoute: PickupRoute,
   PrivacyRoute: PrivacyRoute,

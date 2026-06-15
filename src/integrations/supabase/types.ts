@@ -128,6 +128,74 @@ export type Database = {
         }
         Relationships: []
       }
+      scrap_listings: {
+        Row: {
+          active: boolean
+          category_id: string | null
+          condition: string
+          created_at: string
+          description: string | null
+          featured: boolean
+          id: string
+          images: string[]
+          location: string | null
+          price: string | null
+          quantity: string | null
+          slug: string
+          sort_order: number
+          subcategory: string | null
+          title: string
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id?: string | null
+          condition?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          images?: string[]
+          location?: string | null
+          price?: string | null
+          quantity?: string | null
+          slug: string
+          sort_order?: number
+          subcategory?: string | null
+          title: string
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string | null
+          condition?: string
+          created_at?: string
+          description?: string | null
+          featured?: boolean
+          id?: string
+          images?: string[]
+          location?: string | null
+          price?: string | null
+          quantity?: string | null
+          slug?: string
+          sort_order?: number
+          subcategory?: string | null
+          title?: string
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scrap_listings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "scrap_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       scrap_rates: {
         Row: {
           active: boolean

@@ -122,7 +122,8 @@ export function ListingsPanel() {
 
   const toggle = useMutation({
     mutationFn: async ({ id, field, value }: { id: string; field: "active" | "featured"; value: boolean }) => {
-      const { error } = await supabase.from("scrap_listings").update({ [field]: value }).eq("id", id);
+      const patch = field === "active" ? { active: value } : { featured: value };
+      const { error } = await supabase.from("scrap_listings").update(patch).eq("id", id);
       if (error) throw error;
     },
     onSuccess: invalidate,

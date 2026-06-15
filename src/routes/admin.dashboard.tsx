@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, LogOut, ClipboardList, IndianRupee, Layers, LayoutDashboard, MapPin } from "lucide-react";
+import { Loader2, LogOut, ClipboardList, IndianRupee, Layers, LayoutDashboard, MapPin, Package } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Logo } from "@/components/Logo";
 import { OverviewPanel } from "@/components/admin/OverviewPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
+import { ListingsPanel } from "@/components/admin/ListingsPanel";
 import { RatesPanel } from "@/components/admin/RatesPanel";
 import { CategoriesPanel } from "@/components/admin/CategoriesPanel";
 import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";

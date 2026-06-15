@@ -75,7 +75,7 @@ function ListingDetailPage() {
   const categoryName = categories.find((c) => c.id === listing.category_id)?.name ?? "Scrap";
   const images = listing.images.length ? listing.images : [];
   const numericPrice = listing.price && /^\d/.test(listing.price.trim());
-  const whatsappHref = `https://wa.me/${businessContact.phone.replace(/[^\d]/g, "")}?text=${encodeURIComponent(
+  const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
     `Hi HuluMart, I'm interested in the listing "${listing.title}".`,
   )}`;
 

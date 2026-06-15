@@ -94,12 +94,15 @@ function AdminDashboard() {
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-5 sm:w-auto sm:inline-grid">
+          <TabsList className="grid w-full grid-cols-3 gap-1 sm:w-auto sm:inline-grid sm:grid-cols-6">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5">
               <ClipboardList className="size-4" /> <span className="hidden sm:inline">Leads</span>
+            </TabsTrigger>
+            <TabsTrigger value="listings" className="gap-1.5">
+              <Package className="size-4" /> <span className="hidden sm:inline">Listings</span>
             </TabsTrigger>
             <TabsTrigger value="availability" className="gap-1.5">
               <MapPin className="size-4" /> <span className="hidden sm:inline">Availability</span>
@@ -117,6 +120,9 @@ function AdminDashboard() {
           </TabsContent>
           <TabsContent value="leads" className="mt-5">
             <LeadsPanel />
+          </TabsContent>
+          <TabsContent value="listings" className="mt-5">
+            <ListingsPanel />
           </TabsContent>
           <TabsContent value="availability" className="mt-5">
             <AvailabilityPanel />

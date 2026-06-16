@@ -20,7 +20,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PageHeader } from "@/components/PageHeader";
-import { Reveal } from "@/components/Reveal";
+
 import { useScrapCategories } from "@/lib/scrap-categories";
 import {
   CONDITIONS,

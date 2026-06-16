@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PageHeader } from "@/components/PageHeader";
+
 
 import { useScrapCategories } from "@/lib/scrap-categories";
 import {
@@ -92,22 +92,22 @@ function ListingsPage() {
 
   return (
     <>
-      <PageHeader
-        eyebrow="Marketplace · Bengaluru"
-        title={
-          <>
-            Browse <span className="text-gradient">scrap listings</span>
-          </>
-        }
-        subtitle="Real scrap available right now across Bengaluru — metal, e-waste, vehicles, appliances and more. Filter, find, and book a free doorstep pickup."
-      >
-        <Button asChild variant="hero" size="lg">
-          <Link to="/pickup">
-            Book a free pickup
-            <ArrowRight />
-          </Link>
-        </Button>
-      </PageHeader>
+      <section className="relative overflow-hidden bg-gradient-navy text-navy-foreground">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-20 -top-20 size-72 rounded-full bg-brand-green/20 blur-3xl"
+        />
+        <div className="relative mx-auto max-w-7xl px-4 py-8 sm:px-6 md:py-10 lg:px-8">
+          <p className="text-xs font-semibold uppercase tracking-wider text-brand-green">
+            Marketplace · Bengaluru
+          </p>
+          <h1 className="mt-1.5 text-2xl font-extrabold leading-tight text-gradient drop-shadow-sm sm:text-3xl">
+            Browse Scrap Listings
+          </h1>
+        </div>
+      </section>
+
+
 
       <section className="bg-background py-10 md:py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -187,7 +187,8 @@ function ListingsPage() {
 
           {/* Grid */}
           {isLoading ? (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="overflow-hidden rounded-2xl border border-border bg-card">
                   <div className="aspect-[4/3] animate-pulse bg-secondary" />
@@ -210,7 +211,7 @@ function ListingsPage() {
               </Button>
             </div>
           ) : (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {results.map((listing) => (
                   <Link
                     key={listing.id}
@@ -241,7 +242,7 @@ function ListingsPage() {
                       </span>
                     </div>
 
-                    <div className="flex flex-1 flex-col p-4">
+                    <div className="flex flex-1 flex-col p-3 sm:p-4">
                       <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
                         <Tag className="size-3" />
                         {catName(listing.category_id) || "Scrap"}

@@ -24,7 +24,7 @@ import {
 } from "@/lib/scrap-listings";
 import { businessContact } from "@/lib/seo";
 
-export const Route = createFileRoute("/listings/$slug")({
+export const Route = createFileRoute("/listings_/$slug")({
   head: () => ({
     meta: [
       { title: "Scrap Listing | HuluMart" },

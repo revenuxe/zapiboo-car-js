@@ -211,9 +211,9 @@ function ListingsPage() {
             </div>
           ) : (
             <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {results.map((listing, i) => (
-                <Reveal key={listing.id} delay={(i % 4) * 0.04}>
+              {results.map((listing) => (
                   <Link
+                    key={listing.id}
                     to="/listings/$slug"
                     params={{ slug: listing.slug }}
                     className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-card shadow-soft transition-all hover:-translate-y-1 hover:border-primary/40 hover:shadow-elevated"

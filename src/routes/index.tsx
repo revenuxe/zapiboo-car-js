@@ -211,7 +211,7 @@ function Home() {
                   )}
                 </form>
               </div>
-              <div className="mt-3 min-h-5 text-sm font-medium">
+              <div className="mt-3 min-h-5 text-xs font-medium leading-relaxed sm:text-sm">
                 {!pincodeChecked && (
                   <span className="text-navy-foreground/70">
                     Check if doorstep pickup is available in your 6-digit pincode.

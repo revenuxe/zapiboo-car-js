@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TopScrapBuyersRouteImport } from './routes/top-scrap-buyers'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ScrapCarsRouteImport } from './routes/scrap-cars'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PickupRouteImport } from './routes/pickup'
 import { Route as MaterialsRouteImport } from './routes/materials'
@@ -43,6 +44,11 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScrapCarsRoute = ScrapCarsRouteImport.update({
+  id: '/scrap-cars',
+  path: '/scrap-cars',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
+  '/scrap-cars': typeof ScrapCarsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/top-scrap-buyers': typeof TopScrapBuyersRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByTo {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
+  '/scrap-cars': typeof ScrapCarsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/top-scrap-buyers': typeof TopScrapBuyersRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
+  '/scrap-cars': typeof ScrapCarsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/top-scrap-buyers': typeof TopScrapBuyersRoute
@@ -213,6 +222,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
+    | '/scrap-cars'
     | '/sitemap.xml'
     | '/terms'
     | '/top-scrap-buyers'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
+    | '/scrap-cars'
     | '/sitemap.xml'
     | '/terms'
     | '/top-scrap-buyers'
@@ -257,6 +268,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
+    | '/scrap-cars'
     | '/sitemap.xml'
     | '/terms'
     | '/top-scrap-buyers'
@@ -280,6 +292,7 @@ export interface RootRouteChildren {
   MaterialsRoute: typeof MaterialsRoute
   PickupRoute: typeof PickupRoute
   PrivacyRoute: typeof PrivacyRoute
+  ScrapCarsRoute: typeof ScrapCarsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   TopScrapBuyersRoute: typeof TopScrapBuyersRoute
@@ -311,6 +324,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/scrap-cars': {
+      id: '/scrap-cars'
+      path: '/scrap-cars'
+      fullPath: '/scrap-cars'
+      preLoaderRoute: typeof ScrapCarsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -448,6 +468,7 @@ const rootRouteChildren: RootRouteChildren = {
   MaterialsRoute: MaterialsRoute,
   PickupRoute: PickupRoute,
   PrivacyRoute: PrivacyRoute,
+  ScrapCarsRoute: ScrapCarsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   TopScrapBuyersRoute: TopScrapBuyersRoute,

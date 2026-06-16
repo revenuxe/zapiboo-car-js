@@ -96,6 +96,14 @@ export function SiteFooter() {
                     Top Scrap Buyers
                   </Link>
                 </li>
+                <li>
+                  <Link
+                    to="/scrap-cars"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Scrap Cars
+                  </Link>
+                </li>
               </ul>
             </div>
 

@@ -7,6 +7,7 @@ import {
   Cpu,
   Refrigerator,
   Boxes,
+  Car,
 } from "lucide-react";
 
 /* ---------------- Bangalore service area ---------------- */
@@ -96,6 +97,7 @@ export const householdTypes: HouseholdType[] = [
   { id: "metal", name: "Iron & Metal", icon: Cog },
   { id: "ewaste", name: "E-Waste", icon: Cpu },
   { id: "appliances", name: "Old Appliances", icon: Refrigerator },
+  { id: "car-scrap", name: "Car Scrap", icon: Car },
   { id: "mixed", name: "Other / Mixed", icon: Boxes },
 ];
 

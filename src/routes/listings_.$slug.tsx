@@ -2,9 +2,7 @@ import { useState } from "react";
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import {
   ArrowLeft,
-  ArrowRight,
   BadgeCheck,
-  CalendarClock,
   CheckCircle2,
   MapPin,
   Package,
@@ -28,7 +26,7 @@ export const Route = createFileRoute("/listings_/$slug")({
   head: () => ({
     meta: [
       { title: "Scrap Listing | HuluMart" },
-      { name: "description", content: "View this scrap listing and book a free doorstep pickup in Bengaluru." },
+      { name: "description", content: "View this scrap listing and talk to HuluMart for transparent scrap selling support in Bengaluru." },
     ],
   }),
   component: ListingDetailPage,
@@ -76,7 +74,7 @@ function ListingDetailPage() {
   const images = listing.images.length ? listing.images : [];
   const numericPrice = listing.price && /^\d/.test(listing.price.trim());
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I'm interested in the listing "${listing.title}".`,
+    `Hi HuluMart, I want to sell scrap like "${listing.title}". Please help with best rate, transport and negotiation.`,
   )}`;
 
   return (
@@ -167,45 +165,44 @@ function ListingDetailPage() {
                   {numericPrice && <span className="text-sm font-medium text-muted-foreground">{listing.unit}</span>}
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Final price confirmed after certified weighing at your doorstep.
+                  Final sale value is confirmed with transparent weighing, buyer rate and clear settlement.
                 </p>
               </div>
 
-              {listing.description && (
-                <div className="mt-6">
-                  <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">Description</h2>
+              <div className="mt-6">
+                <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">How HuluMart helps</h2>
+                <p className="mt-2 leading-relaxed text-foreground/90">
+                  Sell scrap with support on rate negotiation, buyer coordination and transport.
+                  HuluMart helps you understand the best available price, keeps weighing transparent
+                  and confirms payment clearly before the material moves.
+                </p>
+                {listing.description && (
                   <p className="mt-2 whitespace-pre-line leading-relaxed text-foreground/90">
                     {listing.description}
                   </p>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* CTAs */}
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Button asChild variant="hero" size="lg" className="h-12 flex-1 text-base">
-                  <Link to="/pickup">
-                    Book a free pickup
-                    <ArrowRight />
-                  </Link>
+                <Button asChild variant="hero" size="lg" className="h-14 flex-1 rounded-xl text-base sm:h-16 sm:text-lg">
+                  <a href={businessContact.phoneHref}>
+                    <Phone className="size-5" /> Call Now
+                  </a>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="h-12 flex-1 text-base">
+                <Button asChild variant="outline" size="lg" className="h-14 flex-1 rounded-xl text-base sm:h-16 sm:text-lg">
                   <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
                     <WhatsAppIcon className="size-5" /> Enquire on WhatsApp
                   </a>
                 </Button>
               </div>
-              <Button asChild variant="ghost" size="sm" className="mt-2 h-10">
-                <a href={businessContact.phoneHref}>
-                  <Phone className="size-4" /> Call {businessContact.phone}
-                </a>
-              </Button>
 
               {/* Trust strip */}
               <div className="mt-7 grid gap-3 rounded-2xl border border-border bg-card p-4 sm:grid-cols-3">
                 {[
                   { icon: ShieldCheck, label: "Certified weighing" },
-                  { icon: Truck, label: "Doorstep pickup" },
-                  { icon: CalendarClock, label: "Instant payment" },
+                  { icon: Truck, label: "Transport support" },
+                  { icon: BadgeCheck, label: "Best rate help" },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-2 text-sm">
                     <item.icon className="size-4 shrink-0 text-primary" />
@@ -217,14 +214,14 @@ function ListingDetailPage() {
           </Reveal>
         </div>
 
-        {/* How pickup works */}
+        {/* How selling works */}
         <section className="mt-16 rounded-3xl bg-secondary/50 p-6 sm:p-10">
-          <h2 className="text-center text-2xl font-bold">How a pickup works</h2>
+          <h2 className="text-center text-2xl font-bold">How HuluMart helps you sell scrap</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {[
-              { step: "01", title: "Book online", text: "Pick a slot and share your Bengaluru address — takes under a minute." },
-              { step: "02", title: "We collect", text: "A verified agent weighs your scrap on a certified scale at your door." },
-              { step: "03", title: "Get paid", text: "Approve the quote and receive instant payment on the spot." },
+              { step: "01", title: "Share the scrap", text: "Tell us the material, condition, quantity and location so we can guide the buyer rate." },
+              { step: "02", title: "Negotiate and move", text: "We help with rate discussion, transport coordination and transparent weighing." },
+              { step: "03", title: "Settle clearly", text: "Approve the final price and complete the sale with clear payment confirmation." },
             ].map((s) => (
               <div key={s.step} className="rounded-2xl border border-border bg-card p-5">
                 <div className="text-sm font-extrabold text-primary">{s.step}</div>
@@ -234,7 +231,7 @@ function ListingDetailPage() {
             ))}
           </div>
           <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-muted-foreground">
-            {["No hidden charges", "Same-day slots", "Responsible recycling"].map((item) => (
+            {["Negotiation help", "Transport support", "Transparent settlement"].map((item) => (
               <span key={item} className="flex items-center gap-2">
                 <CheckCircle2 className="size-4 text-primary" /> {item}
               </span>

@@ -271,7 +271,6 @@ function ListingsPage() {
                       </div>
                     </div>
                   </Link>
-                </Reveal>
               ))}
             </div>
           )}

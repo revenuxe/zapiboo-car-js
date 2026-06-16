@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PageHeader } from "@/components/PageHeader";
+
 
 import { useScrapCategories } from "@/lib/scrap-categories";
 import {

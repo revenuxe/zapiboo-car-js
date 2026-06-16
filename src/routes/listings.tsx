@@ -211,7 +211,7 @@ function ListingsPage() {
               </Button>
             </div>
           ) : (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
               {results.map((listing) => (
                   <Link
                     key={listing.id}

@@ -182,19 +182,19 @@ function ListingDetailPage() {
 
               {/* CTAs */}
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Button asChild variant="hero" size="lg" className="flex-1">
+                <Button asChild variant="hero" size="lg" className="h-12 flex-1 text-base">
                   <Link to="/pickup">
                     Book a free pickup
                     <ArrowRight />
                   </Link>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="flex-1">
+                <Button asChild variant="outline" size="lg" className="h-12 flex-1 text-base">
                   <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
-                    <MessageCircle className="size-4" /> Enquire on WhatsApp
+                    <WhatsAppIcon className="size-5" /> Enquire on WhatsApp
                   </a>
                 </Button>
               </div>
-              <Button asChild variant="ghost" size="sm" className="mt-2">
+              <Button asChild variant="ghost" size="sm" className="mt-2 h-10">
                 <a href={businessContact.phoneHref}>
                   <Phone className="size-4" /> Call {businessContact.phone}
                 </a>

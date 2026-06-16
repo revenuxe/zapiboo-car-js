@@ -169,28 +169,14 @@ function ListingDetailPage() {
                 </p>
               </div>
 
-              <div className="mt-6">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">How HuluMart helps</h2>
-                <p className="mt-2 leading-relaxed text-foreground/90">
-                  Sell scrap with support on rate negotiation, buyer coordination and transport.
-                  HuluMart helps you understand the best available price, keeps weighing transparent
-                  and confirms payment clearly before the material moves.
-                </p>
-                {listing.description && (
-                  <p className="mt-2 whitespace-pre-line leading-relaxed text-foreground/90">
-                    {listing.description}
-                  </p>
-                )}
-              </div>
-
               {/* CTAs */}
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
-                <Button asChild variant="hero" size="lg" className="h-14 flex-1 rounded-xl text-base sm:h-16 sm:text-lg">
+                <Button asChild variant="hero" size="lg" className="h-16 flex-1 rounded-xl text-base sm:text-lg">
                   <a href={businessContact.phoneHref}>
                     <Phone className="size-5" /> Call Now
                   </a>
                 </Button>
-                <Button asChild variant="outline" size="lg" className="h-14 flex-1 rounded-xl text-base sm:h-16 sm:text-lg">
+                <Button asChild variant="outline" size="lg" className="h-16 flex-1 rounded-xl text-base sm:text-lg">
                   <a href={whatsappHref} target="_blank" rel="noopener noreferrer">
                     <WhatsAppIcon className="size-5" /> Enquire on WhatsApp
                   </a>
@@ -209,6 +195,20 @@ function ListingDetailPage() {
                     <span className="font-medium">{item.label}</span>
                   </div>
                 ))}
+              </div>
+
+              <div className="mt-8 rounded-2xl border border-border bg-card p-5">
+                <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">How HuluMart helps</h2>
+                <p className="mt-2 leading-relaxed text-foreground/90">
+                  Sell scrap with support on rate negotiation, buyer coordination and transport.
+                  HuluMart helps you understand the best available price, keeps weighing transparent
+                  and confirms payment clearly before the material moves.
+                </p>
+                {listing.description && (
+                  <p className="mt-3 whitespace-pre-line leading-relaxed text-muted-foreground">
+                    {listing.description}
+                  </p>
+                )}
               </div>
             </div>
           </Reveal>

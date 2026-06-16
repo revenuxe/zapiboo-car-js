@@ -3,12 +3,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   ArrowRight,
   Filter,
-  MapPin,
   Package,
   Search,
   SlidersHorizontal,
   Star,
-  Tag,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -24,7 +22,6 @@ import {
 import { useScrapCategories } from "@/lib/scrap-categories";
 import {
   CONDITIONS,
-  conditionLabel,
   formatListingPrice,
   useActiveListings,
 } from "@/lib/scrap-listings";
@@ -233,29 +230,16 @@ function ListingsPage() {
                         </div>
                       )}
                       {listing.featured && (
-                        <span className="absolute left-2.5 top-2.5 hidden items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-bold text-primary-foreground shadow sm:flex">
+                        <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-bold text-primary-foreground shadow">
                           <Star className="size-3 fill-current" /> Featured
                         </span>
                       )}
-                      <span className="absolute right-2.5 top-2.5 hidden rounded-full bg-background/90 px-2.5 py-1 text-[11px] font-bold text-foreground shadow backdrop-blur sm:block">
-                        {conditionLabel(listing.condition)}
-                      </span>
                     </div>
 
                     <div className="flex flex-1 flex-col p-3 sm:p-4">
-                      <div className="hidden items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-primary sm:flex">
-                        <Tag className="size-3" />
-                        {catName(listing.category_id) || "Scrap"}
-                        {listing.subcategory ? ` · ${listing.subcategory}` : ""}
-                      </div>
-                      <h3 className="mt-1.5 line-clamp-2 font-bold leading-snug group-hover:text-primary">
+                      <h3 className="line-clamp-2 font-bold leading-snug group-hover:text-primary">
                         {listing.title}
                       </h3>
-                      {listing.location && (
-                        <p className="mt-1.5 hidden items-center gap-1 text-xs text-muted-foreground sm:flex">
-                          <MapPin className="size-3.5" /> {listing.location}
-                        </p>
-                      )}
 
                       <div className="mt-auto flex items-end justify-between pt-4">
                         <div>

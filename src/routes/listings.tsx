@@ -187,7 +187,8 @@ function ListingsPage() {
 
           {/* Grid */}
           {isLoading ? (
-            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-5 lg:grid-cols-3 xl:grid-cols-4">
+
               {Array.from({ length: 8 }).map((_, i) => (
                 <div key={i} className="overflow-hidden rounded-2xl border border-border bg-card">
                   <div className="aspect-[4/3] animate-pulse bg-secondary" />

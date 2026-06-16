@@ -7,7 +7,6 @@ import {
   CalendarClock,
   CheckCircle2,
   MapPin,
-  MessageCircle,
   Package,
   Phone,
   ShieldCheck,
@@ -16,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import {
   conditionLabel,

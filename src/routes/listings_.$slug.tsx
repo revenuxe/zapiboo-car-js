@@ -35,7 +35,7 @@ export const Route = createFileRoute("/listings_/$slug")({
 });
 
 function ListingDetailPage() {
-  const { slug } = useParams({ from: "/listings/$slug" });
+  const { slug } = useParams({ from: "/listings_/$slug" });
   const { data: listing, isLoading, isError } = useListing(slug);
   const { data: categories = [] } = useScrapCategories();
   const [activeImage, setActiveImage] = useState(0);

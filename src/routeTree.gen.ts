@@ -25,6 +25,7 @@ import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SellCategoryRouteImport } from './routes/sell.$category'
 import { Route as ListingsSlugRouteImport } from './routes/listings_.$slug'
 import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
@@ -111,6 +112,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellCategoryRoute = SellCategoryRouteImport.update({
+  id: '/sell/$category',
+  path: '/sell/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListingsSlugRoute = ListingsSlugRouteImport.update({
   id: '/listings_/$slug',
   path: '/listings/$slug',
@@ -159,6 +165,7 @@ export interface FileRoutesByFullPath {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/sell/$category': typeof SellCategoryRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/sell/$category': typeof SellCategoryRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas_/$area': typeof AreasAreaRoute
   '/listings_/$slug': typeof ListingsSlugRoute
+  '/sell/$category': typeof SellCategoryRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -231,6 +240,7 @@ export interface FileRouteTypes {
     | '/api/keepalive'
     | '/areas/$area'
     | '/listings/$slug'
+    | '/sell/$category'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -254,6 +264,7 @@ export interface FileRouteTypes {
     | '/api/keepalive'
     | '/areas/$area'
     | '/listings/$slug'
+    | '/sell/$category'
   id:
     | '__root__'
     | '/'
@@ -277,6 +288,7 @@ export interface FileRouteTypes {
     | '/api/keepalive'
     | '/areas_/$area'
     | '/listings_/$slug'
+    | '/sell/$category'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -301,6 +313,7 @@ export interface RootRouteChildren {
   ApiKeepaliveRoute: typeof ApiKeepaliveRoute
   AreasAreaRoute: typeof AreasAreaRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
+  SellCategoryRoute: typeof SellCategoryRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -417,6 +430,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell/$category': {
+      id: '/sell/$category'
+      path: '/sell/$category'
+      fullPath: '/sell/$category'
+      preLoaderRoute: typeof SellCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/listings_/$slug': {
       id: '/listings_/$slug'
       path: '/listings/$slug'
@@ -477,6 +497,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiKeepaliveRoute: ApiKeepaliveRoute,
   AreasAreaRoute: AreasAreaRoute,
   ListingsSlugRoute: ListingsSlugRoute,
+  SellCategoryRoute: SellCategoryRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

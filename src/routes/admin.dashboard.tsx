@@ -95,7 +95,7 @@ function AdminDashboard() {
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-3 gap-1 sm:w-auto sm:inline-grid sm:grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4 gap-1 sm:w-auto sm:inline-grid sm:grid-cols-7">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>

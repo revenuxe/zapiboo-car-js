@@ -14,6 +14,352 @@ export type Database = {
   }
   public: {
     Tables: {
+      condition_groups: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          id: string
+          key: string
+          selection: string
+          step_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          id?: string
+          key: string
+          selection?: string
+          step_order?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          id?: string
+          key?: string
+          selection?: string
+          step_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "condition_groups_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "device_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      condition_options: {
+        Row: {
+          created_at: string
+          description: string | null
+          group_id: string
+          id: string
+          kind: string
+          label: string
+          sort_order: number
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          group_id: string
+          id?: string
+          kind?: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          group_id?: string
+          id?: string
+          kind?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "condition_options_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "condition_groups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      device_brands: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          id: string
+          logo: string | null
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          id?: string
+          logo?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          id?: string
+          logo?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_brands_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "device_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      device_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      device_models: {
+        Row: {
+          active: boolean
+          base_price: number
+          created_at: string
+          id: string
+          image: string | null
+          name: string
+          series_id: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          base_price?: number
+          created_at?: string
+          id?: string
+          image?: string | null
+          name: string
+          series_id: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          base_price?: number
+          created_at?: string
+          id?: string
+          image?: string | null
+          name?: string
+          series_id?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_models_series_id_fkey"
+            columns: ["series_id"]
+            isOneToOne: false
+            referencedRelation: "device_series"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      device_orders: {
+        Row: {
+          address: string | null
+          base_price: number
+          brand_name: string | null
+          category_id: string | null
+          category_name: string | null
+          created_at: string
+          email: string | null
+          final_price: number
+          id: string
+          model_id: string | null
+          model_name: string | null
+          name: string
+          notes: string | null
+          phone: string
+          pincode: string | null
+          preferred_date: string | null
+          selections: Json
+          series_name: string | null
+          slot: string | null
+          status: string
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          address?: string | null
+          base_price?: number
+          brand_name?: string | null
+          category_id?: string | null
+          category_name?: string | null
+          created_at?: string
+          email?: string | null
+          final_price?: number
+          id?: string
+          model_id?: string | null
+          model_name?: string | null
+          name: string
+          notes?: string | null
+          phone: string
+          pincode?: string | null
+          preferred_date?: string | null
+          selections?: Json
+          series_name?: string | null
+          slot?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          address?: string | null
+          base_price?: number
+          brand_name?: string | null
+          category_id?: string | null
+          category_name?: string | null
+          created_at?: string
+          email?: string | null
+          final_price?: number
+          id?: string
+          model_id?: string | null
+          model_name?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          pincode?: string | null
+          preferred_date?: string | null
+          selections?: Json
+          series_name?: string | null
+          slot?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_orders_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "device_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "device_orders_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "device_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      device_series: {
+        Row: {
+          active: boolean
+          brand_id: string
+          created_at: string
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          brand_id: string
+          created_at?: string
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          brand_id?: string
+          created_at?: string
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "device_series_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "device_brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           address: string | null

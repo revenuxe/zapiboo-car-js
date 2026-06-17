@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, LogOut, ClipboardList, IndianRupee, Layers, LayoutDashboard, MapPin, Package } from "lucide-react";
+import { Loader2, LogOut, ClipboardList, IndianRupee, Layers, LayoutDashboard, MapPin, Package, Smartphone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,6 +9,7 @@ import { Logo } from "@/components/Logo";
 import { OverviewPanel } from "@/components/admin/OverviewPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { ListingsPanel } from "@/components/admin/ListingsPanel";
+import { DevicesPanel } from "@/components/admin/DevicesPanel";
 import { RatesPanel } from "@/components/admin/RatesPanel";
 import { CategoriesPanel } from "@/components/admin/CategoriesPanel";
 import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";
@@ -94,7 +95,7 @@ function AdminDashboard() {
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-3 gap-1 sm:w-auto sm:inline-grid sm:grid-cols-6">
+          <TabsList className="grid w-full grid-cols-4 gap-1 sm:w-auto sm:inline-grid sm:grid-cols-7">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
@@ -103,6 +104,9 @@ function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="listings" className="gap-1.5">
               <Package className="size-4" /> <span className="hidden sm:inline">Listings</span>
+            </TabsTrigger>
+            <TabsTrigger value="devices" className="gap-1.5">
+              <Smartphone className="size-4" /> <span className="hidden sm:inline">Devices</span>
             </TabsTrigger>
             <TabsTrigger value="availability" className="gap-1.5">
               <MapPin className="size-4" /> <span className="hidden sm:inline">Availability</span>
@@ -123,6 +127,9 @@ function AdminDashboard() {
           </TabsContent>
           <TabsContent value="listings" className="mt-5">
             <ListingsPanel />
+          </TabsContent>
+          <TabsContent value="devices" className="mt-5">
+            <DevicesPanel />
           </TabsContent>
           <TabsContent value="availability" className="mt-5">
             <AvailabilityPanel />

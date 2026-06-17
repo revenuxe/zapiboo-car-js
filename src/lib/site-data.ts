@@ -84,6 +84,7 @@ export const testimonials = [
 
 export const navLinks = [
   { to: "/how-it-works", label: "How it works" },
+  { to: "/sell/laptops", label: "Sell Laptop" },
   { to: "/listings", label: "Listings" },
   { to: "/materials", label: "Materials & Prices" },
   { to: "/areas", label: "Areas" },

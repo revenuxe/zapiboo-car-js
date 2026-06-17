@@ -46,7 +46,7 @@ export function DeviceOrdersManager() {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as DeviceOrder[];
+      return data as unknown as DeviceOrder[];
     },
   });
 

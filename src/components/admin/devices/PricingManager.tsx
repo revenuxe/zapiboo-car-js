@@ -284,7 +284,7 @@ function GroupDialog({
         subtitle: subtitle.trim() || null,
         selection,
         step_order: Number(step) || nextOrder,
-        key: editing?.key ?? slugify(title) || "group",
+        key: editing?.key ?? (slugify(title) || "group"),
       };
       if (editing) {
         const { error } = await supabase.from("condition_groups").update(payload).eq("id", editing.id);

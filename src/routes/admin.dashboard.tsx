@@ -128,6 +128,9 @@ function AdminDashboard() {
           <TabsContent value="listings" className="mt-5">
             <ListingsPanel />
           </TabsContent>
+          <TabsContent value="devices" className="mt-5">
+            <DevicesPanel />
+          </TabsContent>
           <TabsContent value="availability" className="mt-5">
             <AvailabilityPanel />
           </TabsContent>

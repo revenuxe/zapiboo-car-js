@@ -105,6 +105,9 @@ function AdminDashboard() {
             <TabsTrigger value="listings" className="gap-1.5">
               <Package className="size-4" /> <span className="hidden sm:inline">Listings</span>
             </TabsTrigger>
+            <TabsTrigger value="devices" className="gap-1.5">
+              <Smartphone className="size-4" /> <span className="hidden sm:inline">Devices</span>
+            </TabsTrigger>
             <TabsTrigger value="availability" className="gap-1.5">
               <MapPin className="size-4" /> <span className="hidden sm:inline">Availability</span>
             </TabsTrigger>

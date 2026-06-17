@@ -1,40 +1,52 @@
-## HuluMart — Admin system, dynamic rates & booking map
+## Device Buyback System (Cashify-style) — Laptops first, reusable for any category
 
-### 1. Enable Lovable Cloud (backend)
-Bookings currently only show a toast — nothing is stored, so there's nothing to manage. We enable Lovable Cloud to get a database + auth, then everything below becomes real.
+A complete sell-your-device flow: admin catalog + valuation engine, plus a public evaluation funnel ending in a booking. Built generic (category-scoped) so phones/tablets can be added later, launched with **Laptops**.
 
-### 2. Database
-Tables (all with proper RLS + grants):
+### How the price is calculated (the "top brand" strategy)
+Cashify/Cashfy-style model = **base price per exact model − condition deductions + accessory bonuses**:
+1. Each model has an admin-set **base price** (best-case quote).
+2. The user answers grouped questions; each selected option carries a **deduction** (fixed ₹ or %) or a **bonus** (e.g. bill/box present).
+3. Final quote = base − all deductions + bonuses, floored at a minimum.
+Admin fully controls base prices and every deduction/bonus, so the strategy is tunable.
 
-- `leads` — every pickup booking: scrap type (mixed/specific), items, size tier, photo flag, locality, pincode, address, landmark, name, phone, preferred date, slot, lat/lng, status (`new` / `contacted` / `scheduled` / `done` / `cancelled`), notes, created_at.
-- `scrap_categories` — name, slug, icon, sort order, active.
-- `scrap_rates` — links to a category: item name, price (₹), unit (e.g. /kg), active, updated_at.
-- `user_roles` + `app_role` enum + `has_role()` — admin access control (no roles on profiles).
+### Database (new tables, all category-scoped & reusable)
+```text
+device_categories   Laptop, Phone…  (name, slug, icon, active, sort)
+device_brands       → category      (name, slug, logo, active, sort)
+device_series       → brand         (name, slug, active, sort)
+device_models       → series        (name, slug, base_price, image, active, sort)
+condition_groups    → category      (title, key, type single/multi, step, sort)
+condition_options   → group         (label, desc, kind deduct/percent/bonus, value, sort)
+device_orders       snapshot fields (model/brand/series names, base, deductions json,
+                                     final_price, name, phone, email, pincode, address,
+                                     status, user_id)
+```
+RLS: public `anon`+`auth` SELECT on active catalog rows (no `has_role` for anon — avoids 42501); admin-only writes via `has_role`; orders = public INSERT, users see own, admins all (mirrors `leads`). GRANTs included. Seed Laptops with default condition groups (Power-on, Functional issues, Physical grade, Age, Accessories) + sensible deductions, and a couple of demo brands/series/models.
 
-Public users can INSERT a lead (booking) and SELECT active rates/categories. Only admins can read leads or write rates/categories.
+### Admin dashboard — new "Devices" tab
+A `DevicesPanel` with a category switcher (defaults to Laptop) and sub-tabs:
+- **Brands** — card grid, add/edit, logo upload (client-compressed data URL, same pattern as listings), reorder, active toggle.
+- **Series** — pick brand → manage its series.
+- **Models** — pick brand+series → add models with base price + image.
+- **Pricing** — manage condition groups & options (the deduction/bonus values) with a clean editor.
+- **Orders** — buyback bookings table with status (new/contacted/scheduled/paid/rejected), customer + device + quoted price, detail drawer.
+Best-effort polished UI: search, inline edit dialogs, empty states.
 
-### 3. Public booking flow changes (`/pickup`)
-- On submit, the booking is saved to `leads` (still shows the friendly success screen + WhatsApp).
-- **Interactive map card** added to the location step: an OpenStreetMap/Leaflet map with a draggable pin and a "Use my current location" button that fetches the browser's GPS, drops the pin, and stores lat/lng with the lead. (Free, no API key needed.)
-- Rates shown on Home/Materials read live from `scrap_rates` so prices stay in sync with the admin.
-
-### 4. Admin auth (`/admin/login`)
-- Email + password login on a clean, compact card.
-- Only users with the `admin` role can reach the dashboard; everyone else is redirected.
-- First admin is seeded so you can log in immediately (credentials shared after build).
-
-### 5. Admin dashboard (`/admin/dashboard`)
-Tabbed, mobile-friendly layout:
-
-- **Leads** — table/list of all bookings with status chips, search & status filter, and a small **eye icon** on each row.
-  - Clicking the eye opens a **compact rounded modal** (mobile-style sheet) showing full lead details, where you can update status, add notes, and **delete** the lead.
-- **Rates** — list of scrap items grouped by category; inline edit price/unit, toggle active, add new item. Saves update the live site instantly.
-- **Categories** — add / rename / reorder / activate scrap categories.
+### Public evaluation flow — `/sell/$category` (launch `/sell/laptops`)
+- **Hero** matching site style (navy gradient, Sora), H1 targeting **"Sell Old Laptop in Bangalore"**, sub-CTA + **pincode** check, trust stats.
+- **Brand grid** pulled live from admin → click brand.
+- Step funnel (modern, mobile-first, progress bar): **Brand → Series → Model → Condition questions (power, issues, grade, age, accessories) → Live price reveal → Booking form** (name, phone, email, address, pincode, preferred slot) → saves a `device_order`.
+- Live quote updates as options are picked; animated price reveal.
+- Supporting sections: how-it-works (3 steps), why-us, FAQ, Bangalore-localised copy. SEO `head()` with Bangalore keywords + JSON-LD.
+- Nav link "Sell Laptop" added.
 
 ### Technical notes
-- Saving/reading leads, rates, categories goes through TanStack `createServerFn` (admin reads via `requireSupabaseAuth` + `has_role` check); public lead insert + active-rate reads via safe server functions.
-- Map uses `leaflet` + OpenStreetMap tiles (no key) and the browser Geolocation API; rendered client-only to avoid SSR issues.
-- New routes: `/admin/login`, and `/admin/dashboard` under the managed `_authenticated` layout.
-- Reverse-geocoding the pin to a readable address is optional; default is lat/lng + manual address (kept simple, no extra keys).
+- Helpers in `src/lib/device-buyback.ts` (hooks: categories/brands/series/models/condition-groups/orders, `calculateQuote`, `formatPrice`, `slugify`, reuse `compressImage`).
+- Routes: `src/routes/sell.$category.tsx` (ssr on, public, live data, SEO). Funnel state client-side.
+- Memory updated with the new schema, routes, and pricing model.
 
-Want me to proceed with this? If you'd prefer Google Maps instead of the free OpenStreetMap map, say so and I'll wire that in.
+### Scope notes
+- Logos/model images stored inline as compressed data URLs (no storage bucket in this env — same as listings).
+- Launches with Laptops seeded; new categories are pure data (no code) once schema is in.
+
+I'll start with the migration, then build admin, then the public funnel.

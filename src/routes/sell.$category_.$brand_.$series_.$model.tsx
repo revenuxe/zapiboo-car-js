@@ -1,15 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
+  BadgeIndianRupee,
   Check,
   CheckCircle2,
   Laptop,
   Loader2,
+  LogIn,
   Phone,
   ShieldCheck,
+  Truck,
+  Wallet,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,6 +57,7 @@ function cap(s: string) {
 }
 
 type Selections = Record<string, string[]>;
+type Phase = "intro" | "conditions" | "result" | "booking";
 
 const SLOTS = ["Morning (9am–12pm)", "Afternoon (12pm–4pm)", "Evening (4pm–8pm)"];
 
@@ -60,21 +65,48 @@ function EvaluatePage() {
   const { category, brand, series, model } = useParams({
     from: "/sell/$category_/$brand_/$series_/$model",
   });
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
   const { data: brandRow, isLoading: brandLoading } = useDeviceBrandBySlug(cat?.id, brand);
   const { data: seriesRow, isLoading: seriesLoading } = useDeviceSeriesBySlug(brandRow?.id, series);
   const { data: modelRow, isLoading: modelLoading } = useDeviceModelBySlug(seriesRow?.id, model);
   const { data: groups = [] } = useConditionGroups(cat?.id);
 
+  const storageKey = `hm_eval:${category}/${brand}/${series}/${model}`;
+
   const [selections, setSelections] = useState<Selections>({});
-  const [step, setStep] = useState(0); // 0..groups.length-1 = condition steps, groups.length = booking
+  const [phase, setPhase] = useState<Phase>("intro");
+  const [condStep, setCondStep] = useState(0);
   const [done, setDone] = useState(false);
   const [pincode, setPincode] = useState("");
+  const [restored, setRestored] = useState(false);
 
+  // Restore evaluation state (e.g. after a login round-trip).
   useEffect(() => {
-    if (typeof window !== "undefined") setPincode(sessionStorage.getItem(PINCODE_KEY) ?? "");
-  }, []);
+    if (typeof window === "undefined") return;
+    setPincode(sessionStorage.getItem(PINCODE_KEY) ?? "");
+    try {
+      const raw = sessionStorage.getItem(storageKey);
+      if (raw) {
+        const saved = JSON.parse(raw) as { selections?: Selections };
+        if (saved.selections) setSelections(saved.selections);
+        setRestored(true);
+      }
+    } catch {
+      /* ignore */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey]);
+
+  // After returning from login with saved progress, land on the result screen.
+  useEffect(() => {
+    if (restored && !authLoading && user) {
+      setPhase("result");
+      setRestored(false);
+      sessionStorage.removeItem(storageKey);
+    }
+  }, [restored, authLoading, user, storageKey]);
 
   const selectedOptions = useMemo(() => {
     const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
@@ -118,12 +150,6 @@ function EvaluatePage() {
     );
   }
 
-  // Steps: one per condition group, then the booking step.
-  const conditionSteps = groups.length;
-  const totalSteps = conditionSteps + 1;
-  const isBooking = step >= conditionSteps;
-  const stepLabels = [...groups.map((g) => g.title), "Pickup"];
-
   if (done) {
     return (
       <div className="bg-secondary/30">
@@ -153,8 +179,39 @@ function EvaluatePage() {
     );
   }
 
-  const currentGroup = !isBooking ? groups[step] : null;
+  const conditionSteps = groups.length;
+  const stepLabels = groups.map((g) => g.title);
+  const currentGroup = groups[condStep] ?? null;
   const stepAnswered = currentGroup ? (selections[currentGroup.id]?.length ?? 0) > 0 : true;
+
+  const startEvaluation = () => {
+    if (conditionSteps === 0) {
+      setPhase(user ? "result" : "result");
+      return;
+    }
+    setCondStep(0);
+    setPhase("conditions");
+  };
+
+  const nextCondition = () => {
+    if (condStep < conditionSteps - 1) {
+      setCondStep((s) => s + 1);
+    } else {
+      setPhase("result");
+    }
+  };
+
+  const backCondition = () => {
+    if (condStep > 0) setCondStep((s) => s - 1);
+    else setPhase("intro");
+  };
+
+  const goToLogin = () => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(storageKey, JSON.stringify({ selections }));
+      navigate({ to: "/auth", search: { redirectTo: window.location.pathname } });
+    }
+  };
 
   return (
     <div className="bg-secondary/30 pb-28">
@@ -184,20 +241,49 @@ function EvaluatePage() {
           </div>
         </div>
 
-        {/* Stepper */}
-        <Stepper labels={stepLabels} current={step} />
+        {phase === "intro" && <IntroStep model={modelRow} onStart={startEvaluation} />}
 
-        <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
-          {!isBooking && currentGroup ? (
-            <ConditionStep
-              group={currentGroup}
-              index={step}
-              total={totalSteps}
-              selections={selections}
-              setSelections={setSelections}
-            />
-          ) : (
-            <QuoteAndBook
+        {phase === "conditions" && currentGroup && (
+          <>
+            <Stepper labels={stepLabels} current={condStep} />
+            <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
+              <ConditionStep
+                group={currentGroup}
+                index={condStep}
+                total={conditionSteps}
+                selections={selections}
+                setSelections={setSelections}
+              />
+            </div>
+          </>
+        )}
+
+        {phase === "result" && (
+          <div className="mt-5">
+            {!user ? (
+              <LoginPrompt onLogin={goToLogin} />
+            ) : (
+              <ResultStep
+                model={modelRow}
+                brandName={brandName}
+                quote={quote}
+                onBack={() => {
+                  if (conditionSteps > 0) {
+                    setCondStep(conditionSteps - 1);
+                    setPhase("conditions");
+                  } else {
+                    setPhase("intro");
+                  }
+                }}
+                onContinue={() => setPhase("booking")}
+              />
+            )}
+          </div>
+        )}
+
+        {phase === "booking" && (
+          <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
+            <BookingForm
               categoryId={cat!.id}
               categoryName={cat!.name}
               brandName={brandName}
@@ -206,39 +292,61 @@ function EvaluatePage() {
               quote={quote}
               pincode={pincode}
               userId={user?.id ?? null}
+              onBack={() => setPhase("result")}
               onBooked={() => setDone(true)}
             />
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
-      {/* Sticky action bar */}
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-1">
-          <div className="min-w-0">
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-              {isBooking ? "Final quote" : "Estimated price"}
+      {/* Sticky action bar — condition steps only (no price shown) */}
+      {phase === "conditions" && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-3xl items-center justify-end gap-2 px-1">
+            <Button variant="outline" size="lg" onClick={backCondition}>
+              <ArrowLeft className="size-4" /> Back
+            </Button>
+            <Button variant="hero" size="lg" disabled={!stepAnswered} onClick={nextCondition}>
+              {condStep === conditionSteps - 1 ? "See my price" : "Continue"} <ArrowRight className="size-4" />
+            </Button>
+          </div>
+          {!stepAnswered && (
+            <p className="mx-auto mt-1.5 max-w-3xl px-1 text-center text-[11px] text-muted-foreground">
+              Pick an option to continue.
             </p>
-            <p className="text-2xl font-extrabold text-primary">{formatPrice(quote.final)}</p>
-          </div>
-          <div className="flex items-center gap-2">
-            {step > 0 && (
-              <Button variant="outline" size="lg" onClick={() => setStep((s) => s - 1)}>
-                <ArrowLeft className="size-4" /> Back
-              </Button>
-            )}
-            {!isBooking && (
-              <Button variant="hero" size="lg" disabled={!stepAnswered} onClick={() => setStep((s) => s + 1)}>
-                {step === conditionSteps - 1 ? "See quote" : "Continue"} <ArrowRight className="size-4" />
-              </Button>
-            )}
-          </div>
+          )}
         </div>
-        {!isBooking && !stepAnswered && (
-          <p className="mx-auto mt-1.5 max-w-3xl px-1 text-center text-[11px] text-muted-foreground">
-            Pick an option to continue.
-          </p>
-        )}
+      )}
+    </div>
+  );
+}
+
+function IntroStep({ model, onStart }: { model: DeviceModel; onStart: () => void }) {
+  return (
+    <div className="mt-5">
+      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-6 text-navy-foreground shadow-soft">
+        <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Best price up to</p>
+        <p className="mt-1 text-4xl font-extrabold text-gradient sm:text-5xl">{formatPrice(model.base_price)}</p>
+        <p className="mt-2 max-w-sm text-sm text-navy-foreground/75">
+          Answer a few quick questions about your {model.name}'s condition to lock in your exact price.
+        </p>
+        <Button variant="hero" size="lg" className="mt-5 w-full sm:w-auto" onClick={onStart}>
+          Sell now <ArrowRight className="size-4" />
+        </Button>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        {[
+          { icon: BadgeIndianRupee, title: "Instant price", text: "See your exact quote in under a minute." },
+          { icon: Truck, title: "Free pickup", text: "Doorstep collection across Bangalore." },
+          { icon: Wallet, title: "Instant payment", text: "Get paid the moment we verify your device." },
+        ].map((f) => (
+          <div key={f.title} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+            <f.icon className="size-6 text-primary" />
+            <h3 className="mt-2 text-sm font-bold">{f.title}</h3>
+            <p className="mt-0.5 text-xs text-muted-foreground">{f.text}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -367,7 +475,84 @@ function ConditionChoice({
   );
 }
 
-function QuoteAndBook({
+function LoginPrompt({ onLogin }: { onLogin: () => void }) {
+  return (
+    <div className="rounded-3xl border border-border bg-card p-7 text-center shadow-soft">
+      <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+        <LogIn className="size-8" />
+      </div>
+      <h2 className="mt-4 text-2xl font-bold">Almost there — sign in to see your price</h2>
+      <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+        Log in or create a free account to unlock your final quote and book a free doorstep pickup. We'll bring you
+        right back here.
+      </p>
+      <Button variant="hero" size="lg" className="mt-6 w-full sm:w-auto" onClick={onLogin}>
+        <LogIn className="size-4" /> Login to continue
+      </Button>
+    </div>
+  );
+}
+
+function ResultStep({
+  model,
+  brandName,
+  quote,
+  onBack,
+  onContinue,
+}: {
+  model: DeviceModel;
+  brandName: string;
+  quote: ReturnType<typeof calculateQuote>;
+  onBack: () => void;
+  onContinue: () => void;
+}) {
+  return (
+    <div>
+      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-6 text-navy-foreground shadow-soft">
+        <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Your final quote</p>
+        <p className="mt-1 text-4xl font-extrabold text-gradient sm:text-5xl">{formatPrice(quote.final)}</p>
+        <p className="mt-1 text-sm text-navy-foreground/75">
+          {brandName} {model.name}
+        </p>
+        <div className="mt-4 space-y-1.5 border-t border-navy-foreground/10 pt-3 text-sm">
+          <div className="flex justify-between text-navy-foreground/70">
+            <span>Base price</span>
+            <span>{formatPrice(model.base_price)}</span>
+          </div>
+          {quote.breakdown.map((b, i) => (
+            <div key={i} className="flex justify-between">
+              <span className="text-navy-foreground/70">{b.option}</span>
+              <span className={b.impact >= 0 ? "text-brand-green" : "text-red-300"}>
+                {b.impact >= 0 ? "+" : "−"}
+                {formatPrice(Math.abs(b.impact))}
+              </span>
+            </div>
+          ))}
+          <div className="flex justify-between border-t border-navy-foreground/10 pt-2 text-base font-bold">
+            <span>Final quote</span>
+            <span className="text-gradient">{formatPrice(quote.final)}</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
+        <ShieldCheck className="size-4 shrink-0 text-primary" />
+        Price locked for your pickup. Instant payment after a quick on-site check.
+      </div>
+
+      <div className="mt-5 flex items-center justify-end gap-2">
+        <Button variant="outline" size="lg" onClick={onBack}>
+          <ArrowLeft className="size-4" /> Back
+        </Button>
+        <Button variant="hero" size="lg" onClick={onContinue}>
+          Continue <ArrowRight className="size-4" />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function BookingForm({
   categoryId,
   categoryName,
   brandName,
@@ -376,6 +561,7 @@ function QuoteAndBook({
   quote,
   pincode,
   userId,
+  onBack,
   onBooked,
 }: {
   categoryId: string;
@@ -386,6 +572,7 @@ function QuoteAndBook({
   quote: ReturnType<typeof calculateQuote>;
   pincode: string;
   userId: string | null;
+  onBack: () => void;
   onBooked: () => void;
 }) {
   const [name, setName] = useState("");
@@ -429,36 +616,14 @@ function QuoteAndBook({
 
   return (
     <div>
-      <div className="overflow-hidden rounded-2xl bg-gradient-navy p-5 text-navy-foreground">
-        <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Your instant quote</p>
-        <p className="mt-1 text-4xl font-extrabold text-gradient">{formatPrice(quote.final)}</p>
-        <p className="mt-1 text-sm text-navy-foreground/75">
-          {brandName} {model.name}
-        </p>
-        <div className="mt-4 space-y-1.5 border-t border-navy-foreground/10 pt-3 text-sm">
-          <div className="flex justify-between text-navy-foreground/70">
-            <span>Base price</span>
-            <span>{formatPrice(model.base_price)}</span>
-          </div>
-          {quote.breakdown.map((b, i) => (
-            <div key={i} className="flex justify-between">
-              <span className="text-navy-foreground/70">{b.option}</span>
-              <span className={b.impact >= 0 ? "text-brand-green" : "text-red-300"}>
-                {b.impact >= 0 ? "+" : "−"}
-                {formatPrice(Math.abs(b.impact))}
-              </span>
-            </div>
-          ))}
-          <div className="flex justify-between border-t border-navy-foreground/10 pt-2 text-base font-bold">
-            <span>Final quote</span>
-            <span className="text-gradient">{formatPrice(quote.final)}</span>
-          </div>
+      <div className="flex items-center justify-between gap-3 rounded-2xl bg-primary/5 p-4">
+        <div>
+          <p className="text-xs uppercase tracking-wide text-muted-foreground">Locked quote</p>
+          <p className="text-2xl font-extrabold text-primary">{formatPrice(quote.final)}</p>
         </div>
-      </div>
-
-      <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
-        <ShieldCheck className="size-4 shrink-0 text-primary" />
-        Price locked for your pickup. Instant payment after a quick on-site check.
+        <Button variant="ghost" size="sm" onClick={onBack}>
+          <ArrowLeft className="size-4" /> Back
+        </Button>
       </div>
 
       <h3 className="mt-6 text-lg font-bold">Book your free pickup</h3>

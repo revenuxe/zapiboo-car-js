@@ -186,7 +186,7 @@ function EvaluatePage() {
 
   const startEvaluation = () => {
     if (conditionSteps === 0) {
-      setPhase(user ? "result" : "result");
+      setPhase("result");
       return;
     }
     setCondStep(0);

@@ -100,6 +100,8 @@ export function useListing(slug: string) {
  */
 export function compressImage(file: File, maxDim = 1280, quality = 0.72): Promise<string> {
   const type = (file.type || "").toLowerCase();
+  const name = (file.name || "").toLowerCase();
+  const isSvg = type === "image/svg+xml" || name.endsWith(".svg");
   const isJpeg = type === "image/jpeg" || type === "image/jpg";
   // Anything that can carry transparency must stay PNG so it doesn't go black.
   const keepAlpha = !isJpeg;
@@ -107,6 +109,13 @@ export function compressImage(file: File, maxDim = 1280, quality = 0.72): Promis
     const reader = new FileReader();
     reader.onerror = () => reject(new Error("Could not read the image file."));
     reader.onload = () => {
+      // SVGs are vector + tiny: store the raw data URL instead of rasterising
+      // them onto a canvas, which renders them as a solid black box whenever
+      // they lack intrinsic width/height.
+      if (isSvg) {
+        resolve(reader.result as string);
+        return;
+      }
       const img = new Image();
       img.onerror = () => reject(new Error("Could not load the image."));
       img.onload = () => {

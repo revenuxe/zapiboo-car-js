@@ -248,11 +248,13 @@ function EvaluatePage() {
             <Stepper labels={stepLabels} current={condStep} />
             <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
               <ConditionStep
+                key={currentGroup.id}
                 group={currentGroup}
                 index={condStep}
                 total={conditionSteps}
                 selections={selections}
                 setSelections={setSelections}
+                onAutoAdvance={nextCondition}
               />
             </div>
           </>

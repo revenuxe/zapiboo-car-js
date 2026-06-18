@@ -4,7 +4,6 @@ import { ArrowRight, Laptop, Loader2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CatalogShell } from "@/components/sell/CatalogShell";
 import {
-  formatPrice,
   useDeviceBrandBySlug,
   useDeviceCategory,
   useDeviceModels,

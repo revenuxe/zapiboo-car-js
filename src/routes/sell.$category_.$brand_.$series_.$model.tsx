@@ -9,6 +9,7 @@ import {
   Laptop,
   Loader2,
   Phone,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,6 +28,7 @@ import {
   useDeviceCategory,
   useDeviceModelBySlug,
   useDeviceSeriesBySlug,
+  type ConditionGroup,
   type ConditionOption,
   type DeviceModel,
   type OptionKind,
@@ -66,7 +68,8 @@ function EvaluatePage() {
   const { data: groups = [] } = useConditionGroups(cat?.id);
 
   const [selections, setSelections] = useState<Selections>({});
-  const [phase, setPhase] = useState<"condition" | "book" | "done">("condition");
+  const [step, setStep] = useState(0); // 0..groups.length-1 = condition steps, groups.length = booking
+  const [done, setDone] = useState(false);
   const [pincode, setPincode] = useState("");
 
   useEffect(() => {
@@ -115,34 +118,85 @@ function EvaluatePage() {
     );
   }
 
-  return (
-    <div className="bg-secondary/30">
-      <div className="mx-auto max-w-3xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-        {phase !== "done" && (
-          <Breadcrumbs
-            crumbs={[
-              { label: "Home", to: "/" },
-              { label: "Sell", to: "/sell/$category", params: { category } },
-              { label: brandName, to: "/sell/$category/$brand", params: { category, brand } },
-              { label: seriesName, to: "/sell/$category/$brand/$series", params: { category, brand, series } },
-              { label: modelRow.name },
-            ]}
-          />
-        )}
+  // Steps: one per condition group, then the booking step.
+  const conditionSteps = groups.length;
+  const totalSteps = conditionSteps + 1;
+  const isBooking = step >= conditionSteps;
+  const stepLabels = [...groups.map((g) => g.title), "Pickup"];
 
-        <div className="mt-6 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
-          {phase === "condition" && (
+  if (done) {
+    return (
+      <div className="bg-secondary/30">
+        <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
+          <div className="rounded-3xl border border-border bg-card p-7 text-center shadow-soft">
+            <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <CheckCircle2 className="size-9" />
+            </div>
+            <h2 className="mt-4 text-2xl font-bold">Pickup requested!</h2>
+            <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
+              Our team will call you shortly to confirm your {modelRow.name} pickup and final price of{" "}
+              <span className="font-bold text-primary">{formatPrice(quote.final)}</span>.
+            </p>
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              <Button variant="hero" asChild>
+                <Link to="/sell/$category" params={{ category }}>
+                  Sell another device
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link to="/account">View my requests</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  const currentGroup = !isBooking ? groups[step] : null;
+  const stepAnswered = currentGroup ? (selections[currentGroup.id]?.length ?? 0) > 0 : true;
+
+  return (
+    <div className="bg-secondary/30 pb-28">
+      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-9 lg:px-8">
+        <Breadcrumbs
+          crumbs={[
+            { label: "Home", to: "/" },
+            { label: "Sell", to: "/sell/$category", params: { category } },
+            { label: brandName, to: "/sell/$category/$brand", params: { category, brand } },
+            { label: seriesName, to: "/sell/$category/$brand/$series", params: { category, brand, series } },
+            { label: modelRow.name },
+          ]}
+        />
+
+        {/* Device header */}
+        <div className="mt-5 flex items-center gap-3 rounded-2xl border border-border bg-card p-3.5 shadow-soft">
+          <div className="flex size-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary">
+            {modelRow.image ? (
+              <img src={modelRow.image} alt={modelRow.name} className="max-h-full max-w-full object-contain p-1" />
+            ) : (
+              <Laptop className="size-6 text-muted-foreground" />
+            )}
+          </div>
+          <div className="min-w-0">
+            <p className="text-xs text-muted-foreground">{brandName} · {seriesName}</p>
+            <p className="truncate font-bold leading-tight">{modelRow.name}</p>
+          </div>
+        </div>
+
+        {/* Stepper */}
+        <Stepper labels={stepLabels} current={step} />
+
+        <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
+          {!isBooking && currentGroup ? (
             <ConditionStep
-              modelName={modelRow.name}
-              groups={groups}
+              group={currentGroup}
+              index={step}
+              total={totalSteps}
               selections={selections}
               setSelections={setSelections}
-              quote={quote.final}
-              onContinue={() => setPhase("book")}
             />
-          )}
-
-          {phase === "book" && (
+          ) : (
             <QuoteAndBook
               categoryId={cat!.id}
               categoryName={cat!.name}
@@ -152,111 +206,127 @@ function EvaluatePage() {
               quote={quote}
               pincode={pincode}
               userId={user?.id ?? null}
-              onBooked={() => setPhase("done")}
-              onBack={() => setPhase("condition")}
+              onBooked={() => setDone(true)}
             />
           )}
-
-          {phase === "done" && (
-            <div className="py-6 text-center">
-              <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <CheckCircle2 className="size-9" />
-              </div>
-              <h2 className="mt-4 text-2xl font-bold">Pickup requested!</h2>
-              <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-                Our team will call you shortly to confirm your {modelRow.name} pickup and final price of{" "}
-                <span className="font-bold text-primary">{formatPrice(quote.final)}</span>.
-              </p>
-              <div className="mt-6 flex flex-wrap justify-center gap-2">
-                <Button variant="hero" asChild>
-                  <Link to="/sell/$category" params={{ category }}>
-                    Sell another device
-                  </Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link to="/account">View my requests</Link>
-                </Button>
-              </div>
-            </div>
-          )}
         </div>
+      </div>
+
+      {/* Sticky action bar */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-1">
+          <div className="min-w-0">
+            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              {isBooking ? "Final quote" : "Estimated price"}
+            </p>
+            <p className="text-2xl font-extrabold text-primary">{formatPrice(quote.final)}</p>
+          </div>
+          <div className="flex items-center gap-2">
+            {step > 0 && (
+              <Button variant="outline" size="lg" onClick={() => setStep((s) => s - 1)}>
+                <ArrowLeft className="size-4" /> Back
+              </Button>
+            )}
+            {!isBooking && (
+              <Button variant="hero" size="lg" disabled={!stepAnswered} onClick={() => setStep((s) => s + 1)}>
+                {step === conditionSteps - 1 ? "See quote" : "Continue"} <ArrowRight className="size-4" />
+              </Button>
+            )}
+          </div>
+        </div>
+        {!isBooking && !stepAnswered && (
+          <p className="mx-auto mt-1.5 max-w-3xl px-1 text-center text-[11px] text-muted-foreground">
+            Pick an option to continue.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function Stepper({ labels, current }: { labels: string[]; current: number }) {
+  const total = labels.length;
+  const pct = Math.round(((current + 1) / total) * 100);
+  return (
+    <div className="mt-6">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-sm font-semibold">
+          Step {Math.min(current + 1, total)} of {total}
+          <span className="ml-2 font-normal text-muted-foreground">{labels[current]}</span>
+        </p>
+        <span className="text-xs font-bold text-primary">{pct}%</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        {labels.map((label, i) => {
+          const stateDone = i < current;
+          const active = i === current;
+          return (
+            <div key={`${label}-${i}`} className="flex flex-1 items-center gap-1.5">
+              <div
+                className={`h-1.5 flex-1 rounded-full transition-colors ${
+                  stateDone || active ? "bg-primary" : "bg-border"
+                }`}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
 function ConditionStep({
-  modelName,
-  groups,
+  group,
+  index,
+  total,
   selections,
   setSelections,
-  quote,
-  onContinue,
 }: {
-  modelName: string;
-  groups: ReturnType<typeof useConditionGroups>["data"];
+  group: ConditionGroup;
+  index: number;
+  total: number;
   selections: Selections;
   setSelections: React.Dispatch<React.SetStateAction<Selections>>;
-  quote: number;
-  onContinue: () => void;
 }) {
-  const list = groups ?? [];
+  const multi = group.selection === "multi";
+  const picked = selections[group.id] ?? [];
 
-  const toggle = (groupId: string, optId: string, multi: boolean) => {
+  const toggle = (optId: string) => {
     setSelections((prev) => {
-      const current = prev[groupId] ?? [];
+      const current = prev[group.id] ?? [];
       if (multi) {
         return {
           ...prev,
-          [groupId]: current.includes(optId) ? current.filter((x) => x !== optId) : [...current, optId],
+          [group.id]: current.includes(optId)
+            ? current.filter((x) => x !== optId)
+            : [...current, optId],
         };
       }
-      return { ...prev, [groupId]: current.includes(optId) ? [] : [optId] };
+      return { ...prev, [group.id]: current.includes(optId) ? [] : [optId] };
     });
   };
 
   return (
     <div>
-      <h1 className="text-xl font-bold sm:text-2xl">Tell us the condition</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Evaluating your <span className="font-semibold text-foreground">{modelName}</span> — honest answers
-        get you an accurate, fair quote.
+      <p className="text-xs font-semibold uppercase tracking-wide text-primary">
+        Step {index + 1} of {total}
+      </p>
+      <h1 className="mt-1 text-xl font-bold sm:text-2xl">{group.title}</h1>
+      {group.subtitle && <p className="mt-1 text-sm text-muted-foreground">{group.subtitle}</p>}
+      <p className="mt-1 text-xs text-muted-foreground">
+        {multi ? "Select all that apply." : "Pick the one that matches best."}
       </p>
 
-      <div className="mt-5 space-y-6 pb-28">
-        {list.map((g) => {
-          const multi = g.selection === "multi";
-          const picked = selections[g.id] ?? [];
-          return (
-            <div key={g.id}>
-              <h3 className="font-semibold">{g.title}</h3>
-              {g.subtitle && <p className="text-xs text-muted-foreground">{g.subtitle}</p>}
-              <div className="mt-3 grid gap-2.5 sm:grid-cols-2">
-                {(g.options ?? []).map((o) => (
-                  <ConditionChoice
-                    key={o.id}
-                    option={o}
-                    selected={picked.includes(o.id)}
-                    multi={multi}
-                    onClick={() => toggle(g.id, o.id, multi)}
-                  />
-                ))}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3 px-1">
-          <div>
-            <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Your estimated price</p>
-            <p className="text-2xl font-extrabold text-primary">{formatPrice(quote)}</p>
-          </div>
-          <Button variant="hero" size="lg" onClick={onContinue}>
-            Continue <ArrowRight className="size-4" />
-          </Button>
-        </div>
+      <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
+        {(group.options ?? []).map((o) => (
+          <ConditionChoice
+            key={o.id}
+            option={o}
+            selected={picked.includes(o.id)}
+            multi={multi}
+            onClick={() => toggle(o.id)}
+          />
+        ))}
       </div>
     </div>
   );
@@ -307,7 +377,6 @@ function QuoteAndBook({
   pincode,
   userId,
   onBooked,
-  onBack,
 }: {
   categoryId: string;
   categoryName: string;
@@ -318,7 +387,6 @@ function QuoteAndBook({
   pincode: string;
   userId: string | null;
   onBooked: () => void;
-  onBack: () => void;
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -361,10 +429,6 @@ function QuoteAndBook({
 
   return (
     <div>
-      <button onClick={onBack} className="mb-4 flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-foreground">
-        <ArrowLeft className="size-4" /> Back to condition
-      </button>
-
       <div className="overflow-hidden rounded-2xl bg-gradient-navy p-5 text-navy-foreground">
         <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Your instant quote</p>
         <p className="mt-1 text-4xl font-extrabold text-gradient">{formatPrice(quote.final)}</p>
@@ -390,6 +454,11 @@ function QuoteAndBook({
             <span className="text-gradient">{formatPrice(quote.final)}</span>
           </div>
         </div>
+      </div>
+
+      <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
+        <ShieldCheck className="size-4 shrink-0 text-primary" />
+        Price locked for your pickup. Instant payment after a quick on-site check.
       </div>
 
       <h3 className="mt-6 text-lg font-bold">Book your free pickup</h3>

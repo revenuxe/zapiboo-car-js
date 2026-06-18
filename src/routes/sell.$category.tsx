@@ -187,6 +187,23 @@ function Landing({
                 Pincode not available yet — but you can still book and we'll reach out.
               </div>
             )}
+
+            <div className="mt-3 flex items-center gap-3">
+              <span className="h-px flex-1 bg-navy-foreground/15" />
+              <span className="text-[11px] font-medium uppercase tracking-wide text-navy-foreground/50">or</span>
+              <span className="h-px flex-1 bg-navy-foreground/15" />
+            </div>
+            <a
+              href={`https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
+                `Hi HuluMart, I want to sell my ${lower} in Bangalore. Please help me get a quote.`,
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-soft transition-transform hover:-translate-y-0.5"
+            >
+              <WhatsAppIcon className="size-5" />
+              Sell instantly on WhatsApp
+            </a>
           </div>
         </div>
       </section>

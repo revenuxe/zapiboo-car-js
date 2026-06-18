@@ -33,6 +33,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category.$brand'
 import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category.$brand.$series'
+import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category.$brand.$series.$model'
 
 const TopScrapBuyersRoute = TopScrapBuyersRouteImport.update({
   id: '/top-scrap-buyers',
@@ -154,6 +155,12 @@ const SellCategoryBrandSeriesRoute = SellCategoryBrandSeriesRouteImport.update({
   path: '/$series',
   getParentRoute: () => SellCategoryBrandRoute,
 } as any)
+const SellCategoryBrandSeriesModelRoute =
+  SellCategoryBrandSeriesModelRouteImport.update({
+    id: '/$model',
+    path: '/$model',
+    getParentRoute: () => SellCategoryBrandSeriesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -179,7 +186,8 @@ export interface FileRoutesByFullPath {
   '/listings/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRouteWithChildren
   '/sell/$category/$brand': typeof SellCategoryBrandRouteWithChildren
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRouteWithChildren
+  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -205,7 +213,8 @@ export interface FileRoutesByTo {
   '/listings/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRouteWithChildren
   '/sell/$category/$brand': typeof SellCategoryBrandRouteWithChildren
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRouteWithChildren
+  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -232,7 +241,8 @@ export interface FileRoutesById {
   '/listings_/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRouteWithChildren
   '/sell/$category/$brand': typeof SellCategoryBrandRouteWithChildren
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRouteWithChildren
+  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/sell/$category'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
+    | '/sell/$category/$brand/$series/$model'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -287,6 +298,7 @@ export interface FileRouteTypes {
     | '/sell/$category'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
+    | '/sell/$category/$brand/$series/$model'
   id:
     | '__root__'
     | '/'
@@ -313,6 +325,7 @@ export interface FileRouteTypes {
     | '/sell/$category'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
+    | '/sell/$category/$brand/$series/$model'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -510,15 +523,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellCategoryBrandSeriesRouteImport
       parentRoute: typeof SellCategoryBrandRoute
     }
+    '/sell/$category/$brand/$series/$model': {
+      id: '/sell/$category/$brand/$series/$model'
+      path: '/$model'
+      fullPath: '/sell/$category/$brand/$series/$model'
+      preLoaderRoute: typeof SellCategoryBrandSeriesModelRouteImport
+      parentRoute: typeof SellCategoryBrandSeriesRoute
+    }
   }
 }
 
+interface SellCategoryBrandSeriesRouteChildren {
+  SellCategoryBrandSeriesModelRoute: typeof SellCategoryBrandSeriesModelRoute
+}
+
+const SellCategoryBrandSeriesRouteChildren: SellCategoryBrandSeriesRouteChildren =
+  {
+    SellCategoryBrandSeriesModelRoute: SellCategoryBrandSeriesModelRoute,
+  }
+
+const SellCategoryBrandSeriesRouteWithChildren =
+  SellCategoryBrandSeriesRoute._addFileChildren(
+    SellCategoryBrandSeriesRouteChildren,
+  )
+
 interface SellCategoryBrandRouteChildren {
-  SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRoute
+  SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRouteWithChildren
 }
 
 const SellCategoryBrandRouteChildren: SellCategoryBrandRouteChildren = {
-  SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRoute,
+  SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRouteWithChildren,
 }
 
 const SellCategoryBrandRouteWithChildren =

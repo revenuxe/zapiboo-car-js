@@ -27,6 +27,7 @@ export type DeviceSeries = {
   brand_id: string;
   name: string;
   slug: string;
+  image: string | null;
   active: boolean;
   sort_order: number;
 };

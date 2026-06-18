@@ -99,7 +99,9 @@ function Landing({
   const lower = categoryName.toLowerCase();
   const navigate = useNavigate();
   const { data: brands = [], isLoading: brandsLoading } = useDeviceBrands(categoryId);
+  const { data: availability } = useServiceAvailability();
   const [pincode, setPincode] = useState("");
+  const [checkedPin, setCheckedPin] = useState<string | null>(null);
   const [query, setQuery] = useState("");
 
   const savePincode = (v: string) => {
@@ -109,6 +111,20 @@ function Landing({
   const goToBrand = (slug: string) => {
     savePincode(pincode);
     navigate({ to: "/sell/$category/$brand", params: { category, brand: slug } });
+  };
+
+  const checkAvailability = () => {
+    if (pincode.length !== 6) return;
+    savePincode(pincode);
+    setCheckedPin(pincode);
+  };
+
+  const available =
+    checkedPin && checkedPin === pincode ? isPincodeAvailable(pincode, availability) : null;
+
+  const scrollToBrands = () => {
+    savePincode(pincode);
+    document.getElementById("brands")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const filtered = useMemo(
@@ -122,82 +138,55 @@ function Landing({
       <section className="relative overflow-hidden bg-gradient-navy text-navy-foreground">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-brand-green/20 blur-3xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-16 size-72 rounded-full bg-brand-green/10 blur-3xl" />
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-2 lg:px-8">
-          <div>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-navy-foreground/15 bg-navy-foreground/5 px-3 py-1 text-xs font-semibold text-brand-green">
-              <Sparkles className="size-3.5" /> Instant quote · Free pickup in Bangalore
-            </span>
-            <h1 className="mt-4 text-3xl font-extrabold leading-[1.1] sm:text-4xl md:text-5xl">
-              Sell your old <span className="text-gradient">{lower}</span> in Bangalore
-            </h1>
-            <p className="mt-4 max-w-md text-navy-foreground/75">
-              Get the best price for your used {lower} in minutes. Free doorstep pickup across Bengaluru
-              and instant payment the moment we collect it.
-            </p>
+        <div className="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 md:py-24 lg:px-8">
+          <h1 className="text-3xl font-extrabold leading-[1.1] sm:text-4xl md:text-5xl">
+            Sell your old <span className="text-gradient">{lower}</span> in Bangalore
+          </h1>
+          <p className="mx-auto mt-4 max-w-md text-navy-foreground/75">
+            Get the best price for your used {lower} in minutes. Free doorstep pickup across Bengaluru
+            and instant payment the moment we collect it.
+          </p>
 
-            <div className="mt-7 max-w-md rounded-2xl border border-navy-foreground/10 bg-navy-foreground/5 p-3 backdrop-blur">
-              <Label className="px-1 text-xs font-semibold text-navy-foreground/70">Your Bangalore pincode</Label>
-              <div className="mt-1.5 flex gap-2">
-                <div className="relative flex-1">
-                  <MapPin className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-navy-foreground/50" />
-                  <Input
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    inputMode="numeric"
-                    placeholder="e.g. 560001"
-                    className="h-12 border-navy-foreground/15 bg-navy-foreground/10 pl-9 text-navy-foreground placeholder:text-navy-foreground/40"
-                  />
-                </div>
-                <Button
-                  variant="hero"
-                  size="lg"
-                  onClick={() => {
-                    savePincode(pincode);
-                    document.getElementById("brands")?.scrollIntoView({ behavior: "smooth", block: "start" });
+          <div className="mx-auto mt-8 max-w-md rounded-2xl border border-navy-foreground/10 bg-navy-foreground/5 p-3 text-left backdrop-blur">
+            <Label className="px-1 text-xs font-semibold text-navy-foreground/70">Your Bangalore pincode</Label>
+            <div className="mt-1.5 flex gap-2">
+              <div className="relative flex-1">
+                <MapPin className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-navy-foreground/50" />
+                <Input
+                  value={pincode}
+                  onChange={(e) => {
+                    setPincode(e.target.value.replace(/\D/g, "").slice(0, 6));
+                    setCheckedPin(null);
                   }}
-                >
-                  Get quote <ArrowRight className="size-4" />
-                </Button>
+                  inputMode="numeric"
+                  placeholder="e.g. 560001"
+                  className="h-12 border-navy-foreground/15 bg-navy-foreground/10 pl-9 text-navy-foreground placeholder:text-navy-foreground/40"
+                />
               </div>
+              {available === null && (
+                <Button variant="hero" size="lg" disabled={pincode.length !== 6} onClick={checkAvailability}>
+                  Check <ArrowRight className="size-4" />
+                </Button>
+              )}
+              {available !== null && (
+                <Button variant="hero" size="lg" onClick={scrollToBrands}>
+                  {available ? "Get quote" : "Book pickup"} <ArrowRight className="size-4" />
+                </Button>
+              )}
             </div>
 
-            <div className="mt-7 grid max-w-md grid-cols-3 gap-3">
-              {[
-                { value: "₹50K+", label: "Top payouts" },
-                { value: "60 sec", label: "Instant quote" },
-                { value: "Same day", label: "Free pickup" },
-              ].map((s) => (
-                <div key={s.label} className="rounded-xl border border-navy-foreground/10 bg-navy-foreground/5 p-3 text-center">
-                  <p className="text-lg font-extrabold text-gradient">{s.value}</p>
-                  <p className="text-[11px] text-navy-foreground/70">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Brand quick-grid */}
-          <div className="rounded-3xl border border-navy-foreground/10 bg-navy-foreground/5 p-5 backdrop-blur">
-            <p className="text-sm font-semibold">Pick your brand to start</p>
-            <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
-              {brandsLoading
-                ? Array.from({ length: 8 }).map((_, i) => (
-                    <div key={i} className="aspect-square animate-pulse rounded-2xl bg-navy-foreground/10" />
-                  ))
-                : brands.slice(0, 8).map((b) => (
-                    <button
-                      key={b.id}
-                      onClick={() => goToBrand(b.slug)}
-                      className="flex aspect-square flex-col items-center justify-center gap-1.5 rounded-2xl border border-navy-foreground/10 bg-navy-foreground/5 p-2 transition-all hover:-translate-y-0.5 hover:border-brand-green/50 hover:bg-navy-foreground/10"
-                    >
-                      {b.logo ? (
-                        <img src={b.logo} alt={b.name} className="size-9 object-contain" />
-                      ) : (
-                        <Tag className="size-6 text-brand-green" />
-                      )}
-                      <span className="text-[11px] font-medium">{b.name}</span>
-                    </button>
-                  ))}
-            </div>
+            {available === true && (
+              <div className="mt-2 flex items-center gap-2 rounded-xl bg-brand-green/15 px-3 py-2 text-xs font-medium text-brand-green">
+                <CheckCircle2 className="size-4 shrink-0" />
+                Great news — we offer free pickup at {pincode}.
+              </div>
+            )}
+            {available === false && (
+              <div className="mt-2 flex items-center gap-2 rounded-xl bg-navy-foreground/10 px-3 py-2 text-xs font-medium text-navy-foreground/80">
+                <XCircle className="size-4 shrink-0 text-amber-300" />
+                Pincode not available yet — but you can still book and we'll reach out.
+              </div>
+            )}
           </div>
         </div>
       </section>

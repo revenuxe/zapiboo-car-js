@@ -209,7 +209,7 @@ function EvaluatePage() {
   const goToLogin = () => {
     if (typeof window !== "undefined") {
       sessionStorage.setItem(storageKey, JSON.stringify({ selections }));
-      navigate({ to: "/auth", search: { redirectTo: window.location.pathname } });
+      navigate({ to: "/auth", search: { redirectTo: window.location.pathname } as never });
     }
   };
 

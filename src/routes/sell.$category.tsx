@@ -3,19 +3,21 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import {
   ArrowRight,
   BadgeIndianRupee,
+  CheckCircle2,
   Laptop,
   Loader2,
   MapPin,
   ShieldCheck,
-  Sparkles,
   Tag,
   Truck,
   Wallet,
+  XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDeviceBrands, useDeviceCategory } from "@/lib/device-buyback";
+import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 
 export const Route = createFileRoute("/sell/$category")({
   head: () => ({

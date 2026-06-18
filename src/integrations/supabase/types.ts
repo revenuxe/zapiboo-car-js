@@ -325,6 +325,7 @@ export type Database = {
           brand_id: string
           created_at: string
           id: string
+          image: string | null
           name: string
           slug: string
           sort_order: number
@@ -335,6 +336,7 @@ export type Database = {
           brand_id: string
           created_at?: string
           id?: string
+          image?: string | null
           name: string
           slug: string
           sort_order?: number
@@ -345,6 +347,7 @@ export type Database = {
           brand_id?: string
           created_at?: string
           id?: string
+          image?: string | null
           name?: string
           slug?: string
           sort_order?: number

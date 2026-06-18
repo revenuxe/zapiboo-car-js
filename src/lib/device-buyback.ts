@@ -280,6 +280,8 @@ export function useDeviceModelBySlug(seriesId?: string, slug?: string) {
     staleTime: 60_000,
   });
 }
+
+export function useConditionGroups(categoryId?: string) {
   return useQuery({
     queryKey: ["device", "conditions", categoryId],
     enabled: !!categoryId,

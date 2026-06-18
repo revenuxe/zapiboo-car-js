@@ -223,6 +223,64 @@ export function useDeviceModels(seriesId?: string) {
   });
 }
 
+// ---------------- Slug lookups (for multi-page funnel) ----------------
+export function useDeviceBrandBySlug(categoryId?: string, slug?: string) {
+  return useQuery({
+    queryKey: ["device", "brand-by-slug", categoryId, slug],
+    enabled: !!categoryId && !!slug,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("device_brands")
+        .select("id, category_id, name, slug, logo, active, sort_order")
+        .eq("category_id", categoryId!)
+        .eq("slug", slug!)
+        .eq("active", true)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as DeviceBrand) ?? null;
+    },
+    staleTime: 60_000,
+  });
+}
+
+export function useDeviceSeriesBySlug(brandId?: string, slug?: string) {
+  return useQuery({
+    queryKey: ["device", "series-by-slug", brandId, slug],
+    enabled: !!brandId && !!slug,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("device_series")
+        .select("id, brand_id, name, slug, active, sort_order")
+        .eq("brand_id", brandId!)
+        .eq("slug", slug!)
+        .eq("active", true)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as DeviceSeries) ?? null;
+    },
+    staleTime: 60_000,
+  });
+}
+
+export function useDeviceModelBySlug(seriesId?: string, slug?: string) {
+  return useQuery({
+    queryKey: ["device", "model-by-slug", seriesId, slug],
+    enabled: !!seriesId && !!slug,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("device_models")
+        .select("id, series_id, name, slug, base_price, image, active, sort_order")
+        .eq("series_id", seriesId!)
+        .eq("slug", slug!)
+        .eq("active", true)
+        .maybeSingle();
+      if (error) throw error;
+      return (data as DeviceModel) ?? null;
+    },
+    staleTime: 60_000,
+  });
+}
+
 export function useConditionGroups(categoryId?: string) {
   return useQuery({
     queryKey: ["device", "conditions", categoryId],

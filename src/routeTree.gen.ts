@@ -31,6 +31,9 @@ import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category_.$brand'
+import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category_.$brand_.$series'
+import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category_.$brand_.$series_.$model'
 
 const TopScrapBuyersRoute = TopScrapBuyersRouteImport.update({
   id: '/top-scrap-buyers',
@@ -142,6 +145,22 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellCategoryBrandRoute = SellCategoryBrandRouteImport.update({
+  id: '/sell/$category_/$brand',
+  path: '/sell/$category/$brand',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellCategoryBrandSeriesRoute = SellCategoryBrandSeriesRouteImport.update({
+  id: '/sell/$category_/$brand_/$series',
+  path: '/sell/$category/$brand/$series',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SellCategoryBrandSeriesModelRoute =
+  SellCategoryBrandSeriesModelRouteImport.update({
+    id: '/sell/$category_/$brand_/$series_/$model',
+    path: '/sell/$category/$brand/$series/$model',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -166,6 +185,9 @@ export interface FileRoutesByFullPath {
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -190,6 +212,9 @@ export interface FileRoutesByTo {
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -215,6 +240,9 @@ export interface FileRoutesById {
   '/areas_/$area': typeof AreasAreaRoute
   '/listings_/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category_/$brand': typeof SellCategoryBrandRoute
+  '/sell/$category_/$brand_/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category_/$brand_/$series_/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +269,9 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/listings/$slug'
     | '/sell/$category'
+    | '/sell/$category/$brand'
+    | '/sell/$category/$brand/$series'
+    | '/sell/$category/$brand/$series/$model'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +296,9 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/listings/$slug'
     | '/sell/$category'
+    | '/sell/$category/$brand'
+    | '/sell/$category/$brand/$series'
+    | '/sell/$category/$brand/$series/$model'
   id:
     | '__root__'
     | '/'
@@ -289,6 +323,9 @@ export interface FileRouteTypes {
     | '/areas_/$area'
     | '/listings_/$slug'
     | '/sell/$category'
+    | '/sell/$category_/$brand'
+    | '/sell/$category_/$brand_/$series'
+    | '/sell/$category_/$brand_/$series_/$model'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -314,6 +351,9 @@ export interface RootRouteChildren {
   AreasAreaRoute: typeof AreasAreaRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
   SellCategoryRoute: typeof SellCategoryRoute
+  SellCategoryBrandRoute: typeof SellCategoryBrandRoute
+  SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRoute
+  SellCategoryBrandSeriesModelRoute: typeof SellCategoryBrandSeriesModelRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -472,6 +512,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell/$category_/$brand': {
+      id: '/sell/$category_/$brand'
+      path: '/sell/$category/$brand'
+      fullPath: '/sell/$category/$brand'
+      preLoaderRoute: typeof SellCategoryBrandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell/$category_/$brand_/$series': {
+      id: '/sell/$category_/$brand_/$series'
+      path: '/sell/$category/$brand/$series'
+      fullPath: '/sell/$category/$brand/$series'
+      preLoaderRoute: typeof SellCategoryBrandSeriesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sell/$category_/$brand_/$series_/$model': {
+      id: '/sell/$category_/$brand_/$series_/$model'
+      path: '/sell/$category/$brand/$series/$model'
+      fullPath: '/sell/$category/$brand/$series/$model'
+      preLoaderRoute: typeof SellCategoryBrandSeriesModelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -498,17 +559,10 @@ const rootRouteChildren: RootRouteChildren = {
   AreasAreaRoute: AreasAreaRoute,
   ListingsSlugRoute: ListingsSlugRoute,
   SellCategoryRoute: SellCategoryRoute,
+  SellCategoryBrandRoute: SellCategoryBrandRoute,
+  SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRoute,
+  SellCategoryBrandSeriesModelRoute: SellCategoryBrandSeriesModelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

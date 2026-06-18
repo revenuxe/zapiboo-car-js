@@ -9,7 +9,7 @@ import {
   useDeviceSeries,
 } from "@/lib/device-buyback";
 
-export const Route = createFileRoute("/sell/$category/$brand")({
+export const Route = createFileRoute("/sell/$category_/$brand")({
   head: ({ params }) => ({
     meta: [
       { title: `Sell ${cap(params.brand)} ${cap(params.category)} in Bangalore | HuluMart` },

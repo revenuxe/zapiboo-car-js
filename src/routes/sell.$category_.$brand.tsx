@@ -63,7 +63,7 @@ function SeriesPage() {
       empty={!loading && filtered.length === 0}
       emptyText="No series available for this brand yet."
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
         {filtered.map((s) => (
           <button
             key={s.id}
@@ -73,15 +73,16 @@ function SeriesPage() {
                 params: { category, brand, series: s.slug },
               })
             }
-            className="group flex items-center justify-between gap-3 rounded-2xl border border-border bg-card p-4 text-left shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
+            className="group flex flex-col items-center rounded-2xl border border-border bg-card p-4 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
           >
-            <span className="flex items-center gap-3">
-              <span className="flex size-11 items-center justify-center rounded-xl bg-secondary text-primary">
-                <Layers className="size-5" />
-              </span>
-              <span className="font-semibold">{s.name}</span>
-            </span>
-            <ChevronRight className="size-5 text-muted-foreground transition-transform group-hover:translate-x-0.5 group-hover:text-primary" />
+            <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-secondary/60">
+              {s.image ? (
+                <img src={s.image} alt={s.name} className="max-h-full max-w-full object-contain p-2" />
+              ) : (
+                <Layers className="size-10 text-muted-foreground" />
+              )}
+            </div>
+            <p className="mt-3 text-sm font-semibold leading-snug">{s.name}</p>
           </button>
         ))}
       </div>

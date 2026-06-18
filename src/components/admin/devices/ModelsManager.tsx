@@ -246,21 +246,6 @@ function ModelDialog({
   const [name, setName] = useState(editing?.name ?? "");
   const [price, setPrice] = useState(editing ? String(editing.base_price) : "");
   const [image, setImage] = useState<string | null>(editing?.image ?? null);
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = async (file: File | undefined) => {
-    if (!file) return;
-    setUploading(true);
-    try {
-      setImage(await compressImage(file, 800, 0.75));
-    } catch {
-      toast.error("Couldn't process the image.");
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  };
 
   const save = useMutation({
     mutationFn: async () => {
@@ -316,34 +301,14 @@ function ModelDialog({
               The best-case quote for a flawless unit. Conditions deduct from this.
             </p>
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Image (optional)</Label>
-            <div className="flex items-center gap-3">
-              <div className="flex size-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-secondary">
-                {image ? (
-                  <img src={image} alt="model" className="size-full object-cover" />
-                ) : (
-                  <ImagePlus className="size-5 text-muted-foreground" />
-                )}
-              </div>
-              <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileRef.current?.click()}>
-                {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
-                {image ? "Replace" : "Upload"}
-              </Button>
-              {image && (
-                <Button type="button" variant="ghost" size="sm" className="text-destructive" onClick={() => setImage(null)}>
-                  Remove
-                </Button>
-              )}
-            </div>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files?.[0])}
-            />
-          </div>
+          <ImageField
+            label="Image (optional)"
+            value={image}
+            onChange={setImage}
+            shape="contain"
+            maxDim={800}
+            hint="Upload a photo or paste a product image link (PNG, SVG, JPG)."
+          />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

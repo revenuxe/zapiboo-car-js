@@ -21,6 +21,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ImageField } from "@/components/admin/devices/ImageField";
 import { slugify, type DeviceBrand, type DeviceSeries } from "@/lib/device-buyback";
 
 export function SeriesManager({ categoryId }: { categoryId: string }) {
@@ -53,7 +54,7 @@ export function SeriesManager({ categoryId }: { categoryId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_series")
-        .select("id, brand_id, name, slug, active, sort_order")
+        .select("id, brand_id, name, slug, image, active, sort_order")
         .eq("brand_id", brandId)
         .order("sort_order");
       if (error) throw error;
@@ -133,38 +134,49 @@ export function SeriesManager({ categoryId }: { categoryId: string }) {
           <p className="mt-1 text-sm text-muted-foreground">e.g. MacBook Air, ThinkPad, XPS.</p>
         </div>
       ) : (
-        <div className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
           {series.map((s) => (
-            <div key={s.id} className="flex items-center gap-3 p-3.5">
-              <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold">{s.name}</p>
+            <div key={s.id} className="rounded-2xl border border-border bg-card p-3 shadow-soft">
+              <div className="flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl bg-secondary">
+                {s.image ? (
+                  <img src={s.image} alt={s.name} className="max-h-full max-w-full object-contain p-2" />
+                ) : (
+                  <Layers className="size-7 text-muted-foreground" />
+                )}
               </div>
-              {!s.active && (
-                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
-                  Hidden
-                </span>
-              )}
-              <Switch checked={s.active} onCheckedChange={(v) => toggle.mutate({ id: s.id, active: v })} />
-              <Button
-                size="icon"
-                variant="ghost"
-                className="size-8"
-                onClick={() => {
-                  setEditing(s);
-                  setOpen(true);
-                }}
-              >
-                <Pencil className="size-4" />
-              </Button>
-              <Button
-                size="icon"
-                variant="ghost"
-                className="size-8 text-destructive"
-                disabled={del.isPending}
-                onClick={() => del.mutate(s.id)}
-              >
-                <Trash2 className="size-4" />
-              </Button>
+              <div className="mt-2.5 flex items-center justify-between gap-1">
+                <p className="min-w-0 flex-1 truncate font-bold">{s.name}</p>
+                {!s.active && (
+                  <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-bold text-muted-foreground">
+                    Hidden
+                  </span>
+                )}
+              </div>
+              <div className="mt-2 flex items-center justify-between border-t border-border pt-2">
+                <Switch checked={s.active} onCheckedChange={(v) => toggle.mutate({ id: s.id, active: v })} />
+                <div className="flex items-center gap-0.5">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-8"
+                    onClick={() => {
+                      setEditing(s);
+                      setOpen(true);
+                    }}
+                  >
+                    <Pencil className="size-4" />
+                  </Button>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-8 text-destructive"
+                    disabled={del.isPending}
+                    onClick={() => del.mutate(s.id)}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              </div>
             </div>
           ))}
         </div>
@@ -199,10 +211,11 @@ function SeriesDialog({
   onSaved: () => void;
 }) {
   const [name, setName] = useState(editing?.name ?? "");
+  const [image, setImage] = useState<string | null>(editing?.image ?? null);
 
   const save = useMutation({
     mutationFn: async () => {
-      const payload = { name: name.trim(), slug: slugify(name) || "series" };
+      const payload = { name: name.trim(), slug: slugify(name) || "series", image };
       if (editing) {
         const { error } = await supabase.from("device_series").update(payload).eq("id", editing.id);
         if (error) throw error;
@@ -227,9 +240,18 @@ function SeriesDialog({
         <DialogHeader>
           <DialogTitle>{editing ? "Edit series" : "Add series"}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-1.5">
-          <Label className="text-xs">Series name</Label>
-          <Input placeholder="e.g. MacBook Air" value={name} onChange={(e) => setName(e.target.value)} />
+        <div className="space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs">Series name</Label>
+            <Input placeholder="e.g. MacBook Air" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <ImageField
+            label="Image (optional)"
+            value={image}
+            onChange={setImage}
+            maxDim={700}
+            hint="Upload a photo or paste an image link (PNG, SVG, JPG)."
+          />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

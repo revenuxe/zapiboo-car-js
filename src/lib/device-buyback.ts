@@ -27,6 +27,7 @@ export type DeviceSeries = {
   brand_id: string;
   name: string;
   slug: string;
+  image: string | null;
   active: boolean;
   sort_order: number;
 };
@@ -194,7 +195,7 @@ export function useDeviceSeries(brandId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_series")
-        .select("id, brand_id, name, slug, active, sort_order")
+        .select("id, brand_id, name, slug, image, active, sort_order")
         .eq("brand_id", brandId!)
         .eq("active", true)
         .order("sort_order");
@@ -250,7 +251,7 @@ export function useDeviceSeriesBySlug(brandId?: string, slug?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_series")
-        .select("id, brand_id, name, slug, active, sort_order")
+        .select("id, brand_id, name, slug, image, active, sort_order")
         .eq("brand_id", brandId!)
         .eq("slug", slug!)
         .eq("active", true)

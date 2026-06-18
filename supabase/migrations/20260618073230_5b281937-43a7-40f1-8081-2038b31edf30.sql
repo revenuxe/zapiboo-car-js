@@ -1,0 +1,1 @@
+ALTER TABLE public.device_series ADD COLUMN IF NOT EXISTS image text;

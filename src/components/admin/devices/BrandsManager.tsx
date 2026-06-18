@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Loader2, Pencil, Plus, Tag, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Tag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { compressImage, slugify, type DeviceBrand } from "@/lib/device-buyback";
+import { ImageField } from "@/components/admin/devices/ImageField";
+import { slugify, type DeviceBrand } from "@/lib/device-buyback";
 
 export function BrandsManager({ categoryId }: { categoryId: string }) {
   const qc = useQueryClient();
@@ -177,21 +178,6 @@ function BrandDialog({
 }) {
   const [name, setName] = useState(editing?.name ?? "");
   const [logo, setLogo] = useState<string | null>(editing?.logo ?? null);
-  const [uploading, setUploading] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleFile = async (file: File | undefined) => {
-    if (!file) return;
-    setUploading(true);
-    try {
-      setLogo(await compressImage(file, 512, 0.8));
-    } catch {
-      toast.error("Couldn't process the image.");
-    } finally {
-      setUploading(false);
-      if (fileRef.current) fileRef.current.value = "";
-    }
-  };
 
   const save = useMutation({
     mutationFn: async () => {
@@ -225,36 +211,13 @@ function BrandDialog({
             <Label className="text-xs">Brand name</Label>
             <Input placeholder="e.g. Apple" value={name} onChange={(e) => setName(e.target.value)} />
           </div>
-          <div className="space-y-1.5">
-            <Label className="text-xs">Logo</Label>
-            <div className="flex items-center gap-3">
-              <div className="flex size-16 items-center justify-center overflow-hidden rounded-xl border border-border bg-secondary">
-                {logo ? (
-                  <img src={logo} alt="logo" className="max-h-full max-w-full object-contain p-1.5" />
-                ) : (
-                  <ImagePlus className="size-5 text-muted-foreground" />
-                )}
-              </div>
-              <div className="flex flex-col gap-2">
-                <Button type="button" variant="outline" size="sm" disabled={uploading} onClick={() => fileRef.current?.click()}>
-                  {uploading ? <Loader2 className="size-4 animate-spin" /> : <ImagePlus className="size-4" />}
-                  {logo ? "Replace" : "Upload"}
-                </Button>
-                {logo && (
-                  <Button type="button" variant="ghost" size="sm" className="text-destructive" onClick={() => setLogo(null)}>
-                    Remove
-                  </Button>
-                )}
-              </div>
-            </div>
-            <input
-              ref={fileRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => handleFile(e.target.files?.[0])}
-            />
-          </div>
+          <ImageField
+            label="Logo"
+            value={logo}
+            onChange={setLogo}
+            maxDim={512}
+            hint="PNG, SVG or a hosted image link. Transparent logos stay transparent."
+          />
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

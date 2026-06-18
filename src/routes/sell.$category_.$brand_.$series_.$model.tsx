@@ -391,12 +391,14 @@ function ConditionStep({
   total,
   selections,
   setSelections,
+  onAutoAdvance,
 }: {
   group: ConditionGroup;
   index: number;
   total: number;
   selections: Selections;
   setSelections: React.Dispatch<React.SetStateAction<Selections>>;
+  onAutoAdvance: () => void;
 }) {
   const multi = group.selection === "multi";
   const picked = selections[group.id] ?? [];
@@ -414,6 +416,10 @@ function ConditionStep({
       }
       return { ...prev, [group.id]: current.includes(optId) ? [] : [optId] };
     });
+    // Single-select: jump straight to the next step for a fast, slick feel.
+    if (!multi) {
+      window.setTimeout(() => onAutoAdvance(), 220);
+    }
   };
 
   return (

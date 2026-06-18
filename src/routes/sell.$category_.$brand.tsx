@@ -27,7 +27,7 @@ function cap(s: string) {
 }
 
 function SeriesPage() {
-  const { category, brand } = useParams({ from: "/sell/$category/$brand" });
+  const { category, brand } = useParams({ from: "/sell/$category_/$brand" });
   const navigate = useNavigate();
   const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
   const { data: brandRow, isLoading: brandLoading } = useDeviceBrandBySlug(cat?.id, brand);

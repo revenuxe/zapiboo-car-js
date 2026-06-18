@@ -11,7 +11,7 @@ import {
   useDeviceSeriesBySlug,
 } from "@/lib/device-buyback";
 
-export const Route = createFileRoute("/sell/$category/$brand/$series")({
+export const Route = createFileRoute("/sell/$category_/$brand_/$series")({
   head: ({ params }) => ({
     meta: [
       { title: `Sell ${cap(params.brand)} ${cap(params.series)} in Bangalore | HuluMart` },
@@ -29,7 +29,7 @@ function cap(s: string) {
 }
 
 function ModelsPage() {
-  const { category, brand, series } = useParams({ from: "/sell/$category/$brand/$series" });
+  const { category, brand, series } = useParams({ from: "/sell/$category_/$brand_/$series" });
   const navigate = useNavigate();
   const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
   const { data: brandRow, isLoading: brandLoading } = useDeviceBrandBySlug(cat?.id, brand);

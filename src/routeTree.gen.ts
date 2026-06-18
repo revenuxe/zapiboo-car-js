@@ -31,9 +31,9 @@ import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category.$brand'
-import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category.$brand.$series'
-import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category.$brand.$series.$model'
+import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category_.$brand'
+import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category_.$brand_.$series'
+import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category_.$brand_.$series_.$model'
 
 const TopScrapBuyersRoute = TopScrapBuyersRouteImport.update({
   id: '/top-scrap-buyers',
@@ -146,20 +146,20 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const SellCategoryBrandRoute = SellCategoryBrandRouteImport.update({
-  id: '/$brand',
-  path: '/$brand',
-  getParentRoute: () => SellCategoryRoute,
+  id: '/sell/$category_/$brand',
+  path: '/sell/$category/$brand',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SellCategoryBrandSeriesRoute = SellCategoryBrandSeriesRouteImport.update({
-  id: '/$series',
-  path: '/$series',
-  getParentRoute: () => SellCategoryBrandRoute,
+  id: '/sell/$category_/$brand_/$series',
+  path: '/sell/$category/$brand/$series',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SellCategoryBrandSeriesModelRoute =
   SellCategoryBrandSeriesModelRouteImport.update({
-    id: '/$model',
-    path: '/$model',
-    getParentRoute: () => SellCategoryBrandSeriesRoute,
+    id: '/sell/$category_/$brand_/$series_/$model',
+    path: '/sell/$category/$brand/$series/$model',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -184,9 +184,9 @@ export interface FileRoutesByFullPath {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
-  '/sell/$category': typeof SellCategoryRouteWithChildren
-  '/sell/$category/$brand': typeof SellCategoryBrandRouteWithChildren
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRouteWithChildren
+  '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
   '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesByTo {
@@ -211,9 +211,9 @@ export interface FileRoutesByTo {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
-  '/sell/$category': typeof SellCategoryRouteWithChildren
-  '/sell/$category/$brand': typeof SellCategoryBrandRouteWithChildren
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRouteWithChildren
+  '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
+  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
   '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesById {
@@ -239,10 +239,10 @@ export interface FileRoutesById {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas_/$area': typeof AreasAreaRoute
   '/listings_/$slug': typeof ListingsSlugRoute
-  '/sell/$category': typeof SellCategoryRouteWithChildren
-  '/sell/$category/$brand': typeof SellCategoryBrandRouteWithChildren
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRouteWithChildren
-  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
+  '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category_/$brand': typeof SellCategoryBrandRoute
+  '/sell/$category_/$brand_/$series': typeof SellCategoryBrandSeriesRoute
+  '/sell/$category_/$brand_/$series_/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -323,9 +323,9 @@ export interface FileRouteTypes {
     | '/areas_/$area'
     | '/listings_/$slug'
     | '/sell/$category'
-    | '/sell/$category/$brand'
-    | '/sell/$category/$brand/$series'
-    | '/sell/$category/$brand/$series/$model'
+    | '/sell/$category_/$brand'
+    | '/sell/$category_/$brand_/$series'
+    | '/sell/$category_/$brand_/$series_/$model'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -350,7 +350,10 @@ export interface RootRouteChildren {
   ApiKeepaliveRoute: typeof ApiKeepaliveRoute
   AreasAreaRoute: typeof AreasAreaRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
-  SellCategoryRoute: typeof SellCategoryRouteWithChildren
+  SellCategoryRoute: typeof SellCategoryRoute
+  SellCategoryBrandRoute: typeof SellCategoryBrandRoute
+  SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRoute
+  SellCategoryBrandSeriesModelRoute: typeof SellCategoryBrandSeriesModelRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -509,66 +512,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sell/$category/$brand': {
-      id: '/sell/$category/$brand'
-      path: '/$brand'
+    '/sell/$category_/$brand': {
+      id: '/sell/$category_/$brand'
+      path: '/sell/$category/$brand'
       fullPath: '/sell/$category/$brand'
       preLoaderRoute: typeof SellCategoryBrandRouteImport
-      parentRoute: typeof SellCategoryRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/sell/$category/$brand/$series': {
-      id: '/sell/$category/$brand/$series'
-      path: '/$series'
+    '/sell/$category_/$brand_/$series': {
+      id: '/sell/$category_/$brand_/$series'
+      path: '/sell/$category/$brand/$series'
       fullPath: '/sell/$category/$brand/$series'
       preLoaderRoute: typeof SellCategoryBrandSeriesRouteImport
-      parentRoute: typeof SellCategoryBrandRoute
+      parentRoute: typeof rootRouteImport
     }
-    '/sell/$category/$brand/$series/$model': {
-      id: '/sell/$category/$brand/$series/$model'
-      path: '/$model'
+    '/sell/$category_/$brand_/$series_/$model': {
+      id: '/sell/$category_/$brand_/$series_/$model'
+      path: '/sell/$category/$brand/$series/$model'
       fullPath: '/sell/$category/$brand/$series/$model'
       preLoaderRoute: typeof SellCategoryBrandSeriesModelRouteImport
-      parentRoute: typeof SellCategoryBrandSeriesRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface SellCategoryBrandSeriesRouteChildren {
-  SellCategoryBrandSeriesModelRoute: typeof SellCategoryBrandSeriesModelRoute
-}
-
-const SellCategoryBrandSeriesRouteChildren: SellCategoryBrandSeriesRouteChildren =
-  {
-    SellCategoryBrandSeriesModelRoute: SellCategoryBrandSeriesModelRoute,
-  }
-
-const SellCategoryBrandSeriesRouteWithChildren =
-  SellCategoryBrandSeriesRoute._addFileChildren(
-    SellCategoryBrandSeriesRouteChildren,
-  )
-
-interface SellCategoryBrandRouteChildren {
-  SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRouteWithChildren
-}
-
-const SellCategoryBrandRouteChildren: SellCategoryBrandRouteChildren = {
-  SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRouteWithChildren,
-}
-
-const SellCategoryBrandRouteWithChildren =
-  SellCategoryBrandRoute._addFileChildren(SellCategoryBrandRouteChildren)
-
-interface SellCategoryRouteChildren {
-  SellCategoryBrandRoute: typeof SellCategoryBrandRouteWithChildren
-}
-
-const SellCategoryRouteChildren: SellCategoryRouteChildren = {
-  SellCategoryBrandRoute: SellCategoryBrandRouteWithChildren,
-}
-
-const SellCategoryRouteWithChildren = SellCategoryRoute._addFileChildren(
-  SellCategoryRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -592,7 +558,10 @@ const rootRouteChildren: RootRouteChildren = {
   ApiKeepaliveRoute: ApiKeepaliveRoute,
   AreasAreaRoute: AreasAreaRoute,
   ListingsSlugRoute: ListingsSlugRoute,
-  SellCategoryRoute: SellCategoryRouteWithChildren,
+  SellCategoryRoute: SellCategoryRoute,
+  SellCategoryBrandRoute: SellCategoryBrandRoute,
+  SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRoute,
+  SellCategoryBrandSeriesModelRoute: SellCategoryBrandSeriesModelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

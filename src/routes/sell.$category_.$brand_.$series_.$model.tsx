@@ -32,7 +32,7 @@ import {
   type OptionKind,
 } from "@/lib/device-buyback";
 
-export const Route = createFileRoute("/sell/$category/$brand/$series/$model")({
+export const Route = createFileRoute("/sell/$category_/$brand_/$series_/$model")({
   head: ({ params }) => ({
     meta: [
       { title: `Sell ${cap(params.model)} in Bangalore — Instant Quote | HuluMart` },
@@ -56,7 +56,7 @@ const SLOTS = ["Morning (9am–12pm)", "Afternoon (12pm–4pm)", "Evening (4pm�
 
 function EvaluatePage() {
   const { category, brand, series, model } = useParams({
-    from: "/sell/$category/$brand/$series/$model",
+    from: "/sell/$category_/$brand_/$series_/$model",
   });
   const { user } = useAuth();
   const { data: cat, isLoading: catLoading } = useDeviceCategory(category);

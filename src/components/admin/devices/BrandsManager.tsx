@@ -1,6 +1,6 @@
-import { useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImagePlus, Loader2, Pencil, Plus, Tag, Trash2 } from "lucide-react";
+import { Loader2, Pencil, Plus, Tag, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +14,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { compressImage, slugify, type DeviceBrand } from "@/lib/device-buyback";
+import { ImageField } from "@/components/admin/devices/ImageField";
+import { slugify, type DeviceBrand } from "@/lib/device-buyback";
 
 export function BrandsManager({ categoryId }: { categoryId: string }) {
   const qc = useQueryClient();

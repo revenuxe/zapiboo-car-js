@@ -31,6 +31,7 @@ import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
+import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category.$brand'
 
 const TopScrapBuyersRoute = TopScrapBuyersRouteImport.update({
   id: '/top-scrap-buyers',
@@ -142,6 +143,11 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellCategoryBrandRoute = SellCategoryBrandRouteImport.update({
+  id: '/$brand',
+  path: '/$brand',
+  getParentRoute: () => SellCategoryRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -165,7 +171,8 @@ export interface FileRoutesByFullPath {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
-  '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category': typeof SellCategoryRouteWithChildren
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -189,7 +196,8 @@ export interface FileRoutesByTo {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
   '/listings/$slug': typeof ListingsSlugRoute
-  '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category': typeof SellCategoryRouteWithChildren
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -214,7 +222,8 @@ export interface FileRoutesById {
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas_/$area': typeof AreasAreaRoute
   '/listings_/$slug': typeof ListingsSlugRoute
-  '/sell/$category': typeof SellCategoryRoute
+  '/sell/$category': typeof SellCategoryRouteWithChildren
+  '/sell/$category/$brand': typeof SellCategoryBrandRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +250,7 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/listings/$slug'
     | '/sell/$category'
+    | '/sell/$category/$brand'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/listings/$slug'
     | '/sell/$category'
+    | '/sell/$category/$brand'
   id:
     | '__root__'
     | '/'
@@ -289,6 +300,7 @@ export interface FileRouteTypes {
     | '/areas_/$area'
     | '/listings_/$slug'
     | '/sell/$category'
+    | '/sell/$category/$brand'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -313,7 +325,7 @@ export interface RootRouteChildren {
   ApiKeepaliveRoute: typeof ApiKeepaliveRoute
   AreasAreaRoute: typeof AreasAreaRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
-  SellCategoryRoute: typeof SellCategoryRoute
+  SellCategoryRoute: typeof SellCategoryRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -472,8 +484,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell/$category/$brand': {
+      id: '/sell/$category/$brand'
+      path: '/$brand'
+      fullPath: '/sell/$category/$brand'
+      preLoaderRoute: typeof SellCategoryBrandRouteImport
+      parentRoute: typeof SellCategoryRoute
+    }
   }
 }
+
+interface SellCategoryRouteChildren {
+  SellCategoryBrandRoute: typeof SellCategoryBrandRoute
+}
+
+const SellCategoryRouteChildren: SellCategoryRouteChildren = {
+  SellCategoryBrandRoute: SellCategoryBrandRoute,
+}
+
+const SellCategoryRouteWithChildren = SellCategoryRoute._addFileChildren(
+  SellCategoryRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -497,7 +528,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiKeepaliveRoute: ApiKeepaliveRoute,
   AreasAreaRoute: AreasAreaRoute,
   ListingsSlugRoute: ListingsSlugRoute,
-  SellCategoryRoute: SellCategoryRoute,
+  SellCategoryRoute: SellCategoryRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

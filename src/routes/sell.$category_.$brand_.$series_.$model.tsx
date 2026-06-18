@@ -248,11 +248,13 @@ function EvaluatePage() {
             <Stepper labels={stepLabels} current={condStep} />
             <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
               <ConditionStep
+                key={currentGroup.id}
                 group={currentGroup}
                 index={condStep}
                 total={conditionSteps}
                 selections={selections}
                 setSelections={setSelections}
+                onAutoAdvance={nextCondition}
               />
             </div>
           </>
@@ -389,12 +391,14 @@ function ConditionStep({
   total,
   selections,
   setSelections,
+  onAutoAdvance,
 }: {
   group: ConditionGroup;
   index: number;
   total: number;
   selections: Selections;
   setSelections: React.Dispatch<React.SetStateAction<Selections>>;
+  onAutoAdvance: () => void;
 }) {
   const multi = group.selection === "multi";
   const picked = selections[group.id] ?? [];
@@ -412,6 +416,10 @@ function ConditionStep({
       }
       return { ...prev, [group.id]: current.includes(optId) ? [] : [optId] };
     });
+    // Single-select: jump straight to the next step for a fast, slick feel.
+    if (!multi) {
+      window.setTimeout(() => onAutoAdvance(), 220);
+    }
   };
 
   return (

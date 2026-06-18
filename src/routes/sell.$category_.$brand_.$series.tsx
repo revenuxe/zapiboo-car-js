@@ -4,7 +4,6 @@ import { ArrowRight, Laptop, Loader2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CatalogShell } from "@/components/sell/CatalogShell";
 import {
-  formatPrice,
   useDeviceBrandBySlug,
   useDeviceCategory,
   useDeviceModels,
@@ -99,7 +98,6 @@ function ModelsPage() {
               )}
             </div>
             <p className="mt-3 text-sm font-semibold leading-snug">{m.name}</p>
-            <p className="mt-1 text-xs font-bold text-primary">Up to {formatPrice(m.base_price)}</p>
           </button>
         ))}
       </div>

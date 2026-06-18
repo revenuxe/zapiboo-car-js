@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowRight, Layers, Loader2, Tag } from "lucide-react";
+import { ArrowRight, Loader2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CatalogShell } from "@/components/sell/CatalogShell";
 import {
@@ -73,16 +73,10 @@ function SeriesPage() {
                 params: { category, brand, series: s.slug },
               })
             }
-            className="group flex flex-col items-center rounded-2xl border border-border bg-card p-4 text-center shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
+            className="group flex items-center justify-between gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
           >
-            <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-secondary/60">
-              {s.image ? (
-                <img src={s.image} alt={s.name} className="max-h-full max-w-full object-contain p-2" />
-              ) : (
-                <Layers className="size-10 text-muted-foreground" />
-              )}
-            </div>
-            <p className="mt-3 text-sm font-semibold leading-snug">{s.name}</p>
+            <span className="text-sm font-semibold leading-snug">{s.name}</span>
+            <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
           </button>
         ))}
       </div>

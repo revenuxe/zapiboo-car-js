@@ -246,6 +246,34 @@ export function DeviceOrdersManager() {
                     </div>
                   </div>
                 )}
+
+                <div className="border-t border-border pt-4">
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="outline" className="w-full text-destructive" disabled={remove.isPending}>
+                        <Trash2 className="size-4" /> Delete order
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete this order?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This permanently removes {active.name}'s {active.model_name ?? "device"} order
+                          from the list. This can't be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={() => remove.mutate(active.id)}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
               </div>
             </>
           )}

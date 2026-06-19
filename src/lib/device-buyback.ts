@@ -110,6 +110,7 @@ export const ORDER_STATUSES = [
   { value: "contacted", label: "Contacted" },
   { value: "scheduled", label: "Scheduled" },
   { value: "paid", label: "Paid" },
+  { value: "cancelled", label: "Cancelled" },
   { value: "rejected", label: "Rejected" },
 ] as const;
 

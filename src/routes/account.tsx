@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Loader2,
   LogOut,
@@ -10,11 +10,27 @@ import {
   CalendarDays,
   PlusCircle,
   User as UserIcon,
+  Laptop,
+  Ban,
+  CheckCircle2,
 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { displayName } from "@/hooks/use-auth";
+import { formatPrice, statusLabel, type DeviceOrder } from "@/lib/device-buyback";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/account")({
   ssr: false,
@@ -111,6 +127,9 @@ function AccountPage() {
           </Button>
         </div>
 
+        {/* laptop / device buyback orders */}
+        <LaptopOrders userId={user!.id} />
+
         {/* bookings */}
         <div className="mt-8 flex items-center justify-between">
           <h2 className="text-lg font-bold">My pickups</h2>
@@ -176,5 +195,168 @@ function AccountPage() {
         )}
       </div>
     </div>
+  );
+}
+
+const orderStatusStyles: Record<string, string> = {
+  new: "bg-secondary text-foreground",
+  contacted: "bg-amber-500/15 text-amber-600",
+  scheduled: "bg-accent text-primary",
+  paid: "bg-gradient-brand text-primary-foreground",
+  cancelled: "bg-destructive/10 text-destructive",
+  rejected: "bg-destructive/10 text-destructive",
+};
+
+function LaptopOrders({ userId }: { userId: string }) {
+  const qc = useQueryClient();
+
+  const { data: orders = [], isLoading } = useQuery({
+    queryKey: ["my-device-orders", userId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("device_orders")
+        .select(
+          "id, category_name, brand_name, series_name, model_name, base_price, final_price, status, pincode, preferred_date, slot, created_at",
+        )
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data as unknown as DeviceOrder[];
+    },
+  });
+
+  const cancel = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from("device_orders")
+        .update({ status: "cancelled" })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["my-device-orders", userId] });
+      toast.success("Order cancelled.");
+    },
+    onError: () => toast.error("Couldn't cancel the order."),
+  });
+
+  return (
+    <>
+      <div className="mt-8 flex items-center justify-between">
+        <h2 className="text-lg font-bold">My laptop orders</h2>
+        <Button asChild variant="hero" size="sm">
+          <Link to="/sell/$category" params={{ category: "laptops" }}>
+            <Laptop className="size-4" /> Sell a device
+          </Link>
+        </Button>
+      </div>
+
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="size-6 animate-spin text-primary" />
+        </div>
+      ) : orders.length === 0 ? (
+        <div className="mt-5 rounded-3xl border border-dashed border-border bg-card p-10 text-center">
+          <Laptop className="mx-auto size-9 text-muted-foreground" />
+          <p className="mt-3 font-semibold">No device orders yet</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Get an instant quote for your laptop and it'll appear here.
+          </p>
+          <Button asChild variant="hero" className="mt-5">
+            <Link to="/sell/$category" params={{ category: "laptops" }}>
+              Sell a device
+            </Link>
+          </Button>
+        </div>
+      ) : (
+        <div className="mt-5 space-y-3">
+          {orders.map((o) => {
+            const cancelled = o.status === "cancelled" || o.status === "rejected";
+            const canCancel = o.status === "new" || o.status === "contacted" || o.status === "scheduled";
+            return (
+              <div key={o.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate font-semibold">{o.model_name ?? "Device"}</p>
+                    <p className="mt-0.5 truncate text-sm text-muted-foreground">
+                      {[o.brand_name, o.series_name].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold capitalize ${
+                      orderStatusStyles[o.status] ?? "bg-secondary text-foreground"
+                    }`}
+                  >
+                    {statusLabel(o.status)}
+                  </span>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1.5 font-bold text-primary">
+                    {formatPrice(o.final_price)}
+                  </span>
+                  {o.preferred_date && (
+                    <span className="flex items-center gap-1.5">
+                      <CalendarDays className="size-3.5 text-primary" /> {o.preferred_date}
+                    </span>
+                  )}
+                  {o.slot && (
+                    <span className="flex items-center gap-1.5">
+                      <Clock className="size-3.5 text-primary" /> {o.slot}
+                    </span>
+                  )}
+                  {o.pincode && (
+                    <span className="flex items-center gap-1.5">
+                      <MapPin className="size-3.5 text-primary" /> {o.pincode}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-3 flex items-center justify-end border-t border-border pt-3">
+                  {canCancel ? (
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline" size="sm" className="text-destructive">
+                          <Ban className="size-4" /> Cancel order
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Cancel this order?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Your {o.model_name ?? "device"} pickup request will be cancelled. You can
+                            always get a fresh quote later.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Keep order</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => cancel.mutate(o.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Cancel order
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  ) : (
+                    <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                      {cancelled ? (
+                        <>
+                          <Ban className="size-3.5" /> {statusLabel(o.status)}
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="size-3.5 text-primary" /> {statusLabel(o.status)}
+                        </>
+                      )}
+                    </span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </>
   );
 }

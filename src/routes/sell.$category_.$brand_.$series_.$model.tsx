@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   ArrowRight,
@@ -591,6 +591,43 @@ function BookingForm({
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState(SLOTS[0]);
   const [notes, setNotes] = useState("");
+  const [prefilled, setPrefilled] = useState(false);
+
+  // Auto-fill from the saved profile (and account details) so returning users
+  // don't retype everything. Their details are saved back on every booking.
+  const { data: prefill } = useQuery({
+    queryKey: ["booking-prefill", userId],
+    enabled: !!userId,
+    staleTime: 60_000,
+    queryFn: async () => {
+      const [{ data: profile }, { data: auth }] = await Promise.all([
+        supabase
+          .from("user_profiles")
+          .select("full_name, whatsapp, address, pincode")
+          .eq("user_id", userId!)
+          .maybeSingle(),
+        supabase.auth.getUser(),
+      ]);
+      const meta = (auth.user?.user_metadata ?? {}) as { full_name?: string; phone?: string };
+      return {
+        full_name: profile?.full_name ?? meta.full_name ?? "",
+        phone: profile?.whatsapp ?? meta.phone ?? "",
+        email: auth.user?.email ?? "",
+        address: profile?.address ?? "",
+        pincode: profile?.pincode ?? "",
+      };
+    },
+  });
+
+  useEffect(() => {
+    if (!prefill || prefilled) return;
+    if (prefill.full_name) setName(prefill.full_name);
+    if (prefill.phone) setPhone(prefill.phone);
+    if (prefill.email) setEmail(prefill.email);
+    if (prefill.address) setAddress(prefill.address);
+    if (prefill.pincode && !pin) setPin(prefill.pincode);
+    setPrefilled(true);
+  }, [prefill, prefilled, pin]);
 
   const book = useMutation({
     mutationFn: async () => {
@@ -615,6 +652,20 @@ function BookingForm({
         user_id: userId,
       });
       if (error) throw error;
+
+      // Persist the customer's details to their profile for next time.
+      if (userId) {
+        await supabase.from("user_profiles").upsert(
+          {
+            user_id: userId,
+            full_name: name.trim() || null,
+            whatsapp: phone.trim() || null,
+            address: address.trim() || null,
+            pincode: pin.trim() || null,
+          },
+          { onConflict: "user_id" },
+        );
+      }
     },
     onSuccess: onBooked,
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't submit your request."),

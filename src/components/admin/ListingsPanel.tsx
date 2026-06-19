@@ -28,12 +28,12 @@ import {
 } from "@/components/ui/select";
 import {
   CONDITIONS,
-  compressImage,
   conditionLabel,
   formatListingPrice,
   slugify,
   type ScrapListing,
 } from "@/lib/scrap-listings";
+import { uploadImageToS3 } from "@/lib/s3-upload";
 
 type Category = { id: string; name: string };
 
@@ -329,10 +329,10 @@ function ListingForm({
     setUploading(true);
     try {
       const picked = Array.from(files).slice(0, room);
-      const compressed = await Promise.all(picked.map((f) => compressImage(f)));
-      set("images", [...form.images, ...compressed]);
-    } catch {
-      toast.error("Couldn't process one of the images.");
+      const uploaded = await Promise.all(picked.map((f) => uploadImageToS3(f, "listings")));
+      set("images", [...form.images, ...uploaded]);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Couldn't upload one of the images.");
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";

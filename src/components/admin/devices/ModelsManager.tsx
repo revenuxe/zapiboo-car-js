@@ -307,6 +307,7 @@ function ModelDialog({
             onChange={setImage}
             shape="contain"
             maxDim={800}
+            folder="models"
             hint="Upload a photo or paste a product image link (PNG, SVG, JPG)."
           />
         </div>

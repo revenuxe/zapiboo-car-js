@@ -127,6 +127,9 @@ function AccountPage() {
           </Button>
         </div>
 
+        {/* laptop / device buyback orders */}
+        <LaptopOrders userId={user!.id} />
+
         {/* bookings */}
         <div className="mt-8 flex items-center justify-between">
           <h2 className="text-lg font-bold">My pickups</h2>

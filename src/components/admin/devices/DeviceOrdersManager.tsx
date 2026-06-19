@@ -74,6 +74,21 @@ export function DeviceOrdersManager() {
     onError: () => toast.error("Couldn't update status."),
   });
 
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from("device_orders").delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "device_orders"] });
+      setActive(null);
+      toast.success("Order deleted.");
+    },
+    onError: () => toast.error("Couldn't delete the order."),
+  });
+
+
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
     return orders.filter((o) => {

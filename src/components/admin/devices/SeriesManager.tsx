@@ -250,6 +250,7 @@ function SeriesDialog({
             value={image}
             onChange={setImage}
             maxDim={700}
+            folder="series"
             hint="Upload a photo or paste an image link (PNG, SVG, JPG)."
           />
         </div>

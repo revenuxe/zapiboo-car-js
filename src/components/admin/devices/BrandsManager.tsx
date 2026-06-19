@@ -216,6 +216,7 @@ function BrandDialog({
             value={logo}
             onChange={setLogo}
             maxDim={512}
+            folder="brands"
             hint="PNG, SVG or a hosted image link. Transparent logos stay transparent."
           />
         </div>

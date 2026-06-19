@@ -4,12 +4,13 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { compressImage } from "@/lib/device-buyback";
+import { uploadImageToS3 } from "@/lib/s3-upload";
 
 /**
- * Reusable image picker for the admin device catalog.
- * Supports BOTH uploading a file (compressed inline) and pasting an image URL.
- * URLs are stored verbatim so SVG / PNG transparency is never flattened to black.
+ * Reusable image picker for the admin catalog.
+ * Uploads files directly to Amazon S3 (returns a public URL) OR accepts a
+ * pasted image URL. Nothing is stored in Supabase, and SVG / PNG transparency
+ * is preserved so logos never render as a black box.
  */
 export function ImageField({
   label,
@@ -17,6 +18,7 @@ export function ImageField({
   onChange,
   shape = "contain",
   maxDim = 600,
+  folder = "uploads",
   hint,
 }: {
   label: string;
@@ -24,6 +26,7 @@ export function ImageField({
   onChange: (v: string | null) => void;
   shape?: "contain" | "cover";
   maxDim?: number;
+  folder?: string;
   hint?: string;
 }) {
   const [uploading, setUploading] = useState(false);
@@ -34,9 +37,9 @@ export function ImageField({
     if (!file) return;
     setUploading(true);
     try {
-      onChange(await compressImage(file, maxDim, 0.82));
-    } catch {
-      toast.error("Couldn't process the image.");
+      onChange(await uploadImageToS3(file, folder, { maxDim, quality: 0.82 }));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Couldn't upload the image.");
     } finally {
       setUploading(false);
       if (fileRef.current) fileRef.current.value = "";

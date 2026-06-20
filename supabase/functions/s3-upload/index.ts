@@ -114,6 +114,7 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
   const headers: Record<string, string> = {
     "content-type": contentType,
     host,
+    "x-amz-acl": "public-read",
     "x-amz-content-sha256": payloadHash,
     "x-amz-date": amzDate,
   };
@@ -138,6 +139,7 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
     method: "PUT",
     headers: {
       "Content-Type": contentType,
+      "X-Amz-Acl": "public-read",
       "X-Amz-Content-Sha256": payloadHash,
       "X-Amz-Date": amzDate,
       ...(sessionToken ? { "X-Amz-Security-Token": sessionToken } : {}),

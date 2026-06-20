@@ -109,6 +109,25 @@ export function SiteFooter() {
 
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wider text-navy-foreground/60">
+                Laptop
+              </h4>
+              <ul className="mt-5 space-y-3 text-sm">
+                <li>
+                  <Link
+                    to="/sell/$category"
+                    params={{ category: "laptops" }}
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Sell laptop
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-navy-foreground/60">
                 Service areas
               </h4>
               <ul className="mt-5 space-y-3 text-sm">

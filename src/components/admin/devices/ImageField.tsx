@@ -8,9 +8,9 @@ import { uploadImageToS3 } from "@/lib/s3-upload";
 
 /**
  * Reusable image picker for the admin catalog.
- * Uploads files directly to Amazon S3 (returns a public URL) OR accepts a
- * pasted image URL. Nothing is stored in Supabase, and SVG / PNG transparency
- * is preserved so logos never render as a black box.
+ * Uploads files to Amazon S3 (returns a public URL) OR accepts a pasted image
+ * URL. Nothing is stored in Supabase, and SVG / PNG transparency is preserved
+ * so logos never render as a black box.
  */
 export function ImageField({
   label,

@@ -1,4 +1,4 @@
-import { getUploadUrl } from "@/lib/s3.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Prepare an image for upload. Raster images are resized + recompressed on a
@@ -64,10 +64,20 @@ async function prepareImage(
   return { blob, contentType: outType, ext };
 }
 
+async function blobToBase64(blob: Blob): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read the prepared image."));
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
+  return dataUrl.slice(dataUrl.indexOf(",") + 1);
+}
+
 /**
- * Compress + upload an image to Amazon S3 via a presigned URL and return its
- * public URL. Used by every admin image field (brands, series, models,
- * listings).
+ * Compress + upload an image to Amazon S3 through a Supabase Edge Function and
+ * return its public URL. Used by every admin image field (brands, series,
+ * models, listings).
  */
 export async function uploadImageToS3(
   file: File,
@@ -77,16 +87,19 @@ export async function uploadImageToS3(
   const { maxDim = 1280, quality = 0.82 } = opts;
   const { blob, contentType, ext } = await prepareImage(file, maxDim, quality);
 
-  const { uploadUrl, publicUrl } = await getUploadUrl({ data: { folder, ext } });
-
-  const res = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: { "Content-Type": contentType },
-    body: blob,
+  const { data, error } = await supabase.functions.invoke<{ publicUrl: string; key: string }>("s3-upload", {
+    body: {
+      folder,
+      ext,
+      contentType,
+      base64: await blobToBase64(blob),
+    },
   });
-  if (!res.ok) {
-    const detail = await res.text().catch(() => "");
-    throw new Error(`Upload failed (${res.status}). ${detail.slice(0, 200)}`);
+  if (error) {
+    throw new Error(error.message || "Upload failed.");
   }
-  return publicUrl;
+  if (!data?.publicUrl) {
+    throw new Error("Upload failed: Supabase did not return an S3 URL.");
+  }
+  return data.publicUrl;
 }

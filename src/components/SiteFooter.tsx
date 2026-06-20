@@ -53,7 +53,7 @@ export function SiteFooter() {
 
       <footer className="bg-gradient-navy text-navy-foreground">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-12 lg:grid-cols-[1.4fr_0.8fr_1fr_1fr]">
+          <div className="grid gap-12 lg:grid-cols-[1.4fr_0.8fr_0.7fr_1fr_1fr]">
             <div>
               <Logo invert />
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy-foreground/70">
@@ -106,6 +106,25 @@ export function SiteFooter() {
                 </li>
               </ul>
             </div>
+
+            <div>
+              <h4 className="text-sm font-semibold uppercase tracking-wider text-navy-foreground/60">
+                Laptop
+              </h4>
+              <ul className="mt-5 space-y-3 text-sm">
+                <li>
+                  <Link
+                    to="/sell/$category"
+                    params={{ category: "laptops" }}
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Sell laptop
+                  </Link>
+                </li>
+              </ul>
+            </div>
+
+
 
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wider text-navy-foreground/60">

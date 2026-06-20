@@ -90,13 +90,6 @@ function decodeBase64(base64: string): Uint8Array {
   return bytes;
 }
 
-function sanitizeAwsError(detail: string): string {
-  return detail
-    .replace(/Credential=[^,<\s]+/g, "Credential=[redacted]")
-    .replace(/Signature=[a-f0-9]+/gi, "Signature=[redacted]")
-    .replace(/AKIA[0-9A-Z]+/g, "[redacted-access-key]");
-}
-
 async function putObjectToS3(key: string, body: Uint8Array, contentType: string): Promise<string> {
   const region = optionalEnv("AWS_REGION") || optionalEnv("AWS_DEFAULT_REGION") || "";
   const accessKeyId = env("AWS_ACCESS_KEY_ID");
@@ -114,7 +107,6 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
   const headers: Record<string, string> = {
     "content-type": contentType,
     host,
-    "x-amz-acl": "public-read",
     "x-amz-content-sha256": payloadHash,
     "x-amz-date": amzDate,
   };
@@ -139,19 +131,22 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
     method: "PUT",
     headers: {
       "Content-Type": contentType,
-      "X-Amz-Acl": "public-read",
       "X-Amz-Content-Sha256": payloadHash,
       "X-Amz-Date": amzDate,
       ...(sessionToken ? { "X-Amz-Security-Token": sessionToken } : {}),
-      Authorization: `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
+      Authorization: [
+        "AWS4-HMAC-SHA256",
+        `Credential=${accessKeyId}/${credentialScope}`,
+        `SignedHeaders=${signedHeaders}`,
+        `Signature=${signature}`,
+      ].join(", "),
     },
     body,
   });
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
-    console.error("[s3-upload] S3 error", res.status, sanitizeAwsError(detail).slice(0, 500));
-    throw new Error(`S3 upload failed (${res.status}). Check Supabase function logs for details.`);
+    throw new Error(`S3 upload failed (${res.status}). ${detail.slice(0, 500)}`);
   }
 
   return `https://${host}${canonicalUri}`;
@@ -203,8 +198,6 @@ Deno.serve(async (req) => {
     const publicUrl = await putObjectToS3(key, decodeBase64(base64), contentType);
     return json({ publicUrl, key });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Upload failed.";
-    console.error("[s3-upload]", message);
-    return json({ error: message }, 500);
+    return json({ error: error instanceof Error ? error.message : "Upload failed." }, 500);
   }
 });

@@ -90,6 +90,13 @@ function decodeBase64(base64: string): Uint8Array {
   return bytes;
 }
 
+function sanitizeAwsError(detail: string): string {
+  return detail
+    .replace(/Credential=[^,<\s]+/g, "Credential=[redacted]")
+    .replace(/Signature=[a-f0-9]+/gi, "Signature=[redacted]")
+    .replace(/AKIA[0-9A-Z]+/g, "[redacted-access-key]");
+}
+
 async function putObjectToS3(key: string, body: Uint8Array, contentType: string): Promise<string> {
   const region = optionalEnv("AWS_REGION") || optionalEnv("AWS_DEFAULT_REGION") || "";
   const accessKeyId = env("AWS_ACCESS_KEY_ID");
@@ -134,19 +141,15 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
       "X-Amz-Content-Sha256": payloadHash,
       "X-Amz-Date": amzDate,
       ...(sessionToken ? { "X-Amz-Security-Token": sessionToken } : {}),
-      Authorization: [
-        "AWS4-HMAC-SHA256",
-        `Credential=${accessKeyId}/${credentialScope}`,
-        `SignedHeaders=${signedHeaders}`,
-        `Signature=${signature}`,
-      ].join(", "),
+      Authorization: `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}`,
     },
     body,
   });
 
   if (!res.ok) {
     const detail = await res.text().catch(() => "");
-    throw new Error(`S3 upload failed (${res.status}). ${detail.slice(0, 500)}`);
+    console.error("[s3-upload] S3 error", res.status, sanitizeAwsError(detail).slice(0, 500));
+    throw new Error(`S3 upload failed (${res.status}). Check Supabase function logs for details.`);
   }
 
   return `https://${host}${canonicalUri}`;

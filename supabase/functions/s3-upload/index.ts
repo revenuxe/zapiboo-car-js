@@ -198,6 +198,8 @@ Deno.serve(async (req) => {
     const publicUrl = await putObjectToS3(key, decodeBase64(base64), contentType);
     return json({ publicUrl, key });
   } catch (error) {
-    return json({ error: error instanceof Error ? error.message : "Upload failed." }, 500);
+    const message = error instanceof Error ? error.message : "Upload failed.";
+    console.error("[s3-upload]", message);
+    return json({ error: message }, 500);
   }
 });

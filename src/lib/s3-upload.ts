@@ -74,6 +74,28 @@ async function blobToBase64(blob: Blob): Promise<string> {
   return dataUrl.slice(dataUrl.indexOf(",") + 1);
 }
 
+async function getEdgeFunctionErrorMessage(error: unknown): Promise<string> {
+  const fallback = error instanceof Error ? error.message : "Upload failed.";
+  const response = (error as { context?: Response | null })?.context;
+  if (!response) return fallback;
+
+  try {
+    const payload = await response.clone().json();
+    if (payload && typeof payload.error === "string") {
+      return payload.error;
+    }
+  } catch {
+    try {
+      const text = await response.clone().text();
+      if (text) return text.slice(0, 500);
+    } catch {
+      // Keep the original Supabase error when the response body is unavailable.
+    }
+  }
+
+  return fallback;
+}
+
 /**
  * Compress + upload an image to Amazon S3 through a Supabase Edge Function and
  * return its public URL. Used by every admin image field (brands, series,
@@ -96,7 +118,7 @@ export async function uploadImageToS3(
     },
   });
   if (error) {
-    throw new Error(error.message || "Upload failed.");
+    throw new Error(await getEdgeFunctionErrorMessage(error));
   }
   if (!data?.publicUrl) {
     throw new Error("Upload failed: Supabase did not return an S3 URL.");

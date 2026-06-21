@@ -523,31 +523,16 @@ function ResultStep({
 }) {
   return (
     <div>
-      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-6 text-navy-foreground shadow-soft">
+      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-7 text-center text-navy-foreground shadow-soft">
         <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Your final quote</p>
-        <p className="mt-1 text-4xl font-extrabold text-gradient sm:text-5xl">{formatPrice(quote.final)}</p>
-        <p className="mt-1 text-sm text-navy-foreground/75">
+        <p className="mt-2 text-5xl font-extrabold text-gradient sm:text-6xl">{formatPrice(quote.final)}</p>
+        <p className="mt-2 text-sm text-navy-foreground/75">
           {brandName} {model.name}
         </p>
-        <div className="mt-4 space-y-1.5 border-t border-navy-foreground/10 pt-3 text-sm">
-          <div className="flex justify-between text-navy-foreground/70">
-            <span>Base price</span>
-            <span>{formatPrice(model.base_price)}</span>
-          </div>
-          {quote.breakdown.map((b, i) => (
-            <div key={i} className="flex justify-between">
-              <span className="text-navy-foreground/70">{b.option}</span>
-              <span className={b.impact >= 0 ? "text-brand-green" : "text-red-300"}>
-                {b.impact >= 0 ? "+" : "−"}
-                {formatPrice(Math.abs(b.impact))}
-              </span>
-            </div>
-          ))}
-          <div className="flex justify-between border-t border-navy-foreground/10 pt-2 text-base font-bold">
-            <span>Final quote</span>
-            <span className="text-gradient">{formatPrice(quote.final)}</span>
-          </div>
-        </div>
+        <p className="mx-auto mt-4 max-w-sm text-xs text-navy-foreground/60">
+          This is your locked offer based on the condition details you shared. The exact amount is confirmed with a
+          free doorstep evaluation — and paid instantly.
+        </p>
       </div>
 
       <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">

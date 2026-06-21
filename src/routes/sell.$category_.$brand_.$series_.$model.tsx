@@ -172,9 +172,18 @@ function EvaluatePage() {
             <h2 className="mt-4 text-2xl font-bold">Pickup requested!</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               Our team will call you shortly to confirm your {modelRow.name} pickup and final price of{" "}
-              <span className="font-bold text-primary">{formatPrice(quote.final)}</span>.
+              <span className="font-bold text-primary">{formatPrice(quote.final)}</span>. Your booking invoice has been
+              downloaded.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {invoice && (
+                <Button
+                  variant="navy"
+                  onClick={() => downloadBookingInvoice(invoice).catch(() => toast.error("Couldn't generate the invoice."))}
+                >
+                  <Download className="size-4" /> Download invoice
+                </Button>
+              )}
               <Button variant="hero" asChild>
                 <Link to="/sell/$category" params={{ category }}>
                   Sell another device

@@ -639,27 +639,31 @@ function BookingForm({
   }, [prefill, prefilled, pin]);
 
   const book = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("device_orders").insert({
-        category_id: categoryId,
-        model_id: model.id,
-        category_name: categoryName,
-        brand_name: brandName,
-        series_name: seriesName,
-        model_name: model.name,
-        base_price: model.base_price,
-        final_price: quote.final,
-        selections: quote.breakdown as unknown as never,
-        name: name.trim(),
-        phone: phone.trim(),
-        email: email.trim() || null,
-        address: address.trim() || null,
-        pincode: pin.trim() || null,
-        preferred_date: date || null,
-        slot,
-        notes: notes.trim() || null,
-        user_id: userId,
-      });
+    mutationFn: async (): Promise<BookingInvoiceData> => {
+      const { data: inserted, error } = await supabase
+        .from("device_orders")
+        .insert({
+          category_id: categoryId,
+          model_id: model.id,
+          category_name: categoryName,
+          brand_name: brandName,
+          series_name: seriesName,
+          model_name: model.name,
+          base_price: model.base_price,
+          final_price: quote.final,
+          selections: quote.breakdown as unknown as never,
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || null,
+          address: address.trim() || null,
+          pincode: pin.trim() || null,
+          preferred_date: date || null,
+          slot,
+          notes: notes.trim() || null,
+          user_id: userId,
+        })
+        .select("id, created_at")
+        .single();
       if (error) throw error;
 
       // Persist the customer's details to their profile for next time.
@@ -675,12 +679,39 @@ function BookingForm({
           { onConflict: "user_id" },
         );
       }
+
+      const reference = `HM-${String(inserted?.id ?? "").slice(0, 8).toUpperCase() || Date.now().toString(36).toUpperCase()}`;
+      return {
+        reference,
+        createdAt: inserted?.created_at ? new Date(inserted.created_at) : new Date(),
+        customer: {
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || null,
+          address: address.trim() || null,
+          pincode: pin.trim() || null,
+        },
+        device: {
+          category: categoryName,
+          brand: brandName,
+          series: seriesName,
+          model: model.name,
+        },
+        finalPrice: quote.final,
+        preferredDate: date || null,
+        slot,
+        notes: notes.trim() || null,
+      };
     },
-    onSuccess: onBooked,
+    onSuccess: (inv) => {
+      // Auto-download the booking invoice, then advance to the thank-you screen.
+      downloadBookingInvoice(inv).catch(() => toast.error("Booking saved, but the invoice couldn't be generated."));
+      onBooked(inv);
+    },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't submit your request."),
   });
 
-  const valid = name.trim().length > 1 && /^\d{10}$/.test(phone.trim());
+  const valid = name.trim().length > 1 && /^\d{10}$/.test(phone.trim()) && agreed;
 
   return (
     <div>

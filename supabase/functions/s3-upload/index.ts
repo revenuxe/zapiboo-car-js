@@ -141,7 +141,6 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
     method: "PUT",
     headers: {
       "Content-Type": contentType,
-      "X-Amz-Acl": "public-read",
       "X-Amz-Content-Sha256": payloadHash,
       "X-Amz-Date": amzDate,
       ...(sessionToken ? { "X-Amz-Security-Token": sessionToken } : {}),

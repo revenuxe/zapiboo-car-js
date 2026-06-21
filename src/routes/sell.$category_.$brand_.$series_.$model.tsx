@@ -315,7 +315,10 @@ function EvaluatePage() {
               pincode={pincode}
               userId={user?.id ?? null}
               onBack={() => setPhase("result")}
-              onBooked={() => setDone(true)}
+              onBooked={(inv) => {
+                setInvoice(inv);
+                setDone(true);
+              }}
             />
           </div>
         )}

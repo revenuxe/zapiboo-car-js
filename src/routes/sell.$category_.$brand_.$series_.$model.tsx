@@ -82,6 +82,7 @@ function EvaluatePage() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [condStep, setCondStep] = useState(0);
   const [done, setDone] = useState(false);
+  const [invoice, setInvoice] = useState<BookingInvoiceData | null>(null);
   const [pincode, setPincode] = useState("");
   const [restored, setRestored] = useState(false);
 

@@ -589,7 +589,7 @@ function BookingForm({
   pincode: string;
   userId: string | null;
   onBack: () => void;
-  onBooked: () => void;
+  onBooked: (invoice: BookingInvoiceData) => void;
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");

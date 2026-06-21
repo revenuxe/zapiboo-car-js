@@ -7,6 +7,7 @@ import {
   BadgeIndianRupee,
   Check,
   CheckCircle2,
+  Download,
   Laptop,
   Loader2,
   LogIn,
@@ -18,11 +19,13 @@ import {
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Breadcrumbs } from "@/components/sell/CatalogShell";
 import { useAuth } from "@/hooks/use-auth";
+import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
 import { PINCODE_KEY } from "@/routes/sell.$category";
 import {
   calculateQuote,
@@ -79,6 +82,7 @@ function EvaluatePage() {
   const [phase, setPhase] = useState<Phase>("intro");
   const [condStep, setCondStep] = useState(0);
   const [done, setDone] = useState(false);
+  const [invoice, setInvoice] = useState<BookingInvoiceData | null>(null);
   const [pincode, setPincode] = useState("");
   const [restored, setRestored] = useState(false);
 
@@ -107,6 +111,13 @@ function EvaluatePage() {
       sessionStorage.removeItem(storageKey);
     }
   }, [restored, authLoading, user, storageKey]);
+
+  // Every step / screen change should start from the very top.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+  }, [phase, condStep, done]);
 
   const selectedOptions = useMemo(() => {
     const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
@@ -161,9 +172,18 @@ function EvaluatePage() {
             <h2 className="mt-4 text-2xl font-bold">Pickup requested!</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
               Our team will call you shortly to confirm your {modelRow.name} pickup and final price of{" "}
-              <span className="font-bold text-primary">{formatPrice(quote.final)}</span>.
+              <span className="font-bold text-primary">{formatPrice(quote.final)}</span>. Your booking invoice has been
+              downloaded.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2">
+              {invoice && (
+                <Button
+                  variant="navy"
+                  onClick={() => downloadBookingInvoice(invoice).catch(() => toast.error("Couldn't generate the invoice."))}
+                >
+                  <Download className="size-4" /> Download invoice
+                </Button>
+              )}
               <Button variant="hero" asChild>
                 <Link to="/sell/$category" params={{ category }}>
                   Sell another device
@@ -295,7 +315,10 @@ function EvaluatePage() {
               pincode={pincode}
               userId={user?.id ?? null}
               onBack={() => setPhase("result")}
-              onBooked={() => setDone(true)}
+              onBooked={(inv) => {
+                setInvoice(inv);
+                setDone(true);
+              }}
             />
           </div>
         )}
@@ -516,31 +539,16 @@ function ResultStep({
 }) {
   return (
     <div>
-      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-6 text-navy-foreground shadow-soft">
+      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-7 text-center text-navy-foreground shadow-soft">
         <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Your final quote</p>
-        <p className="mt-1 text-4xl font-extrabold text-gradient sm:text-5xl">{formatPrice(quote.final)}</p>
-        <p className="mt-1 text-sm text-navy-foreground/75">
+        <p className="mt-2 text-5xl font-extrabold text-gradient sm:text-6xl">{formatPrice(quote.final)}</p>
+        <p className="mt-2 text-sm text-navy-foreground/75">
           {brandName} {model.name}
         </p>
-        <div className="mt-4 space-y-1.5 border-t border-navy-foreground/10 pt-3 text-sm">
-          <div className="flex justify-between text-navy-foreground/70">
-            <span>Base price</span>
-            <span>{formatPrice(model.base_price)}</span>
-          </div>
-          {quote.breakdown.map((b, i) => (
-            <div key={i} className="flex justify-between">
-              <span className="text-navy-foreground/70">{b.option}</span>
-              <span className={b.impact >= 0 ? "text-brand-green" : "text-red-300"}>
-                {b.impact >= 0 ? "+" : "−"}
-                {formatPrice(Math.abs(b.impact))}
-              </span>
-            </div>
-          ))}
-          <div className="flex justify-between border-t border-navy-foreground/10 pt-2 text-base font-bold">
-            <span>Final quote</span>
-            <span className="text-gradient">{formatPrice(quote.final)}</span>
-          </div>
-        </div>
+        <p className="mx-auto mt-4 max-w-sm text-xs text-navy-foreground/60">
+          This is your locked offer based on the condition details you shared. The exact amount is confirmed with a
+          free doorstep evaluation — and paid instantly.
+        </p>
       </div>
 
       <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
@@ -581,7 +589,7 @@ function BookingForm({
   pincode: string;
   userId: string | null;
   onBack: () => void;
-  onBooked: () => void;
+  onBooked: (invoice: BookingInvoiceData) => void;
 }) {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -591,6 +599,7 @@ function BookingForm({
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState(SLOTS[0]);
   const [notes, setNotes] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
 
   // Auto-fill from the saved profile (and account details) so returning users
@@ -630,27 +639,31 @@ function BookingForm({
   }, [prefill, prefilled, pin]);
 
   const book = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("device_orders").insert({
-        category_id: categoryId,
-        model_id: model.id,
-        category_name: categoryName,
-        brand_name: brandName,
-        series_name: seriesName,
-        model_name: model.name,
-        base_price: model.base_price,
-        final_price: quote.final,
-        selections: quote.breakdown as unknown as never,
-        name: name.trim(),
-        phone: phone.trim(),
-        email: email.trim() || null,
-        address: address.trim() || null,
-        pincode: pin.trim() || null,
-        preferred_date: date || null,
-        slot,
-        notes: notes.trim() || null,
-        user_id: userId,
-      });
+    mutationFn: async (): Promise<BookingInvoiceData> => {
+      const { data: inserted, error } = await supabase
+        .from("device_orders")
+        .insert({
+          category_id: categoryId,
+          model_id: model.id,
+          category_name: categoryName,
+          brand_name: brandName,
+          series_name: seriesName,
+          model_name: model.name,
+          base_price: model.base_price,
+          final_price: quote.final,
+          selections: quote.breakdown as unknown as never,
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || null,
+          address: address.trim() || null,
+          pincode: pin.trim() || null,
+          preferred_date: date || null,
+          slot,
+          notes: notes.trim() || null,
+          user_id: userId,
+        })
+        .select("id, created_at")
+        .single();
       if (error) throw error;
 
       // Persist the customer's details to their profile for next time.
@@ -666,12 +679,39 @@ function BookingForm({
           { onConflict: "user_id" },
         );
       }
+
+      const reference = `HM-${String(inserted?.id ?? "").slice(0, 8).toUpperCase() || Date.now().toString(36).toUpperCase()}`;
+      return {
+        reference,
+        createdAt: inserted?.created_at ? new Date(inserted.created_at) : new Date(),
+        customer: {
+          name: name.trim(),
+          phone: phone.trim(),
+          email: email.trim() || null,
+          address: address.trim() || null,
+          pincode: pin.trim() || null,
+        },
+        device: {
+          category: categoryName,
+          brand: brandName,
+          series: seriesName,
+          model: model.name,
+        },
+        finalPrice: quote.final,
+        preferredDate: date || null,
+        slot,
+        notes: notes.trim() || null,
+      };
     },
-    onSuccess: onBooked,
+    onSuccess: (inv) => {
+      // Auto-download the booking invoice, then advance to the thank-you screen.
+      downloadBookingInvoice(inv).catch(() => toast.error("Booking saved, but the invoice couldn't be generated."));
+      onBooked(inv);
+    },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't submit your request."),
   });
 
-  const valid = name.trim().length > 1 && /^\d{10}$/.test(phone.trim());
+  const valid = name.trim().length > 1 && /^\d{10}$/.test(phone.trim()) && agreed;
 
   return (
     <div>
@@ -738,10 +778,25 @@ function BookingForm({
         </div>
       </div>
 
+      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-secondary/40 p-3.5">
+        <Checkbox
+          checked={agreed}
+          onCheckedChange={(v) => setAgreed(v === true)}
+          className="mt-0.5"
+        />
+        <span className="text-xs leading-relaxed text-muted-foreground">
+          I agree to HuluMart's{" "}
+          <Link to="/terms" target="_blank" className="font-semibold text-primary underline-offset-2 hover:underline">
+            Terms &amp; Conditions
+          </Link>{" "}
+          and understand the final price is confirmed after a free doorstep evaluation of my device.
+        </span>
+      </label>
+
       <Button
         variant="hero"
         size="lg"
-        className="mt-5 w-full"
+        className="mt-4 w-full"
         disabled={!valid || book.isPending}
         onClick={() => book.mutate()}
       >
@@ -750,7 +805,9 @@ function BookingForm({
       </Button>
       {!valid && (
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          Enter your name and a valid 10-digit phone number to continue.
+          {!agreed && name.trim().length > 1 && /^\d{10}$/.test(phone.trim())
+            ? "Please accept the Terms & Conditions to continue."
+            : "Enter your name, a valid 10-digit phone number, and accept the terms to continue."}
         </p>
       )}
     </div>

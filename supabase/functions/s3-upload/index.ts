@@ -111,10 +111,12 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
   const canonicalUri = `/${encodeRfc3986(key, true)}`;
   const { amzDate, dateStamp } = amzDates();
   const payloadHash = await sha256Hex(body);
+  // NOTE: No "x-amz-acl" header. Modern S3 buckets disable ACLs
+  // ("Bucket owner enforced"), so sending an ACL fails with
+  // AccessControlListNotSupported. Public read is granted via a bucket policy.
   const headers: Record<string, string> = {
     "content-type": contentType,
     host,
-    "x-amz-acl": "public-read",
     "x-amz-content-sha256": payloadHash,
     "x-amz-date": amzDate,
   };
@@ -139,7 +141,6 @@ async function putObjectToS3(key: string, body: Uint8Array, contentType: string)
     method: "PUT",
     headers: {
       "Content-Type": contentType,
-      "X-Amz-Acl": "public-read",
       "X-Amz-Content-Sha256": payloadHash,
       "X-Amz-Date": amzDate,
       ...(sessionToken ? { "X-Amz-Security-Token": sessionToken } : {}),

@@ -108,6 +108,13 @@ function EvaluatePage() {
     }
   }, [restored, authLoading, user, storageKey]);
 
+  // Every step / screen change should start from the very top.
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+    }
+  }, [phase, condStep, done]);
+
   const selectedOptions = useMemo(() => {
     const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
     for (const g of groups) {

@@ -778,10 +778,25 @@ function BookingForm({
         </div>
       </div>
 
+      <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-secondary/40 p-3.5">
+        <Checkbox
+          checked={agreed}
+          onCheckedChange={(v) => setAgreed(v === true)}
+          className="mt-0.5"
+        />
+        <span className="text-xs leading-relaxed text-muted-foreground">
+          I agree to HuluMart's{" "}
+          <Link to="/terms" target="_blank" className="font-semibold text-primary underline-offset-2 hover:underline">
+            Terms &amp; Conditions
+          </Link>{" "}
+          and understand the final price is confirmed after a free doorstep evaluation of my device.
+        </span>
+      </label>
+
       <Button
         variant="hero"
         size="lg"
-        className="mt-5 w-full"
+        className="mt-4 w-full"
         disabled={!valid || book.isPending}
         onClick={() => book.mutate()}
       >
@@ -790,7 +805,9 @@ function BookingForm({
       </Button>
       {!valid && (
         <p className="mt-2 text-center text-xs text-muted-foreground">
-          Enter your name and a valid 10-digit phone number to continue.
+          {!agreed && name.trim().length > 1 && /^\d{10}$/.test(phone.trim())
+            ? "Please accept the Terms & Conditions to continue."
+            : "Enter your name, a valid 10-digit phone number, and accept the terms to continue."}
         </p>
       )}
     </div>

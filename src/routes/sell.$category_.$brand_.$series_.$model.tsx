@@ -599,6 +599,7 @@ function BookingForm({
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState(SLOTS[0]);
   const [notes, setNotes] = useState("");
+  const [agreed, setAgreed] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
 
   // Auto-fill from the saved profile (and account details) so returning users

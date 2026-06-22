@@ -117,14 +117,37 @@ export function BrandsManager({ categoryId }: { categoryId: string }) {
         <EmptyState onAdd={() => setOpen(true)} />
       ) : (
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-          {brands.map((b) => (
+          {brands.map((b, i) => (
             <div key={b.id} className="rounded-2xl border border-border bg-card p-3 shadow-soft">
-              <div className="flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl bg-secondary">
+              <div className="relative flex aspect-[3/2] items-center justify-center overflow-hidden rounded-xl bg-secondary">
                 {b.logo ? (
                   <img src={b.logo} alt={b.name} className="max-h-full max-w-full object-contain p-2" />
                 ) : (
                   <Tag className="size-7 text-muted-foreground" />
                 )}
+                <div className="absolute left-1.5 top-1.5 flex items-center gap-1 rounded-full bg-background/85 p-0.5 shadow-soft backdrop-blur">
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-6 rounded-full"
+                    disabled={i === 0 || swap.isPending}
+                    title="Move left"
+                    onClick={() => move(i, -1)}
+                  >
+                    <ArrowLeft className="size-3.5" />
+                  </Button>
+                  <span className="px-0.5 text-[10px] font-bold text-muted-foreground">{i + 1}</span>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="size-6 rounded-full"
+                    disabled={i === brands.length - 1 || swap.isPending}
+                    title="Move right"
+                    onClick={() => move(i, 1)}
+                  >
+                    <ArrowRight className="size-3.5" />
+                  </Button>
+                </div>
               </div>
               <div className="mt-2.5 flex items-center justify-between gap-1">
                 <p className="min-w-0 flex-1 truncate font-bold">{b.name}</p>

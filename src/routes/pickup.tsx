@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadDataUrlToS3 } from "@/lib/s3-upload";
 import { householdTypes } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";

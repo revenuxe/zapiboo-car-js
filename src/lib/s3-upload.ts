@@ -125,3 +125,27 @@ export async function uploadImageToS3(
   }
   return data.publicUrl;
 }
+
+/**
+ * Upload an already-prepared JPEG/PNG data URL (e.g. a canvas-compressed photo)
+ * to Amazon S3 and return its public URL. Used by customer flows like the
+ * pickup booking photo, where the image is compressed before upload.
+ */
+export async function uploadDataUrlToS3(dataUrl: string, folder: string): Promise<string> {
+  const match = /^data:([^;]+);base64,(.*)$/i.exec(dataUrl);
+  if (!match) throw new Error("Invalid image data.");
+  const contentType = match[1] || "image/jpeg";
+  const base64 = match[2];
+  const ext = contentType.includes("png") ? "png" : contentType.includes("webp") ? "webp" : "jpg";
+
+  const { data, error } = await supabase.functions.invoke<{ publicUrl: string; key: string }>("s3-upload", {
+    body: { folder, ext, contentType, base64 },
+  });
+  if (error) {
+    throw new Error(await getEdgeFunctionErrorMessage(error));
+  }
+  if (!data?.publicUrl) {
+    throw new Error("Upload failed: Supabase did not return an S3 URL.");
+  }
+  return data.publicUrl;
+}

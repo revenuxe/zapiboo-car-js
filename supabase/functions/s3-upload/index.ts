@@ -182,15 +182,25 @@ Deno.serve(async (req) => {
       return json({ error: "Unauthorized" }, 401);
     }
 
-    const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
-      _user_id: userData.user.id,
-      _role: "admin",
-    });
-    if (roleError || !isAdmin) {
-      return json({ error: "Forbidden: admin access required." }, 403);
+    const input = (await req.json()) as UploadRequest;
+    const requestedFolder = (input.folder || "uploads").toString();
+    // Folders any signed-in customer is allowed to upload to (e.g. pickup
+    // booking photos, device-order photos). Everything else is admin-only
+    // catalog imagery (brands, series, models, listings).
+    const topFolder = requestedFolder.replace(/^\/+/, "").split("/")[0].toLowerCase();
+    const CUSTOMER_FOLDERS = new Set(["pickups", "pickup", "orders", "order", "device-orders"]);
+    const isCustomerFolder = CUSTOMER_FOLDERS.has(topFolder);
+
+    if (!isCustomerFolder) {
+      const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
+        _user_id: userData.user.id,
+        _role: "admin",
+      });
+      if (roleError || !isAdmin) {
+        return json({ error: "Forbidden: admin access required." }, 403);
+      }
     }
 
-    const input = (await req.json()) as UploadRequest;
     const base64 = typeof input.base64 === "string" ? input.base64 : "";
     if (!base64) {
       return json({ error: "No image data was provided." }, 400);
@@ -200,7 +210,7 @@ Deno.serve(async (req) => {
     }
 
     const contentType = typeof input.contentType === "string" ? input.contentType : "application/octet-stream";
-    const key = buildObjectKey(input.folder || "uploads", input.ext || "bin");
+    const key = buildObjectKey(requestedFolder, input.ext || "bin");
     const publicUrl = await putObjectToS3(key, decodeBase64(base64), contentType);
     return json({ publicUrl, key });
   } catch (error) {

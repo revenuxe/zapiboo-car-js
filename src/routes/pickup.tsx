@@ -389,12 +389,26 @@ function Pickup() {
       return toast.error("Add your name and a valid phone number.");
 
     setSaving(true);
+
+    // Upload the (optional) compressed photo to S3 so we store a URL, not the
+    // full base64 blob, in the database.
+    let photoUrl: string | null = null;
+    if (photo) {
+      try {
+        photoUrl = photo.startsWith("data:") ? await uploadDataUrlToS3(photo, "pickups") : photo;
+      } catch (err) {
+        setSaving(false);
+        toast.error(err instanceof Error ? err.message : "Couldn't upload the photo. Please try again.");
+        return;
+      }
+    }
+
     const { error } = await supabase.from("leads").insert({
       scrap_mode: scrapMode || "mixed",
       items: scrapMode === "specific" ? items : [],
       size_tier: null,
-      has_photo: !!photo,
-      photo_url: photo,
+      has_photo: !!photoUrl,
+      photo_url: photoUrl,
       locality: null,
       pincode,
       address: address.trim(),

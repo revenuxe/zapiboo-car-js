@@ -50,6 +50,35 @@ export function BrandsManager({ categoryId }: { categoryId: string }) {
     onError: () => toast.error("Couldn't update the brand."),
   });
 
+  const swap = useMutation({
+    mutationFn: async ({ a, b }: { a: DeviceBrand; b: DeviceBrand }) => {
+      const { error: e1 } = await supabase
+        .from("device_brands")
+        .update({ sort_order: b.sort_order })
+        .eq("id", a.id);
+      const { error: e2 } = await supabase
+        .from("device_brands")
+        .update({ sort_order: a.sort_order })
+        .eq("id", b.id);
+      if (e1 || e2) throw e1 || e2;
+    },
+    onSuccess: invalidate,
+    onError: () => toast.error("Couldn't reorder the brands."),
+  });
+
+  const move = (index: number, dir: -1 | 1) => {
+    const a = brands[index];
+    const b = brands[index + dir];
+    if (a && b) {
+      // Guard against equal sort_order values (legacy rows) so a swap still moves them.
+      if (a.sort_order === b.sort_order) {
+        a.sort_order = index;
+        b.sort_order = index + dir;
+      }
+      swap.mutate({ a, b });
+    }
+  };
+
   const del = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase.from("device_brands").delete().eq("id", id);

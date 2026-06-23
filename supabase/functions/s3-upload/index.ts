@@ -195,33 +195,33 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return json({ error: "Unauthorized" }, 401);
-    }
-
-    const supabase = createClient(env("SUPABASE_URL"), env("SUPABASE_ANON_KEY"), {
-      global: { headers: { Authorization: authHeader } },
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !userData.user) {
-      return json({ error: "Unauthorized" }, 401);
-    }
-
     const input = (await req.json()) as UploadRequest;
     const requestedFolder = (input.folder || "uploads").toString();
-    // Folders any signed-in customer is allowed to upload to (e.g. pickup
-    // booking photos, device-order photos). Everything else is admin-only
-    // catalog imagery (brands, series, models, listings).
+    // Customer-facing flows upload before a booking may be complete, so pickup
+    // folders accept tightly-validated image uploads from visitors too. Catalog
+    // folders remain admin-only.
     const topFolder = requestedFolder.replace(/^\/+/, "").split("/")[0].toLowerCase();
     const CUSTOMER_FOLDERS = new Set(["pickups", "pickup", "orders", "order", "device-orders"]);
     const isCustomerFolder = CUSTOMER_FOLDERS.has(topFolder);
 
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ") && !isCustomerFolder) {
+      return json({ error: "Unauthorized" }, 401);
+    }
+
+    const supabase = createClient(env("SUPABASE_URL"), env("SUPABASE_ANON_KEY"), {
+      global: { headers: authHeader ? { Authorization: authHeader } : {} },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const token = authHeader?.replace("Bearer ", "") ?? "";
+    const { data: userData, error: userError } = token
+      ? await supabase.auth.getUser(token)
+      : { data: { user: null }, error: null };
+    if (token && (userError || !userData.user)) return json({ error: "Unauthorized" }, 401);
+
     if (!isCustomerFolder) {
       const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
-        _user_id: userData.user.id,
+        _user_id: userData.user!.id,
         _role: "admin",
       });
       if (roleError || !isAdmin) {

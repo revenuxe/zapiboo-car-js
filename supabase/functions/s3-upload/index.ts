@@ -14,6 +14,8 @@ type UploadRequest = {
 };
 
 const encoder = new TextEncoder();
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
+const ALLOWED_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "svg"]);
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -43,6 +45,32 @@ function buildObjectKey(folder: string, ext: string): string {
   const cleanFolder = folder.replace(/[^a-z0-9/_-]/gi, "").replace(/^\/+|\/+$/g, "") || "uploads";
   const cleanExt = ext.replace(/[^a-z0-9]/gi, "").toLowerCase() || "bin";
   return `${cleanFolder}/${crypto.randomUUID()}.${cleanExt}`;
+}
+
+function cleanBase64(input: string): string {
+  let cleaned = input.trim();
+  if (cleaned.startsWith("data:") && cleaned.includes(",")) {
+    cleaned = cleaned.slice(cleaned.indexOf(",") + 1);
+  }
+  cleaned = cleaned.replace(/\s/g, "");
+  if (!cleaned || !/^[A-Za-z0-9+/]*={0,2}$/.test(cleaned)) {
+    throw new Error("Invalid image data.");
+  }
+  return cleaned;
+}
+
+function normalizeExt(ext: string, contentType: string): string {
+  const fromType = contentType.includes("png")
+    ? "png"
+    : contentType.includes("webp")
+      ? "webp"
+      : contentType.includes("gif")
+        ? "gif"
+        : contentType.includes("svg")
+          ? "svg"
+          : "jpg";
+  const cleanExt = ext.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return ALLOWED_EXTENSIONS.has(cleanExt) ? cleanExt : fromType;
 }
 
 function amzDates(now = new Date()) {
@@ -201,7 +229,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const base64 = typeof input.base64 === "string" ? input.base64 : "";
+    const base64 = typeof input.base64 === "string" ? cleanBase64(input.base64) : "";
     if (!base64) {
       return json({ error: "No image data was provided." }, 400);
     }
@@ -209,8 +237,12 @@ Deno.serve(async (req) => {
       return json({ error: "Image is too large after compression." }, 413);
     }
 
-    const contentType = typeof input.contentType === "string" ? input.contentType : "application/octet-stream";
-    const key = buildObjectKey(requestedFolder, input.ext || "bin");
+    const contentType = (typeof input.contentType === "string" ? input.contentType : "image/jpeg").toLowerCase();
+    if (!ALLOWED_IMAGE_TYPES.has(contentType)) {
+      return json({ error: "Only image uploads are allowed." }, 415);
+    }
+
+    const key = buildObjectKey(requestedFolder, normalizeExt(input.ext || "", contentType));
     const publicUrl = await putObjectToS3(key, decodeBase64(base64), contentType);
     return json({ publicUrl, key });
   } catch (error) {

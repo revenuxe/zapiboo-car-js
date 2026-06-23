@@ -183,8 +183,7 @@ function Pickup() {
     }
   };
 
-  const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> | null => {
-    if (!user) return null;
+  const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> => {
     if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
     if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
       return photoUploadPromiseRef.current;
@@ -418,7 +417,7 @@ function Pickup() {
         uploadedUrl: null,
       };
       setPhoto(nextPhoto);
-      beginPhotoUpload(nextPhoto, true)?.catch(() => {
+      beginPhotoUpload(nextPhoto, true).catch(() => {
         // The booking submit path retries and blocks if the early upload fails.
       });
     } catch (err) {

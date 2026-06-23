@@ -152,33 +152,44 @@ function About() {
         </div>
       </section>
 
-      <section className="bg-secondary/40 py-16 md:py-20">
+      <section className="bg-gradient-to-r from-slate-950 via-primary to-slate-950 py-20 text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal>
-            <div className="grid gap-8 rounded-3xl border border-border bg-card p-8 shadow-soft md:grid-cols-[1fr_auto] md:items-center md:p-10">
-              <div className="space-y-4">
-                <div className="flex size-12 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
-                  <BadgeCheck className="size-6" />
+            <div className="grid gap-10 rounded-[2.5rem] border border-white/10 bg-white/5 p-8 shadow-[0_40px_120px_rgba(15,23,42,0.35)] md:grid-cols-[1.2fr_0.8fr] md:p-12">
+              <div className="space-y-6">
+                <div className="inline-flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold uppercase tracking-[0.22em] text-white/80 shadow-lg shadow-white/5">
+                  A Platform by Revenuxe
                 </div>
-                <div>
-                  <p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">
-                    Product by Revenuxe
-                  </p>
-                  <h2 className="mt-2 text-3xl font-bold sm:text-4xl">
-                    Built by Revenuxe for a cleaner scrap economy
-                  </h2>
-                </div>
-                <p className="max-w-3xl text-muted-foreground">
-                  HuluMart is a Revenuxe product designed to bring local scrap experience, practical
-                  technology and reliable operations together for customers and business sellers.
+                <h2 className="text-4xl font-bold leading-tight sm:text-5xl">
+                  Bringing sustainable scrap collection into the digital age
+                </h2>
+                <p className="max-w-2xl text-lg text-white/80">
+                  Revenuxe powers HuluMart with a thoughtful platform experience, blending marketplace expertise, service reliability and a bold vision for cleaner materials reuse.
                 </p>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-3xl bg-white/10 p-6 backdrop-blur-xl">
+                    <p className="text-sm uppercase tracking-[0.18em] text-white/70">Trusted innovation</p>
+                    <p className="mt-3 text-base text-white/90">Designed to support Bangalore homes and businesses with dependable pickup and clear pricing.</p>
+                  </div>
+                  <div className="rounded-3xl bg-white/10 p-6 backdrop-blur-xl">
+                    <p className="text-sm uppercase tracking-[0.18em] text-white/70">Built for impact</p>
+                    <p className="mt-3 text-base text-white/90">Focused on making scrap more valuable, accountable and easier to move through the right channels.</p>
+                  </div>
+                </div>
               </div>
-              <Button asChild variant="outline" size="lg">
-                <a href="https://www.revenuxe.com" target="_blank" rel="noreferrer">
-                  Visit Revenuxe
-                  <ExternalLink />
-                </a>
-              </Button>
+              <div className="rounded-[2rem] border border-white/10 bg-slate-950/75 p-8 shadow-2xl shadow-slate-950/40">
+                <p className="text-sm uppercase tracking-[0.24em] text-primary">Discover Revenuxe</p>
+                <h3 className="mt-4 text-2xl font-bold text-white">Visit our platform</h3>
+                <p className="mt-4 text-white/75">
+                  Explore the full vision, services and latest work at the Revenuxe website. Your next sustainable project starts at the link below.
+                </p>
+                <Button asChild variant="secondary" size="lg" className="mt-8 w-full justify-center">
+                  <a href="https://www.revenuxe.com" target="_blank" rel="noreferrer">
+                    Go to Revenuxe
+                    <ExternalLink />
+                  </a>
+                </Button>
+              </div>
             </div>
           </Reveal>
         </div>

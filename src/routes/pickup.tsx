@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
-import { uploadDataUrlToS3 } from "@/lib/s3-upload";
+import { uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
 import { householdTypes } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
@@ -114,6 +114,12 @@ function imageToDataUrl(file: File): Promise<string> {
   });
 }
 
+type PickupPhoto = {
+  previewUrl: string;
+  file: File;
+  uploadedUrl: string | null;
+};
+
 function Pickup() {
   const pickupSearch = Route.useSearch();
   const { data: categories = [] } = useScrapCategories();
@@ -125,7 +131,7 @@ function Pickup() {
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
   const [items, setItems] = useState<string[]>([]);
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   // step 2

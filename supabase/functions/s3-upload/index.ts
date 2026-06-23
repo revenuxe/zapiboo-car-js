@@ -14,6 +14,8 @@ type UploadRequest = {
 };
 
 const encoder = new TextEncoder();
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif", "image/svg+xml"]);
+const ALLOWED_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "svg"]);
 
 function json(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
@@ -43,6 +45,32 @@ function buildObjectKey(folder: string, ext: string): string {
   const cleanFolder = folder.replace(/[^a-z0-9/_-]/gi, "").replace(/^\/+|\/+$/g, "") || "uploads";
   const cleanExt = ext.replace(/[^a-z0-9]/gi, "").toLowerCase() || "bin";
   return `${cleanFolder}/${crypto.randomUUID()}.${cleanExt}`;
+}
+
+function cleanBase64(input: string): string {
+  let cleaned = input.trim();
+  if (cleaned.startsWith("data:") && cleaned.includes(",")) {
+    cleaned = cleaned.slice(cleaned.indexOf(",") + 1);
+  }
+  cleaned = cleaned.replace(/\s/g, "");
+  if (!cleaned || !/^[A-Za-z0-9+/]*={0,2}$/.test(cleaned)) {
+    throw new Error("Invalid image data.");
+  }
+  return cleaned;
+}
+
+function normalizeExt(ext: string, contentType: string): string {
+  const fromType = contentType.includes("png")
+    ? "png"
+    : contentType.includes("webp")
+      ? "webp"
+      : contentType.includes("gif")
+        ? "gif"
+        : contentType.includes("svg")
+          ? "svg"
+          : "jpg";
+  const cleanExt = ext.replace(/[^a-z0-9]/gi, "").toLowerCase();
+  return ALLOWED_EXTENSIONS.has(cleanExt) ? cleanExt : fromType;
 }
 
 function amzDates(now = new Date()) {
@@ -167,33 +195,36 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader?.startsWith("Bearer ")) {
-      return json({ error: "Unauthorized" }, 401);
-    }
-
-    const supabase = createClient(env("SUPABASE_URL"), env("SUPABASE_ANON_KEY"), {
-      global: { headers: { Authorization: authHeader } },
-      auth: { persistSession: false, autoRefreshToken: false },
-    });
-    const token = authHeader.replace("Bearer ", "");
-    const { data: userData, error: userError } = await supabase.auth.getUser(token);
-    if (userError || !userData.user) {
-      return json({ error: "Unauthorized" }, 401);
-    }
-
     const input = (await req.json()) as UploadRequest;
     const requestedFolder = (input.folder || "uploads").toString();
-    // Folders any signed-in customer is allowed to upload to (e.g. pickup
-    // booking photos, device-order photos). Everything else is admin-only
-    // catalog imagery (brands, series, models, listings).
+    // Customer-facing flows upload before a booking may be complete, so pickup
+    // folders accept tightly-validated image uploads from visitors too. Catalog
+    // folders remain admin-only.
     const topFolder = requestedFolder.replace(/^\/+/, "").split("/")[0].toLowerCase();
     const CUSTOMER_FOLDERS = new Set(["pickups", "pickup", "orders", "order", "device-orders"]);
     const isCustomerFolder = CUSTOMER_FOLDERS.has(topFolder);
 
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ") && !isCustomerFolder) {
+      return json({ error: "Unauthorized" }, 401);
+    }
+
+    const supabase = createClient(env("SUPABASE_URL"), env("SUPABASE_ANON_KEY"), {
+      global: { headers: authHeader ? { Authorization: authHeader } : {} },
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    const token = authHeader?.replace("Bearer ", "") ?? "";
+    const isAnonApiKey = token === env("SUPABASE_ANON_KEY");
+    const { data: userData, error: userError } = token && !isAnonApiKey
+      ? await supabase.auth.getUser(token)
+      : { data: { user: null }, error: null };
+    if (!isCustomerFolder && (!token || isAnonApiKey || userError || !userData.user)) {
+      return json({ error: "Unauthorized" }, 401);
+    }
+
     if (!isCustomerFolder) {
       const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
-        _user_id: userData.user.id,
+        _user_id: userData.user!.id,
         _role: "admin",
       });
       if (roleError || !isAdmin) {
@@ -201,7 +232,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    const base64 = typeof input.base64 === "string" ? input.base64 : "";
+    const base64 = typeof input.base64 === "string" ? cleanBase64(input.base64) : "";
     if (!base64) {
       return json({ error: "No image data was provided." }, 400);
     }
@@ -209,8 +240,12 @@ Deno.serve(async (req) => {
       return json({ error: "Image is too large after compression." }, 413);
     }
 
-    const contentType = typeof input.contentType === "string" ? input.contentType : "application/octet-stream";
-    const key = buildObjectKey(requestedFolder, input.ext || "bin");
+    const contentType = (typeof input.contentType === "string" ? input.contentType : "image/jpeg").toLowerCase();
+    if (!ALLOWED_IMAGE_TYPES.has(contentType)) {
+      return json({ error: "Only image uploads are allowed." }, 415);
+    }
+
+    const key = buildObjectKey(requestedFolder, normalizeExt(input.ext || "", contentType));
     const publicUrl = await putObjectToS3(key, decodeBase64(base64), contentType);
     return json({ publicUrl, key });
   } catch (error) {

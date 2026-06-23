@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
-import { uploadDataUrlToS3 } from "@/lib/s3-upload";
+import { uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
 import { householdTypes } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
@@ -114,6 +114,13 @@ function imageToDataUrl(file: File): Promise<string> {
   });
 }
 
+type PickupPhoto = {
+  id: string;
+  previewUrl: string;
+  file: File | null;
+  uploadedUrl: string | null;
+};
+
 function Pickup() {
   const pickupSearch = Route.useSearch();
   const { data: categories = [] } = useScrapCategories();
@@ -125,8 +132,11 @@ function Pickup() {
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
   const [items, setItems] = useState<string[]>([]);
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<PickupPhoto | null>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const photoUploadPromiseRef = useRef<Promise<string> | null>(null);
+  const photoUploadIdRef = useRef<string | null>(null);
 
   // step 2
   const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
@@ -156,6 +166,52 @@ function Pickup() {
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
 
+  const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
+    try {
+      if (snapshot.file) {
+        return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
+      }
+      return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
+    } catch (primaryError) {
+      try {
+        return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
+      } catch {
+        throw primaryError instanceof Error
+          ? primaryError
+          : new Error("Couldn't upload the photo. Please try again.");
+      }
+    }
+  };
+
+  const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> => {
+    if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
+    if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
+      return photoUploadPromiseRef.current;
+    }
+
+    setPhotoUploading(true);
+    photoUploadIdRef.current = snapshot.id;
+    const promise = uploadPickupPhoto(snapshot)
+      .then((url) => {
+        setPhoto((current) => (current?.id === snapshot.id ? { ...current, uploadedUrl: url } : current));
+        if (notify) toast.success("Photo saved securely.");
+        return url;
+      })
+      .catch((err) => {
+        if (notify) toast.error(err instanceof Error ? err.message : "Couldn't upload the photo.");
+        throw err;
+      })
+      .finally(() => {
+        if (photoUploadPromiseRef.current === promise) {
+          photoUploadPromiseRef.current = null;
+          photoUploadIdRef.current = null;
+          setPhotoUploading(false);
+        }
+      });
+    photoUploadPromiseRef.current = promise;
+    return promise;
+  };
+
   const savePickupDraft = () => {
     if (typeof window === "undefined") return;
     window.sessionStorage.setItem(
@@ -170,6 +226,9 @@ function Pickup() {
         slot,
         name,
         phone,
+        photo: photo
+          ? { id: photo.id, previewUrl: photo.previewUrl, uploadedUrl: photo.uploadedUrl }
+          : null,
       }),
     );
   };
@@ -193,6 +252,7 @@ function Pickup() {
           slot?: string;
           name?: string;
           phone?: string;
+          photo?: { id?: string; previewUrl?: string; uploadedUrl?: string | null } | null;
         };
         if (draft.scrapMode) setScrapMode(draft.scrapMode);
         if (Array.isArray(draft.items)) setItems(draft.items);
@@ -203,6 +263,14 @@ function Pickup() {
         if (draft.slot) setSlot(draft.slot);
         if (draft.name) setName(draft.name);
         if (draft.phone) setPhone(draft.phone);
+        if (draft.photo?.previewUrl) {
+          setPhoto({
+            id: draft.photo.id || crypto.randomUUID(),
+            previewUrl: draft.photo.previewUrl,
+            file: null,
+            uploadedUrl: draft.photo.uploadedUrl ?? null,
+          });
+        }
       } catch {
         window.sessionStorage.removeItem(pickupDraftKey);
       }
@@ -341,7 +409,17 @@ function Pickup() {
       return;
     }
     try {
-      setPhoto(await imageToDataUrl(file));
+      const previewUrl = await imageToDataUrl(file);
+      const nextPhoto: PickupPhoto = {
+        id: crypto.randomUUID(),
+        previewUrl,
+        file,
+        uploadedUrl: null,
+      };
+      setPhoto(nextPhoto);
+      beginPhotoUpload(nextPhoto, true).catch(() => {
+        // The booking submit path retries and blocks if the early upload fails.
+      });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't process the photo.");
     }
@@ -395,7 +473,7 @@ function Pickup() {
     let photoUrl: string | null = null;
     if (photo) {
       try {
-        photoUrl = photo.startsWith("data:") ? await uploadDataUrlToS3(photo, "pickups") : photo;
+        photoUrl = photo.uploadedUrl ?? (await beginPhotoUpload(photo));
       } catch (err) {
         setSaving(false);
         toast.error(err instanceof Error ? err.message : "Couldn't upload the photo. Please try again.");
@@ -667,18 +745,28 @@ function Pickup() {
                     {photo ? (
                       <div className="mt-3 relative w-fit">
                         <img
-                          src={photo}
+                          src={photo.previewUrl}
                           alt="Your scrap"
                           className="size-28 rounded-xl object-cover"
                         />
                         <button
                           type="button"
-                          onClick={() => setPhoto(null)}
+                          onClick={() => {
+                            setPhoto(null);
+                            if (fileRef.current) fileRef.current.value = "";
+                          }}
                           className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-foreground text-background"
                           aria-label="Remove photo"
                         >
                           <X className="size-3.5" />
                         </button>
+                        <div className="mt-2 text-xs font-medium text-muted-foreground">
+                          {photo.uploadedUrl
+                            ? "Photo saved securely."
+                            : photoUploading
+                              ? "Saving photo securely…"
+                              : "Photo will be saved before booking."}
+                        </div>
                       </div>
                     ) : (
                       <button

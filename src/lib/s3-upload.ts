@@ -96,6 +96,30 @@ async function getEdgeFunctionErrorMessage(error: unknown): Promise<string> {
   return fallback;
 }
 
+function parseImageDataUrl(input: string): { contentType: string; base64: string; ext: string } {
+  const trimmed = input.trim();
+  const match = /^data:([^;,]+)(?:;[^,]*)?;base64,(.*)$/is.exec(trimmed);
+  if (!match) throw new Error("Invalid image data.");
+
+  const contentType = (match[1] || "image/jpeg").toLowerCase();
+  const base64 = match[2].replace(/\s/g, "");
+  if (!base64 || !/^[A-Za-z0-9+/]*={0,2}$/.test(base64)) {
+    throw new Error("Invalid image data.");
+  }
+
+  const ext = contentType.includes("png")
+    ? "png"
+    : contentType.includes("webp")
+      ? "webp"
+      : contentType.includes("gif")
+        ? "gif"
+        : contentType.includes("svg")
+          ? "svg"
+          : "jpg";
+
+  return { contentType, base64, ext };
+}
+
 /**
  * Compress + upload an image to Amazon S3 through a Supabase Edge Function and
  * return its public URL. Used by every admin image field (brands, series,
@@ -132,11 +156,7 @@ export async function uploadImageToS3(
  * pickup booking photo, where the image is compressed before upload.
  */
 export async function uploadDataUrlToS3(dataUrl: string, folder: string): Promise<string> {
-  const match = /^data:([^;]+);base64,(.*)$/i.exec(dataUrl);
-  if (!match) throw new Error("Invalid image data.");
-  const contentType = match[1] || "image/jpeg";
-  const base64 = match[2];
-  const ext = contentType.includes("png") ? "png" : contentType.includes("webp") ? "webp" : "jpg";
+  const { contentType, base64, ext } = parseImageDataUrl(dataUrl);
 
   const { data, error } = await supabase.functions.invoke<{ publicUrl: string; key: string }>("s3-upload", {
     body: { folder, ext, contentType, base64 },

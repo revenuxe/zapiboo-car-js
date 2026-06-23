@@ -115,6 +115,7 @@ function imageToDataUrl(file: File): Promise<string> {
 }
 
 type PickupPhoto = {
+  id: string;
   previewUrl: string;
   file: File;
   uploadedUrl: string | null;
@@ -132,7 +133,10 @@ function Pickup() {
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
   const [items, setItems] = useState<string[]>([]);
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
+  const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+  const photoUploadPromiseRef = useRef<Promise<string> | null>(null);
+  const photoUploadIdRef = useRef<string | null>(null);
 
   // step 2
   const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
@@ -161,6 +165,50 @@ function Pickup() {
 
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+
+  const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
+    try {
+      return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
+    } catch (primaryError) {
+      try {
+        return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
+      } catch {
+        throw primaryError instanceof Error
+          ? primaryError
+          : new Error("Couldn't upload the photo. Please try again.");
+      }
+    }
+  };
+
+  const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> | null => {
+    if (!user) return null;
+    if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
+    if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
+      return photoUploadPromiseRef.current;
+    }
+
+    setPhotoUploading(true);
+    photoUploadIdRef.current = snapshot.id;
+    const promise = uploadPickupPhoto(snapshot)
+      .then((url) => {
+        setPhoto((current) => (current?.id === snapshot.id ? { ...current, uploadedUrl: url } : current));
+        if (notify) toast.success("Photo saved securely.");
+        return url;
+      })
+      .catch((err) => {
+        if (notify) toast.error(err instanceof Error ? err.message : "Couldn't upload the photo.");
+        throw err;
+      })
+      .finally(() => {
+        if (photoUploadPromiseRef.current === promise) {
+          photoUploadPromiseRef.current = null;
+          photoUploadIdRef.current = null;
+          setPhotoUploading(false);
+        }
+      });
+    photoUploadPromiseRef.current = promise;
+    return promise;
+  };
 
   const savePickupDraft = () => {
     if (typeof window === "undefined") return;

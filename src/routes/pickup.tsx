@@ -752,12 +752,22 @@ function Pickup() {
                         />
                         <button
                           type="button"
-                          onClick={() => setPhoto(null)}
+                          onClick={() => {
+                            setPhoto(null);
+                            if (fileRef.current) fileRef.current.value = "";
+                          }}
                           className="absolute -right-2 -top-2 flex size-6 items-center justify-center rounded-full bg-foreground text-background"
                           aria-label="Remove photo"
                         >
                           <X className="size-3.5" />
                         </button>
+                        <div className="mt-2 text-xs font-medium text-muted-foreground">
+                          {photo.uploadedUrl
+                            ? "Photo saved securely."
+                            : photoUploading
+                              ? "Saving photo securely…"
+                              : "Photo will be saved before booking."}
+                        </div>
                       </div>
                     ) : (
                       <button

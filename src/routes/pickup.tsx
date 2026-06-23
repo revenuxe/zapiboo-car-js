@@ -398,7 +398,17 @@ function Pickup() {
       return;
     }
     try {
-      setPhoto(await imageToDataUrl(file));
+      const previewUrl = await imageToDataUrl(file);
+      const nextPhoto: PickupPhoto = {
+        id: crypto.randomUUID(),
+        previewUrl,
+        file,
+        uploadedUrl: null,
+      };
+      setPhoto(nextPhoto);
+      beginPhotoUpload(nextPhoto, true)?.catch(() => {
+        // The booking submit path retries and blocks if the early upload fails.
+      });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't process the photo.");
     }
@@ -452,7 +462,7 @@ function Pickup() {
     let photoUrl: string | null = null;
     if (photo) {
       try {
-        photoUrl = photo.startsWith("data:") ? await uploadDataUrlToS3(photo, "pickups") : photo;
+        photoUrl = photo.uploadedUrl ?? (await beginPhotoUpload(photo));
       } catch (err) {
         setSaving(false);
         toast.error(err instanceof Error ? err.message : "Couldn't upload the photo. Please try again.");

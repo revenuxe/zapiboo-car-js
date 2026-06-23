@@ -227,6 +227,9 @@ function Pickup() {
         slot,
         name,
         phone,
+        photo: photo
+          ? { id: photo.id, previewUrl: photo.previewUrl, uploadedUrl: photo.uploadedUrl }
+          : null,
       }),
     );
   };
@@ -250,6 +253,7 @@ function Pickup() {
           slot?: string;
           name?: string;
           phone?: string;
+          photo?: { id?: string; previewUrl?: string; uploadedUrl?: string | null } | null;
         };
         if (draft.scrapMode) setScrapMode(draft.scrapMode);
         if (Array.isArray(draft.items)) setItems(draft.items);
@@ -260,6 +264,14 @@ function Pickup() {
         if (draft.slot) setSlot(draft.slot);
         if (draft.name) setName(draft.name);
         if (draft.phone) setPhone(draft.phone);
+        if (draft.photo?.previewUrl) {
+          setPhoto({
+            id: draft.photo.id || crypto.randomUUID(),
+            previewUrl: draft.photo.previewUrl,
+            file: null,
+            uploadedUrl: draft.photo.uploadedUrl ?? null,
+          });
+        }
       } catch {
         window.sessionStorage.removeItem(pickupDraftKey);
       }

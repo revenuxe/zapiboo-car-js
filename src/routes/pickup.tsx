@@ -117,7 +117,7 @@ function imageToDataUrl(file: File): Promise<string> {
 type PickupPhoto = {
   id: string;
   previewUrl: string;
-  file: File;
+  file: File | null;
   uploadedUrl: string | null;
 };
 
@@ -168,7 +168,10 @@ function Pickup() {
 
   const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
     try {
-      return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
+      if (snapshot.file) {
+        return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
+      }
+      return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
     } catch (primaryError) {
       try {
         return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");

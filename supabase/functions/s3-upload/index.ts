@@ -214,10 +214,13 @@ Deno.serve(async (req) => {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     const token = authHeader?.replace("Bearer ", "") ?? "";
-    const { data: userData, error: userError } = token
+    const isAnonApiKey = token === env("SUPABASE_ANON_KEY");
+    const { data: userData, error: userError } = token && !isAnonApiKey
       ? await supabase.auth.getUser(token)
       : { data: { user: null }, error: null };
-    if (token && (userError || !userData.user)) return json({ error: "Unauthorized" }, 401);
+    if (!isCustomerFolder && (!token || isAnonApiKey || userError || !userData.user)) {
+      return json({ error: "Unauthorized" }, 401);
+    }
 
     if (!isCustomerFolder) {
       const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {

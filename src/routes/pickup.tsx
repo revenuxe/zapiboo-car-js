@@ -734,7 +734,7 @@ function Pickup() {
                     {photo ? (
                       <div className="mt-3 relative w-fit">
                         <img
-                          src={photo}
+                          src={photo.previewUrl}
                           alt="Your scrap"
                           className="size-28 rounded-xl object-cover"
                         />

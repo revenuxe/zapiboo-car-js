@@ -26,6 +26,18 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/about", changefreq: "monthly", priority: "0.6" },
           { path: "/contact", changefreq: "yearly", priority: "0.5" },
           { path: "/pickup", changefreq: "monthly", priority: "0.9" },
+          { path: "/listings", changefreq: "weekly", priority: "0.8" },
+          { path: "/sell/laptops", changefreq: "weekly", priority: "0.8" },
+          { path: "/blog", changefreq: "weekly", priority: "0.8" },
+          { path: "/about", changefreq: "monthly", priority: "0.6" },
+          { path: "/contact", changefreq: "yearly", priority: "0.5" },
+          { path: "/privacy", changefreq: "yearly", priority: "0.3" },
+          { path: "/terms", changefreq: "yearly", priority: "0.3" },
+          ...sortedBlogPosts.map((post) => ({
+            path: `/blog/${post.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.75",
+          })),
           ...serviceAreas.map((area) => ({
             path: `/areas/${area.slug}`,
             changefreq: "monthly" as const,

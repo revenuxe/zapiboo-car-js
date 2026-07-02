@@ -191,3 +191,58 @@ export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
     })),
   };
 }
+
+export function faqSchema(items: Array<{ question: string; answer: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+}
+
+export function blogPostingSchema(input: {
+  path: string;
+  title: string;
+  description: string;
+  image?: string;
+  datePublished: string;
+  dateModified?: string;
+  authorName?: string;
+  keywords?: string[];
+}) {
+  const url = absoluteUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "@id": `${url}#article`,
+    mainEntityOfPage: { "@type": "WebPage", "@id": url },
+    headline: input.title,
+    description: input.description,
+    ...(input.image ? { image: [input.image] } : {}),
+    datePublished: input.datePublished,
+    dateModified: input.dateModified ?? input.datePublished,
+    inLanguage: "en-IN",
+    ...(input.keywords ? { keywords: input.keywords.join(", ") } : {}),
+    author: {
+      "@type": "Organization",
+      name: input.authorName ?? businessContact.name,
+      url: siteUrl,
+    },
+    publisher: {
+      "@type": "Organization",
+      name: businessContact.name,
+      url: siteUrl,
+      logo: {
+        "@type": "ImageObject",
+        url: `${siteUrl}/favicon.ico`,
+      },
+    },
+  };
+}

@@ -20,6 +20,7 @@ import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessRouteImport } from './routes/business'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AccountRouteImport } from './routes/account'
@@ -27,6 +28,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellCategoryRouteImport } from './routes/sell.$category'
 import { Route as ListingsSlugRouteImport } from './routes/listings_.$slug'
+import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
 import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
@@ -90,6 +92,11 @@ const BusinessRoute = BusinessRouteImport.update({
   path: '/business',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -123,6 +130,11 @@ const SellCategoryRoute = SellCategoryRouteImport.update({
 const ListingsSlugRoute = ListingsSlugRouteImport.update({
   id: '/listings_/$slug',
   path: '/listings/$slug',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogSlugRoute = BlogSlugRouteImport.update({
+  id: '/blog_/$slug',
+  path: '/blog/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AreasAreaRoute = AreasAreaRouteImport.update({
@@ -168,6 +180,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -183,6 +196,7 @@ export interface FileRoutesByFullPath {
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRoute
   '/sell/$category/$brand': typeof SellCategoryBrandRoute
@@ -195,6 +209,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -210,6 +225,7 @@ export interface FileRoutesByTo {
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas/$area': typeof AreasAreaRoute
+  '/blog/$slug': typeof BlogSlugRoute
   '/listings/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRoute
   '/sell/$category/$brand': typeof SellCategoryBrandRoute
@@ -223,6 +239,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -238,6 +255,7 @@ export interface FileRoutesById {
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
   '/areas_/$area': typeof AreasAreaRoute
+  '/blog_/$slug': typeof BlogSlugRoute
   '/listings_/$slug': typeof ListingsSlugRoute
   '/sell/$category': typeof SellCategoryRoute
   '/sell/$category_/$brand': typeof SellCategoryBrandRoute
@@ -252,6 +270,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/areas'
     | '/auth'
+    | '/blog'
     | '/business'
     | '/contact'
     | '/how-it-works'
@@ -267,6 +286,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/keepalive'
     | '/areas/$area'
+    | '/blog/$slug'
     | '/listings/$slug'
     | '/sell/$category'
     | '/sell/$category/$brand'
@@ -279,6 +299,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/areas'
     | '/auth'
+    | '/blog'
     | '/business'
     | '/contact'
     | '/how-it-works'
@@ -294,6 +315,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/keepalive'
     | '/areas/$area'
+    | '/blog/$slug'
     | '/listings/$slug'
     | '/sell/$category'
     | '/sell/$category/$brand'
@@ -306,6 +328,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/areas'
     | '/auth'
+    | '/blog'
     | '/business'
     | '/contact'
     | '/how-it-works'
@@ -321,6 +344,7 @@ export interface FileRouteTypes {
     | '/admin/login'
     | '/api/keepalive'
     | '/areas_/$area'
+    | '/blog_/$slug'
     | '/listings_/$slug'
     | '/sell/$category'
     | '/sell/$category_/$brand'
@@ -334,6 +358,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AreasRoute: typeof AreasRoute
   AuthRoute: typeof AuthRoute
+  BlogRoute: typeof BlogRoute
   BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
   HowItWorksRoute: typeof HowItWorksRoute
@@ -349,6 +374,7 @@ export interface RootRouteChildren {
   AdminLoginRoute: typeof AdminLoginRoute
   ApiKeepaliveRoute: typeof ApiKeepaliveRoute
   AreasAreaRoute: typeof AreasAreaRoute
+  BlogSlugRoute: typeof BlogSlugRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
   SellCategoryRoute: typeof SellCategoryRoute
   SellCategoryBrandRoute: typeof SellCategoryBrandRoute
@@ -435,6 +461,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BusinessRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -482,6 +515,13 @@ declare module '@tanstack/react-router' {
       path: '/listings/$slug'
       fullPath: '/listings/$slug'
       preLoaderRoute: typeof ListingsSlugRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog_/$slug': {
+      id: '/blog_/$slug'
+      path: '/blog/$slug'
+      fullPath: '/blog/$slug'
+      preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/areas_/$area': {
@@ -542,6 +582,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AreasRoute: AreasRoute,
   AuthRoute: AuthRoute,
+  BlogRoute: BlogRoute,
   BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,
   HowItWorksRoute: HowItWorksRoute,
@@ -557,6 +598,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminLoginRoute: AdminLoginRoute,
   ApiKeepaliveRoute: ApiKeepaliveRoute,
   AreasAreaRoute: AreasAreaRoute,
+  BlogSlugRoute: BlogSlugRoute,
   ListingsSlugRoute: ListingsSlugRoute,
   SellCategoryRoute: SellCategoryRoute,
   SellCategoryBrandRoute: SellCategoryBrandRoute,

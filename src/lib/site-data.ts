@@ -88,6 +88,7 @@ export const navLinks = [
   { to: "/listings", label: "Listings" },
   { to: "/materials", label: "Materials & Prices" },
   { to: "/areas", label: "Areas" },
+  { to: "/blog", label: "Blog" },
   { to: "/business", label: "For Business" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },

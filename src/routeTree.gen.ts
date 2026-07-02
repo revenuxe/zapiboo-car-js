@@ -20,6 +20,7 @@ import { Route as ListingsRouteImport } from './routes/listings'
 import { Route as HowItWorksRouteImport } from './routes/how-it-works'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as BusinessRouteImport } from './routes/business'
+import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AreasRouteImport } from './routes/areas'
 import { Route as AccountRouteImport } from './routes/account'
@@ -88,6 +89,11 @@ const ContactRoute = ContactRouteImport.update({
 const BusinessRoute = BusinessRouteImport.update({
   id: '/business',
   path: '/business',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogRoute = BlogRouteImport.update({
+  id: '/blog',
+  path: '/blog',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/account': typeof AccountRoute
   '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -195,6 +202,7 @@ export interface FileRoutesByTo {
   '/account': typeof AccountRoute
   '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -223,6 +231,7 @@ export interface FileRoutesById {
   '/account': typeof AccountRoute
   '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
+  '/blog': typeof BlogRoute
   '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
   '/how-it-works': typeof HowItWorksRoute
@@ -252,6 +261,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/areas'
     | '/auth'
+    | '/blog'
     | '/business'
     | '/contact'
     | '/how-it-works'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/areas'
     | '/auth'
+    | '/blog'
     | '/business'
     | '/contact'
     | '/how-it-works'
@@ -306,6 +317,7 @@ export interface FileRouteTypes {
     | '/account'
     | '/areas'
     | '/auth'
+    | '/blog'
     | '/business'
     | '/contact'
     | '/how-it-works'
@@ -334,6 +346,7 @@ export interface RootRouteChildren {
   AccountRoute: typeof AccountRoute
   AreasRoute: typeof AreasRoute
   AuthRoute: typeof AuthRoute
+  BlogRoute: typeof BlogRoute
   BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
   HowItWorksRoute: typeof HowItWorksRoute
@@ -433,6 +446,13 @@ declare module '@tanstack/react-router' {
       path: '/business'
       fullPath: '/business'
       preLoaderRoute: typeof BusinessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blog': {
+      id: '/blog'
+      path: '/blog'
+      fullPath: '/blog'
+      preLoaderRoute: typeof BlogRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/auth': {
@@ -542,6 +562,7 @@ const rootRouteChildren: RootRouteChildren = {
   AccountRoute: AccountRoute,
   AreasRoute: AreasRoute,
   AuthRoute: AuthRoute,
+  BlogRoute: BlogRoute,
   BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,
   HowItWorksRoute: HowItWorksRoute,

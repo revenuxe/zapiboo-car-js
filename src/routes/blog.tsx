@@ -71,7 +71,7 @@ function BlogIndex() {
       <PageHeader
         eyebrow="HuluMart Journal"
         title="Scrap, recycling & sustainability guides"
-        description="Practical guides on selling scrap in Bangalore — live rates, area-wise scrap buyers, e-waste and doorstep pickup tips."
+        subtitle="Practical guides on selling scrap in Bangalore — live rates, area-wise scrap buyers, e-waste and doorstep pickup tips."
       />
 
       <section className="bg-background py-16">

@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { serviceAreas, siteUrl } from "@/lib/seo";
+import { sortedBlogPosts } from "@/lib/blog";
 
 const BASE_URL = siteUrl;
 

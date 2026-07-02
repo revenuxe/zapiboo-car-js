@@ -1,2 +1,8 @@
 User-agent: *
 Allow: /
+
+Disallow: /admin
+Disallow: /account
+Disallow: /auth
+
+Sitemap: https://www.hulumart.com/sitemap.xml

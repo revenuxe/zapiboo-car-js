@@ -290,10 +290,10 @@ function Pickup() {
   // Persist the draft on every meaningful change (once hydrated) so the flow
   // survives reloads/remounts and always resumes from the right step.
   useEffect(() => {
-    if (!hydrated) return;
+    if (!hydrated || submitted) return;
     savePickupDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, step, scrapMode, items, pincode, address, geo, date, slot, name, phone, photo]);
+  }, [hydrated, submitted, step, scrapMode, items, pincode, address, geo, date, slot, name, phone, photo]);
 
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {

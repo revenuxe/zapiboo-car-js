@@ -128,6 +128,7 @@ function Pickup() {
   const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");

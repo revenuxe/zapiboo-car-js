@@ -339,3 +339,131 @@ function Landing({
     </>
   );
 }
+
+function BrandModelsSection({
+  category,
+  categoryId,
+  lower,
+}: {
+  category: string;
+  categoryId: string;
+  lower: string;
+}) {
+  const { data: catalog = [], isLoading } = useCategoryCatalog(categoryId);
+  const brands = catalog.filter((b) => b.series.length > 0);
+
+  if (!isLoading && brands.length === 0) return null;
+
+  return (
+    <section className="bg-background py-14 md:py-16">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+          Sell {lower} by brand
+        </p>
+        <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">
+          Sell your old {lower} — every brand, every model
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          From premium ultrabooks to gaming rigs, HuluMart buys all {lower} models in Bangalore at
+          the best price. Pick your brand and series below for an instant quote, free doorstep pickup
+          and same-day payment.
+        </p>
+
+        {isLoading ? (
+          <div className="flex justify-center py-16">
+            <Loader2 className="size-7 animate-spin text-primary" />
+          </div>
+        ) : (
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            {brands.map((b) => (
+              <div
+                key={b.id}
+                className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-soft transition-shadow hover:shadow-elevated"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border bg-background">
+                    {b.logo ? (
+                      <img
+                        src={b.logo}
+                        alt={`${b.name} ${lower}`}
+                        className="max-h-8 max-w-8 object-contain"
+                      />
+                    ) : (
+                      <Tag className="size-6 text-primary" />
+                    )}
+                  </div>
+                  <h3 className="text-lg font-bold">Sell {b.name} {lower}</h3>
+                </div>
+                <p className="mt-3 text-sm text-muted-foreground">
+                  Get the best price for your used {b.name} {lower} in Bangalore. We buy every{" "}
+                  {b.name} series with a free instant quote, doorstep pickup and instant payment.
+                </p>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {b.series.slice(0, 6).map((s) => (
+                    <Link
+                      key={s.id}
+                      to="/sell/$category_/$brand_/$series"
+                      params={{ category, brand: b.slug, series: s.slug }}
+                      className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary hover:text-primary"
+                    >
+                      {s.name}
+                    </Link>
+                  ))}
+                </div>
+                <Button asChild variant="outline" size="sm" className="mt-5 self-start">
+                  <Link to="/sell/$category_/$brand" params={{ category, brand: b.slug }}>
+                    Get {b.name} quote <ArrowRight className="size-4" />
+                  </Link>
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function LaptopLocationsSection() {
+  const areas = useMemo(() => {
+    const order = new Map(featuredServiceAreas.map((slug, i) => [slug, i]));
+    return [...serviceAreas]
+      .filter((a) => order.has(a.slug))
+      .sort((a, b) => (order.get(a.slug)! - order.get(b.slug)!));
+  }, []);
+
+  if (areas.length === 0) return null;
+
+  return (
+    <section className="bg-secondary/40 py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p className="text-sm font-semibold uppercase tracking-wider text-primary">
+          Sell laptop near you
+        </p>
+        <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">
+          Sell used laptops across Bangalore
+        </h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          Free doorstep laptop pickup in every major Bangalore locality. Tap your area for a
+          dedicated local page and instant quote.
+        </p>
+
+        <div className="mt-8 flex gap-4 overflow-x-auto pb-4 [scrollbar-width:thin]">
+          {areas.map((area) => (
+            <Link
+              key={area.slug}
+              to="/sell-used-laptop/$area"
+              params={{ area: area.slug }}
+              className="group flex w-28 shrink-0 flex-col items-center gap-2 text-center"
+            >
+              <span className="flex size-20 items-center justify-center rounded-full border border-border bg-card text-primary shadow-soft transition-all group-hover:-translate-y-1 group-hover:border-primary group-hover:shadow-elevated">
+                <MapPin className="size-7" />
+              </span>
+              <span className="text-sm font-semibold leading-tight">{area.name}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

@@ -18,7 +18,12 @@ import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { businessContact } from "@/lib/seo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useDeviceBrands, useDeviceCategory } from "@/lib/device-buyback";
+import {
+  useCategoryCatalog,
+  useDeviceBrands,
+  useDeviceCategory,
+} from "@/lib/device-buyback";
+import { featuredServiceAreas, serviceAreas } from "@/lib/seo";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 
 export const Route = createFileRoute("/sell/$category")({

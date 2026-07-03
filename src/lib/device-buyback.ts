@@ -225,6 +225,42 @@ export function useDeviceModels(seriesId?: string) {
   });
 }
 
+export type BrandWithSeries = DeviceBrand & { series: DeviceSeries[] };
+
+// Brands + their series in one query — powers the SEO "sell by brand" section.
+export function useCategoryCatalog(categoryId?: string) {
+  return useQuery({
+    queryKey: ["device", "catalog", categoryId],
+    enabled: !!categoryId,
+    queryFn: async () => {
+      const { data: brands, error: bErr } = await supabase
+        .from("device_brands")
+        .select("id, category_id, name, slug, logo, active, sort_order")
+        .eq("category_id", categoryId!)
+        .eq("active", true)
+        .order("sort_order");
+      if (bErr) throw bErr;
+      const brandIds = (brands ?? []).map((b) => b.id);
+      let series: DeviceSeries[] = [];
+      if (brandIds.length) {
+        const { data: s, error: sErr } = await supabase
+          .from("device_series")
+          .select("id, brand_id, name, slug, image, active, sort_order")
+          .in("brand_id", brandIds)
+          .eq("active", true)
+          .order("sort_order");
+        if (sErr) throw sErr;
+        series = s as DeviceSeries[];
+      }
+      return (brands as DeviceBrand[]).map((b) => ({
+        ...b,
+        series: series.filter((s) => s.brand_id === b.id),
+      })) as BrandWithSeries[];
+    },
+    staleTime: 60_000,
+  });
+}
+
 // ---------------- Slug lookups (for multi-page funnel) ----------------
 export function useDeviceBrandBySlug(categoryId?: string, slug?: string) {
   return useQuery({

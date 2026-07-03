@@ -263,6 +263,14 @@ function Landing({
         </div>
       </section>
 
+      {/* SELL BY BRAND — SEO */}
+      <BrandModelsSection category={category} categoryId={categoryId} lower={lower} />
+
+      {/* LOCATIONS */}
+      {category === "laptops" && <LaptopLocationsSection />}
+
+
+
       {/* HOW IT WORKS */}
       <section className="bg-secondary/40 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">

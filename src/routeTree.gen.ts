@@ -27,6 +27,7 @@ import { Route as AccountRouteImport } from './routes/account'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SellCategoryRouteImport } from './routes/sell.$category'
+import { Route as SellUsedLaptopAreaRouteImport } from './routes/sell-used-laptop.$area'
 import { Route as ListingsSlugRouteImport } from './routes/listings_.$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
 import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
@@ -127,6 +128,11 @@ const SellCategoryRoute = SellCategoryRouteImport.update({
   path: '/sell/$category',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellUsedLaptopAreaRoute = SellUsedLaptopAreaRouteImport.update({
+  id: '/sell-used-laptop/$area',
+  path: '/sell-used-laptop/$area',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ListingsSlugRoute = ListingsSlugRouteImport.update({
   id: '/listings_/$slug',
   path: '/listings/$slug',
@@ -198,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/areas/$area': typeof AreasAreaRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
   '/sell/$category/$brand': typeof SellCategoryBrandRoute
   '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
@@ -227,6 +234,7 @@ export interface FileRoutesByTo {
   '/areas/$area': typeof AreasAreaRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
   '/sell/$category/$brand': typeof SellCategoryBrandRoute
   '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/areas_/$area': typeof AreasAreaRoute
   '/blog_/$slug': typeof BlogSlugRoute
   '/listings_/$slug': typeof ListingsSlugRoute
+  '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
   '/sell/$category_/$brand': typeof SellCategoryBrandRoute
   '/sell/$category_/$brand_/$series': typeof SellCategoryBrandSeriesRoute
@@ -288,6 +297,7 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/blog/$slug'
     | '/listings/$slug'
+    | '/sell-used-laptop/$area'
     | '/sell/$category'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
@@ -317,6 +327,7 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/blog/$slug'
     | '/listings/$slug'
+    | '/sell-used-laptop/$area'
     | '/sell/$category'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/areas_/$area'
     | '/blog_/$slug'
     | '/listings_/$slug'
+    | '/sell-used-laptop/$area'
     | '/sell/$category'
     | '/sell/$category_/$brand'
     | '/sell/$category_/$brand_/$series'
@@ -376,6 +388,7 @@ export interface RootRouteChildren {
   AreasAreaRoute: typeof AreasAreaRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
+  SellUsedLaptopAreaRoute: typeof SellUsedLaptopAreaRoute
   SellCategoryRoute: typeof SellCategoryRoute
   SellCategoryBrandRoute: typeof SellCategoryBrandRoute
   SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRoute
@@ -510,6 +523,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellCategoryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell-used-laptop/$area': {
+      id: '/sell-used-laptop/$area'
+      path: '/sell-used-laptop/$area'
+      fullPath: '/sell-used-laptop/$area'
+      preLoaderRoute: typeof SellUsedLaptopAreaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/listings_/$slug': {
       id: '/listings_/$slug'
       path: '/listings/$slug'
@@ -600,6 +620,7 @@ const rootRouteChildren: RootRouteChildren = {
   AreasAreaRoute: AreasAreaRoute,
   BlogSlugRoute: BlogSlugRoute,
   ListingsSlugRoute: ListingsSlugRoute,
+  SellUsedLaptopAreaRoute: SellUsedLaptopAreaRoute,
   SellCategoryRoute: SellCategoryRoute,
   SellCategoryBrandRoute: SellCategoryBrandRoute,
   SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRoute,

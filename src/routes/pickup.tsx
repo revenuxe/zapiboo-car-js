@@ -128,6 +128,7 @@ function Pickup() {
   const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
+  const [hydrated, setHydrated] = useState(false);
 
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
@@ -217,6 +218,7 @@ function Pickup() {
     window.sessionStorage.setItem(
       pickupDraftKey,
       JSON.stringify({
+        step,
         scrapMode,
         items,
         pincode,
@@ -233,16 +235,18 @@ function Pickup() {
     );
   };
 
+  // Restore any in-progress booking draft once on mount. This keeps the whole
+  // flow — including which step the user was on — intact across a full page
+  // reload (returning from Google OAuth) or any remount triggered by an auth
+  // state change, so signing in never bounces back to step 1.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    const params = new URLSearchParams(window.location.search);
-    const returningFromBookingAuth = pickupSearch.bookingAuth === "1";
     const rawDraft = window.sessionStorage.getItem(pickupDraftKey);
-
     if (rawDraft) {
       try {
         const draft = JSON.parse(rawDraft) as {
+          step?: number;
           scrapMode?: "mixed" | "specific" | "";
           items?: string[];
           pincode?: string;
@@ -271,22 +275,39 @@ function Pickup() {
             uploadedUrl: draft.photo.uploadedUrl ?? null,
           });
         }
+        if (typeof draft.step === "number" && draft.step >= 1 && draft.step <= 4) {
+          setStep(draft.step);
+        }
       } catch {
         window.sessionStorage.removeItem(pickupDraftKey);
       }
     }
 
-    if (returningFromBookingAuth) {
-      setStep(user ? 4 : 3);
-      params.delete("bookingAuth");
-      const query = params.toString();
-      window.history.replaceState(
-        null,
-        "",
-        `${window.location.pathname}${query ? `?${query}` : ""}`,
-      );
-    }
-  }, [pickupSearch.bookingAuth, user]);
+    setHydrated(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist the draft on every meaningful change (once hydrated) so the flow
+  // survives reloads/remounts and always resumes from the right step.
+  useEffect(() => {
+    if (!hydrated || submitted) return;
+    savePickupDraft();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, submitted, step, scrapMode, items, pincode, address, geo, date, slot, name, phone, photo]);
+
+  // Strip the bookingAuth flag out of the URL after returning from OAuth.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (pickupSearch.bookingAuth !== "1") return;
+    const params = new URLSearchParams(window.location.search);
+    params.delete("bookingAuth");
+    const query = params.toString();
+    window.history.replaceState(
+      null,
+      "",
+      `${window.location.pathname}${query ? `?${query}` : ""}`,
+    );
+  }, [pickupSearch.bookingAuth]);
 
   useEffect(() => {
     if (!pickupSearch.mode) return;

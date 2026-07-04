@@ -3,6 +3,7 @@ import {
   ArrowRight,
   BadgeIndianRupee,
   CheckCircle2,
+  Cpu,
   Laptop,
   MapPin,
   Phone,
@@ -19,45 +20,38 @@ import {
   breadcrumbSchema,
   businessContact,
   faqSchema,
-  getAreaBySlug,
+  featuredServiceAreas,
   organizationSchema,
+  serviceAreas,
 } from "@/lib/seo";
+import { getLaptopBrandBySlug, laptopBrands, type LaptopBrand } from "@/lib/laptop-brands";
 
-const laptopBrands = [
-  { name: "Apple MacBook", slug: "apple" },
-  { name: "Dell", slug: "dell" },
-  { name: "HP", slug: "hp" },
-  { name: "Lenovo", slug: "lenovo" },
-  { name: "Asus", slug: "asus" },
-  { name: "Acer", slug: "acer" },
-  { name: "MSI", slug: "msi" },
-];
-
-export const Route = createFileRoute("/sell-used-laptop/$area")({
+export const Route = createFileRoute("/sell-old-laptop/$brand")({
   loader: ({ params }) => {
-    const area = getAreaBySlug(params.area);
-    if (!area) throw notFound();
-    return { area };
+    const brand = getLaptopBrandBySlug(params.brand);
+    if (!brand) throw notFound();
+    return { brand };
   },
   head: ({ params }) => {
-    const area = getAreaBySlug(params.area);
-    if (!area) return {};
-    const path = `/sell-used-laptop/${area.slug}`;
-    const title = `Sell Used Laptop in ${area.name}, Bangalore — Instant Cash | HuluMart`;
-    const description = `Sell your old or used laptop in ${area.name}, Bangalore for instant cash. Free instant quote, free doorstep pickup and same-day UPI payment for Apple, Dell, HP, Lenovo, Asus & more.`;
+    const brand = getLaptopBrandBySlug(params.brand);
+    if (!brand) return {};
+    const path = `/sell-old-laptop/${brand.slug}`;
+    const title = `Sell Used ${brand.name} Laptop in Bangalore — Instant Cash | HuluMart`;
+    const description = `Sell your old or used ${brand.name} laptop in Bangalore for instant cash. Free instant quote, free doorstep pickup and same-day UPI payment. ${brand.priceRange} for ${brand.popularSeries
+      .map((s) => s.name)
+      .slice(0, 3)
+      .join(", ")} & more.`;
 
     return {
       meta: [
         { title },
         { name: "description", content: description },
-        {
-          name: "keywords",
-          content: `sell used laptop ${area.name}, sell old laptop ${area.name} Bangalore, laptop buyer ${area.name}, second hand laptop price ${area.name}, sell laptop for cash ${area.name}`,
-        },
+        { name: "keywords", content: brand.keywords.join(", ") },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:url", content: absoluteUrl(path) },
         { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },
       ],
@@ -71,10 +65,10 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
               "@context": "https://schema.org",
               "@type": "Service",
               "@id": `${absoluteUrl(path)}#service`,
-              name: `Sell Used Laptop in ${area.name}, Bangalore`,
-              serviceType: "Used laptop buyback with free doorstep pickup",
+              name: `Sell Used ${brand.name} Laptop in Bangalore`,
+              serviceType: `Used ${brand.name} laptop buyback with free doorstep pickup`,
               provider: { "@id": `${absoluteUrl("/")}#organization` },
-              areaServed: { "@type": "Place", name: `${area.name}, Bangalore` },
+              areaServed: { "@type": "Place", name: "Bangalore" },
               offers: {
                 "@type": "Offer",
                 availability: "https://schema.org/InStock",
@@ -85,38 +79,23 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
             breadcrumbSchema([
               { name: "Home", path: "/" },
               { name: "Sell Laptop", path: "/sell/laptops" },
-              { name: `Sell Used Laptop in ${area.name}`, path },
+              { name: `Sell ${brand.name} Laptop`, path },
             ]),
-            faqSchema([
-              {
-                question: `How can I sell my used laptop in ${area.name}, Bangalore?`,
-                answer: `Get a free instant quote online, book a free doorstep pickup in ${area.name}, and our verified agent collects your laptop and pays you instantly via UPI or bank transfer.`,
-              },
-              {
-                question: `Which laptop brands do you buy in ${area.name}?`,
-                answer: `We buy all major brands in ${area.name} including Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI — working or with minor issues.`,
-              },
-              {
-                question: `Is laptop pickup free in ${area.name}?`,
-                answer: `Yes. Doorstep pickup is completely free across ${area.name} and nearby localities. You only need to be present to hand over the device.`,
-              },
-              {
-                question: `When do I get paid after selling my laptop?`,
-                answer: `Payment is instant. Once our agent verifies your laptop at your ${area.name} address, the money is transferred on the spot.`,
-              },
-            ]),
+            faqSchema(brand.faqs.map((f) => ({ question: f.q, answer: f.a }))),
           ]),
         },
       ],
     };
   },
-  component: SellLaptopArea,
+  component: SellBrandLaptop,
 });
 
-function SellLaptopArea() {
-  const { area } = Route.useLoaderData();
+function SellBrandLaptop() {
+  const { brand } = Route.useLoaderData() as { brand: LaptopBrand };
+  const otherBrands = laptopBrands.filter((b) => b.slug !== brand.slug);
+  const areas = serviceAreas.filter((a) => featuredServiceAreas.includes(a.slug)).slice(0, 12);
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`,
+    `Hi HuluMart, I want to sell my used ${brand.name} laptop in Bangalore. Please help me with a quote.`,
   )}`;
 
   return (
@@ -133,21 +112,21 @@ function SellLaptopArea() {
         />
         <div className="relative mx-auto max-w-4xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
           <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-green">
-            Sell laptop in {area.name}
+            Sell {brand.name} laptop
           </p>
           <h1 className="mt-4 text-3xl font-extrabold leading-[1.08] sm:text-5xl">
-            Sell Used Laptop in <span className="text-gradient">{area.name}</span>, Bangalore
+            {brand.headline.replace(brand.name, "")}{" "}
+            <span className="text-gradient">{brand.name}</span> Laptop in Bangalore
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg">
-            Turn your old or used laptop into instant cash in {area.name}. HuluMart gives you the
-            best price for Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI laptops — with a free
-            instant quote, free doorstep pickup and same-day UPI payment.
+            {brand.tagline} Free instant quote, free doorstep pickup and same-day UPI payment across
+            Bengaluru.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <Button asChild variant="hero" size="xl">
-              <Link to="/sell/$category" params={{ category: "laptops" }}>
-                Get instant laptop quote
+              <Link to="/sell/$category/$brand" params={{ category: "laptops", brand: brand.slug }}>
+                Get instant {brand.name} quote
                 <ArrowRight />
               </Link>
             </Button>
@@ -163,69 +142,41 @@ function SellLaptopArea() {
               <Star className="size-4 fill-brand-green text-brand-green" /> 4.9/5 seller rating
             </span>
             <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="size-4 text-brand-green" /> Same-day pickup slots
+              <BadgeIndianRupee className="size-4 text-brand-green" /> {brand.priceRange}
             </span>
             <span className="flex items-center gap-1.5">
-              <MapPin className="size-4 text-brand-green" /> Pincode {area.pincode}
+              <CheckCircle2 className="size-4 text-brand-green" /> Same-day pickup
             </span>
           </div>
         </div>
       </section>
 
-      {/* INTRO CONTENT + WHY US */}
+      {/* INTRO CONTENT */}
       <section className="bg-background py-16 md:py-20">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
           <Reveal>
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Best laptop buyer in {area.name}
+              Best {brand.name} laptop buyer in Bangalore
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              Get the best price for your laptop in {area.name}
+              Get the best price for your {brand.name} laptop
             </h2>
             <div className="mt-4 space-y-4 text-muted-foreground">
-              <p>
-                Looking to <strong>sell your old laptop in {area.name}</strong>? HuluMart is the
-                trusted local laptop buyer for {area.name} and nearby areas. Whether your laptop is
-                a few months old or a few years old, working perfectly or has a cracked screen,
-                battery or keyboard issues — we make you a fair, transparent offer based on the
-                current Bangalore resale market.
-              </p>
-              <p>
-                We buy <strong>second hand laptops of every brand in {area.name}</strong> — Apple
-                MacBook Air and MacBook Pro, Dell XPS, Inspiron and Latitude, HP Pavilion, Envy and
-                EliteBook, Lenovo ThinkPad, IdeaPad and Legion, plus Asus, Acer and MSI gaming
-                laptops. No haggling, no lowball offers — just an honest price and instant payment
-                at your doorstep.
-              </p>
-            </div>
-
-            <div className="mt-8">
-              <p className="text-sm font-semibold text-foreground">Sell your laptop brand:</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {laptopBrands.map((b) => (
-                  <Link
-                    key={b.slug}
-                    to="/sell-old-laptop/$brand"
-                    params={{ brand: b.slug }}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
-                  >
-                    <Laptop className="size-4 text-primary" />
-                    Sell {b.name} laptop
-                  </Link>
-                ))}
-              </div>
+              {brand.intro.map((p, i) => (
+                <p key={i}>{p}</p>
+              ))}
             </div>
           </Reveal>
 
           <Reveal delay={0.1}>
             <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-              <h2 className="text-xl font-bold">Why sell your laptop in {area.name} with HuluMart?</h2>
+              <h2 className="text-xl font-bold">Why sell your {brand.name} laptop with HuluMart?</h2>
               <ul className="mt-5 space-y-4">
                 {[
-                  "Best market price benchmarked for Bangalore resale",
-                  `Free doorstep pickup across ${area.name}`,
+                  `Best price for ${brand.name} laptops in the Bangalore resale market`,
+                  "Free doorstep pickup across all of Bengaluru",
                   "Free instant quote in under 2 minutes",
-                  "Certified data wiping on every device",
+                  "Certified data wiping on every laptop",
                   "Instant UPI or bank payment after verification",
                 ].map((item) => (
                   <li key={item} className="flex items-start gap-3">
@@ -234,24 +185,9 @@ function SellLaptopArea() {
                   </li>
                 ))}
               </ul>
-              {area.nearby.length > 0 && (
-                <div className="mt-6 border-t border-border pt-5">
-                  <p className="text-sm font-semibold">We also cover nearby</p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {area.nearby.map((nearby: string) => (
-                      <span
-                        key={nearby}
-                        className="rounded-full bg-secondary px-3 py-1 text-xs font-medium"
-                      >
-                        {nearby}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
               <Button asChild variant="hero" size="lg" className="mt-6 w-full">
-                <Link to="/sell/$category" params={{ category: "laptops" }}>
-                  Get my laptop price <ArrowRight />
+                <Link to="/sell/$category/$brand" params={{ category: "laptops", brand: brand.slug }}>
+                  Get my {brand.name} price <ArrowRight />
                 </Link>
               </Button>
             </div>
@@ -259,26 +195,73 @@ function SellLaptopArea() {
         </div>
       </section>
 
+      {/* POPULAR SERIES */}
+      <section className="bg-secondary/40 py-14 md:py-16">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-extrabold sm:text-3xl">
+            {brand.name} series we buy in Bangalore
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            We buy every {brand.name} laptop series at the best resale price. Pick your series for an
+            instant quote, free pickup and same-day payment.
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2">
+            {brand.popularSeries.map((s) => (
+              <div
+                key={s.name}
+                className="flex items-start gap-3 rounded-2xl border border-border bg-card p-5 shadow-soft"
+              >
+                <Cpu className="mt-0.5 size-6 shrink-0 text-primary" />
+                <div>
+                  <h3 className="font-bold">Sell {s.name}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{s.note}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8">
+            <p className="text-sm font-semibold text-foreground">Popular {brand.name} models we buy:</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {brand.models.map((m) => (
+                <span
+                  key={m}
+                  className="rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft"
+                >
+                  {m}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <Button asChild variant="hero" size="lg" className="mt-8">
+            <Link to="/sell/$category/$brand" params={{ category: "laptops", brand: brand.slug }}>
+              See all {brand.name} models & get a quote <ArrowRight />
+            </Link>
+          </Button>
+        </div>
+      </section>
+
       {/* HOW IT WORKS */}
-      <section className="bg-secondary/40 py-14">
+      <section className="bg-background py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-extrabold sm:text-3xl">
-            How to sell your laptop in {area.name}
+            How to sell your {brand.name} laptop in Bangalore
           </h2>
           <p className="mx-auto mt-2 max-w-xl text-center text-sm text-muted-foreground">
-            Three simple steps to instant cash for your used laptop in {area.name}.
+            Three simple steps to instant cash for your used {brand.name} laptop.
           </p>
           <div className="mt-10 grid gap-5 md:grid-cols-3">
             {[
               {
                 icon: BadgeIndianRupee,
                 title: "Get an instant quote",
-                text: "Select your laptop brand and model, answer a few condition questions and see your price instantly.",
+                text: `Select your ${brand.name} model, answer a few condition questions and see your price instantly.`,
               },
               {
                 icon: Truck,
-                title: `Free pickup in ${area.name}`,
-                text: `Book a convenient slot. Our verified agent comes to your ${area.name} address and verifies the laptop.`,
+                title: "Free doorstep pickup",
+                text: "Book a convenient slot. Our verified agent comes to your Bangalore address and verifies the laptop.",
               },
               {
                 icon: Wallet,
@@ -298,13 +281,13 @@ function SellLaptopArea() {
       </section>
 
       {/* TRUST */}
-      <section className="bg-background py-14">
+      <section className="bg-secondary/40 py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: BadgeIndianRupee, title: "Best price", text: `Live valuation for the ${area.name} resale market.` },
+              { icon: BadgeIndianRupee, title: "Best price", text: `Live valuation for ${brand.name} laptops in Bangalore.` },
               { icon: ShieldCheck, title: "Safe & data-wiped", text: "Certified data erasure on every laptop we collect." },
-              { icon: Truck, title: "Free pickup", text: `Doorstep collection across ${area.name}.` },
+              { icon: Truck, title: "Free pickup", text: "Doorstep collection across all Bangalore localities." },
               { icon: Wallet, title: "Instant payment", text: "Money in your account the moment we verify." },
             ].map((f) => (
               <div key={f.title} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
@@ -317,31 +300,40 @@ function SellLaptopArea() {
         </div>
       </section>
 
+      {/* LOCATIONS */}
+      <section className="bg-background py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-extrabold sm:text-3xl">
+            Sell your {brand.name} laptop across Bangalore
+          </h2>
+          <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+            Free doorstep pickup in every major Bangalore locality. Tap your area for a dedicated
+            local page.
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {areas.map((area) => (
+              <Link
+                key={area.slug}
+                to="/sell-used-laptop/$area"
+                params={{ area: area.slug }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+              >
+                <MapPin className="size-4 text-primary" />
+                {area.name}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <section className="bg-secondary/40 py-14">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-extrabold sm:text-3xl">
-            Selling a laptop in {area.name} — FAQs
+            Selling a {brand.name} laptop — FAQs
           </h2>
           <div className="mt-8 space-y-3">
-            {[
-              {
-                q: `How can I sell my used laptop in ${area.name}?`,
-                a: `Get a free instant quote online, book a free doorstep pickup in ${area.name}, and our verified agent collects your laptop and pays you instantly.`,
-              },
-              {
-                q: `Which laptop brands do you buy in ${area.name}?`,
-                a: `We buy all major brands in ${area.name} — Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI — working or with minor issues.`,
-              },
-              {
-                q: `Is the laptop pickup really free in ${area.name}?`,
-                a: `Yes, doorstep pickup is completely free across ${area.name} and nearby localities.`,
-              },
-              {
-                q: "When do I get paid?",
-                a: `Instantly. Once our agent verifies your laptop at your ${area.name} address, payment is transferred on the spot via UPI or bank transfer.`,
-              },
-            ].map((f) => (
+            {brand.faqs.map((f) => (
               <div key={f.q} className="rounded-2xl border border-border bg-card p-5">
                 <h3 className="font-bold">{f.q}</h3>
                 <p className="mt-1.5 text-sm text-muted-foreground">{f.a}</p>
@@ -351,19 +343,39 @@ function SellLaptopArea() {
         </div>
       </section>
 
+      {/* OTHER BRANDS */}
+      <section className="bg-background py-14">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-2xl font-extrabold sm:text-3xl">Sell other laptop brands</h2>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {otherBrands.map((b) => (
+              <Link
+                key={b.slug}
+                to="/sell-old-laptop/$brand"
+                params={{ brand: b.slug }}
+                className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary"
+              >
+                <Laptop className="size-4 text-primary" />
+                Sell {b.name} laptop
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
-      <section className="bg-background py-16">
+      <section className="bg-secondary/40 py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-2xl font-extrabold sm:text-3xl">
-            Ready to sell your laptop in {area.name}?
+            Ready to sell your {brand.name} laptop in Bangalore?
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground">
-            Get your free instant quote now and book a same-day doorstep pickup in {area.name},
+            Get your free instant quote now and book a same-day doorstep pickup anywhere in
             Bangalore.
           </p>
           <div className="mt-7 flex flex-col justify-center gap-3 sm:flex-row">
             <Button asChild variant="hero" size="xl">
-              <Link to="/sell/$category" params={{ category: "laptops" }}>
+              <Link to="/sell/$category/$brand" params={{ category: "laptops", brand: brand.slug }}>
                 Get instant quote <ArrowRight />
               </Link>
             </Button>

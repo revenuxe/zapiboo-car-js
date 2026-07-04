@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { serviceAreas, siteUrl } from "@/lib/seo";
 import { sortedBlogPosts } from "@/lib/blog";
+import { laptopBrands } from "@/lib/laptop-brands";
 
 const BASE_URL = siteUrl;
 
@@ -45,6 +46,11 @@ export const Route = createFileRoute("/sitemap.xml")({
             path: `/sell-used-laptop/${area.slug}`,
             changefreq: "monthly" as const,
             priority: "0.8",
+          })),
+          ...laptopBrands.map((brand) => ({
+            path: `/sell-old-laptop/${brand.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.85",
           })),
         ];
 

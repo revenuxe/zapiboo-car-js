@@ -340,85 +340,26 @@ function Landing({
   );
 }
 
-function BrandModelsSection({
-  category,
-  categoryId,
-  lower,
-}: {
-  category: string;
-  categoryId: string;
-  lower: string;
-}) {
-  const { data: catalog = [], isLoading } = useCategoryCatalog(categoryId);
-  const brands = catalog.filter((b) => b.series.length > 0);
-
-  if (!isLoading && brands.length === 0) return null;
-
+function BrandLinksSection() {
   return (
-    <section className="bg-background py-14 md:py-16">
+    <section className="border-t border-border bg-background py-12 md:py-14">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-          Sell {lower} by brand
-        </p>
-        <h2 className="mt-2 text-2xl font-extrabold sm:text-3xl">
-          Sell your old {lower} — every brand, every model
-        </h2>
+        <h2 className="text-xl font-bold sm:text-2xl">Sell used laptop by brand in Bangalore</h2>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          From premium ultrabooks to gaming rigs, HuluMart buys all {lower} models in Bangalore at
-          the best price. Pick your brand and series below for an instant quote, free doorstep pickup
-          and same-day payment.
+          Explore detailed guides and instant prices for every laptop brand we buy in Bengaluru.
         </p>
-
-        {isLoading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="size-7 animate-spin text-primary" />
-          </div>
-        ) : (
-          <div className="mt-8 grid gap-5 md:grid-cols-2">
-            {brands.map((b) => (
-              <div
-                key={b.id}
-                className="flex flex-col rounded-2xl border border-border bg-card p-6 shadow-soft transition-shadow hover:shadow-elevated"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex size-12 shrink-0 items-center justify-center rounded-xl border border-border bg-background">
-                    {b.logo ? (
-                      <img
-                        src={b.logo}
-                        alt={`${b.name} ${lower}`}
-                        className="max-h-8 max-w-8 object-contain"
-                      />
-                    ) : (
-                      <Tag className="size-6 text-primary" />
-                    )}
-                  </div>
-                  <h3 className="text-lg font-bold">Sell {b.name} {lower}</h3>
-                </div>
-                <p className="mt-3 text-sm text-muted-foreground">
-                  Get the best price for your used {b.name} {lower} in Bangalore. We buy every{" "}
-                  {b.name} series with a free instant quote, doorstep pickup and instant payment.
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {b.series.slice(0, 6).map((s) => (
-                    <Link
-                      key={s.id}
-                      to="/sell/$category_/$brand_/$series"
-                      params={{ category, brand: b.slug, series: s.slug }}
-                      className="rounded-full border border-border bg-background px-3 py-1.5 text-xs font-medium transition-colors hover:border-primary hover:text-primary"
-                    >
-                      {s.name}
-                    </Link>
-                  ))}
-                </div>
-                <Button asChild variant="outline" size="sm" className="mt-5 self-start">
-                  <Link to="/sell/$category_/$brand" params={{ category, brand: b.slug }}>
-                    Get {b.name} quote <ArrowRight className="size-4" />
-                  </Link>
-                </Button>
-              </div>
-            ))}
-          </div>
-        )}
+        <div className="mt-5 flex flex-wrap gap-x-6 gap-y-2.5 text-sm">
+          {laptopBrands.map((b) => (
+            <Link
+              key={b.slug}
+              to="/sell-old-laptop/$brand"
+              params={{ brand: b.slug }}
+              className="font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-primary hover:underline"
+            >
+              Sell used {b.name} laptop
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );

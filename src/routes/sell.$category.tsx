@@ -333,6 +333,9 @@ function Landing({
           </div>
         </div>
       </section>
+
+      {/* SELL BY BRAND — simple SEO links above footer */}
+      {category === "laptops" && <BrandLinksSection />}
     </>
   );
 }

@@ -263,9 +263,6 @@ function Landing({
         </div>
       </section>
 
-      {/* SELL BY BRAND — SEO */}
-      <BrandModelsSection category={category} categoryId={categoryId} lower={lower} />
-
       {/* LOCATIONS */}
       {category === "laptops" && <LaptopLocationsSection />}
 

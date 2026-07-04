@@ -24,7 +24,7 @@ import {
   organizationSchema,
   serviceAreas,
 } from "@/lib/seo";
-import { getLaptopBrandBySlug, laptopBrands } from "@/lib/laptop-brands";
+import { getLaptopBrandBySlug, laptopBrands, type LaptopBrand } from "@/lib/laptop-brands";
 
 export const Route = createFileRoute("/sell-old-laptop/$brand")({
   loader: ({ params }) => {
@@ -91,7 +91,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand")({
 });
 
 function SellBrandLaptop() {
-  const { brand } = Route.useLoaderData();
+  const { brand } = Route.useLoaderData() as { brand: LaptopBrand };
   const otherBrands = laptopBrands.filter((b) => b.slug !== brand.slug);
   const areas = serviceAreas.filter((a) => featuredServiceAreas.includes(a.slug)).slice(0, 12);
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(

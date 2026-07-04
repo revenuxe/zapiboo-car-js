@@ -47,6 +47,11 @@ export const Route = createFileRoute("/sitemap.xml")({
             changefreq: "monthly" as const,
             priority: "0.8",
           })),
+          ...laptopBrands.map((brand) => ({
+            path: `/sell-old-laptop/${brand.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.85",
+          })),
         ];
 
         const urls = entries.map((e) =>

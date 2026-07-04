@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { serviceAreas, siteUrl } from "@/lib/seo";
 import { sortedBlogPosts } from "@/lib/blog";
+import { laptopBrands } from "@/lib/laptop-brands";
 
 const BASE_URL = siteUrl;
 

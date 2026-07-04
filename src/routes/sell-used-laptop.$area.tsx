@@ -205,12 +205,12 @@ function SellLaptopArea() {
                 {laptopBrands.map((b) => (
                   <Link
                     key={b.slug}
-                    to="/sell/$category_/$brand"
-                    params={{ category: "laptops", brand: b.slug }}
+                    to="/sell-old-laptop/$brand"
+                    params={{ brand: b.slug }}
                     className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
                   >
                     <Laptop className="size-4 text-primary" />
-                    {b.name}
+                    Sell {b.name} laptop
                   </Link>
                 ))}
               </div>

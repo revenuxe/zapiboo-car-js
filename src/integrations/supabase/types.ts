@@ -113,6 +113,7 @@ export type Database = {
           id: string
           logo: string | null
           name: string
+          platform: string
           slug: string
           sort_order: number
           updated_at: string
@@ -124,6 +125,7 @@ export type Database = {
           id?: string
           logo?: string | null
           name: string
+          platform?: string
           slug: string
           sort_order?: number
           updated_at?: string
@@ -135,6 +137,7 @@ export type Database = {
           id?: string
           logo?: string | null
           name?: string
+          platform?: string
           slug?: string
           sort_order?: number
           updated_at?: string
@@ -194,6 +197,7 @@ export type Database = {
           slug: string
           sort_order: number
           updated_at: string
+          year: number | null
         }
         Insert: {
           active?: boolean
@@ -206,6 +210,7 @@ export type Database = {
           slug: string
           sort_order?: number
           updated_at?: string
+          year?: number | null
         }
         Update: {
           active?: boolean
@@ -218,6 +223,7 @@ export type Database = {
           slug?: string
           sort_order?: number
           updated_at?: string
+          year?: number | null
         }
         Relationships: [
           {
@@ -624,6 +630,100 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      spec_groups: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          id: string
+          key: string
+          platform: string | null
+          selection: string
+          step_order: number
+          subtitle: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          id?: string
+          key: string
+          platform?: string | null
+          selection?: string
+          step_order?: number
+          subtitle?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          id?: string
+          key?: string
+          platform?: string | null
+          selection?: string
+          step_order?: number
+          subtitle?: string | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spec_groups_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "device_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      spec_options: {
+        Row: {
+          created_at: string
+          description: string | null
+          group_id: string
+          id: string
+          kind: string
+          label: string
+          sort_order: number
+          updated_at: string
+          value: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          group_id: string
+          id?: string
+          kind?: string
+          label: string
+          sort_order?: number
+          updated_at?: string
+          value?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          group_id?: string
+          id?: string
+          kind?: string
+          label?: string
+          sort_order?: number
+          updated_at?: string
+          value?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "spec_options_group_id_fkey"
+            columns: ["group_id"]
+            isOneToOne: false
+            referencedRelation: "spec_groups"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_profiles: {
         Row: {

@@ -24,7 +24,7 @@ import {
   organizationSchema,
   serviceAreas,
 } from "@/lib/seo";
-import { getLaptopBrandBySlug, laptopBrands, type LaptopBrand } from "@/lib/laptop-brands";
+import { getLaptopBrandBySlug, laptopBrands, modelSlug, type LaptopBrand } from "@/lib/laptop-brands";
 
 export const Route = createFileRoute("/sell-old-laptop/$brand")({
   loader: ({ params }) => {
@@ -115,8 +115,11 @@ function SellBrandLaptop() {
             Sell {brand.name} laptop
           </p>
           <h1 className="mt-4 text-3xl font-extrabold leading-[1.08] sm:text-5xl">
-            {brand.headline.replace(brand.name, "")}{" "}
-            <span className="text-gradient">{brand.name}</span> Laptop in Bangalore
+            {brand.h1 ?? (
+              <>
+                Sell Old <span className="text-gradient">{brand.name}</span> Laptop in Bangalore
+              </>
+            )}
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg">
             {brand.tagline} Free instant quote, free doorstep pickup and same-day UPI payment across
@@ -224,12 +227,14 @@ function SellBrandLaptop() {
             <p className="text-sm font-semibold text-foreground">Popular {brand.name} models we buy:</p>
             <div className="mt-3 flex flex-wrap gap-2">
               {brand.models.map((m) => (
-                <span
+                <Link
                   key={m}
-                  className="rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft"
+                  to="/sell-old-laptop/$brand/$model"
+                  params={{ brand: brand.slug, model: modelSlug(m) }}
+                  className="rounded-full border border-border bg-card px-3.5 py-2 text-sm font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:text-primary"
                 >
-                  {m}
-                </span>
+                  Sell {m}
+                </Link>
               ))}
             </div>
           </div>

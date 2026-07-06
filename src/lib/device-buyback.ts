@@ -18,6 +18,7 @@ export type DeviceBrand = {
   name: string;
   slug: string;
   logo: string | null;
+  platform: string;
   active: boolean;
   sort_order: number;
 };
@@ -38,6 +39,7 @@ export type DeviceModel = {
   name: string;
   slug: string;
   base_price: number;
+  year: number | null;
   image: string | null;
   active: boolean;
   sort_order: number;
@@ -65,6 +67,22 @@ export type ConditionGroup = {
   step_order: number;
   active: boolean;
   options?: ConditionOption[];
+};
+
+// Configuration specs (processor / RAM / storage / GPU). Options reuse ConditionOption shape.
+export type SpecOption = ConditionOption;
+
+export type SpecGroup = {
+  id: string;
+  category_id: string;
+  platform: string | null; // null = all platforms, else 'apple' | 'windows'
+  key: string;
+  title: string;
+  subtitle: string | null;
+  selection: "single" | "multi";
+  step_order: number;
+  active: boolean;
+  options?: SpecOption[];
 };
 
 export type DeviceOrder = {
@@ -122,7 +140,7 @@ export function formatPrice(n: number) {
   return `₹${Math.round(n).toLocaleString("en-IN")}`;
 }
 
-// ---------------- Quote engine ----------------
+// ---------------- Quote engine (Cashify-style) ----------------
 export function optionImpact(base: number, kind: OptionKind, value: number): number {
   switch (kind) {
     case "deduct_fixed":
@@ -136,21 +154,73 @@ export function optionImpact(base: number, kind: OptionKind, value: number): num
   }
 }
 
-export function calculateQuote(
-  base: number,
-  selected: { kind: OptionKind; value: number; label: string; group: string }[],
-) {
-  let total = base;
+export type SelectedOption = { kind: OptionKind; value: number; label: string; group: string };
+
+// Age-based depreciation table (fraction of the config value removed).
+export function ageDepreciation(year?: number | null): { years: number; rate: number } {
+  if (!year) return { years: 0, rate: 0 };
+  const age = new Date().getFullYear() - year;
+  if (age <= 0) return { years: 0, rate: 0 };
+  if (age === 1) return { years: 1, rate: 0.08 };
+  if (age === 2) return { years: 2, rate: 0.15 };
+  if (age === 3) return { years: 3, rate: 0.25 };
+  if (age === 4) return { years: 4, rate: 0.32 };
+  return { years: age, rate: 0.38 };
+}
+
+export type QuoteInput = {
+  base: number;
+  year?: number | null;
+  specs?: SelectedOption[]; // configuration impacts (processor / ram / storage / gpu)
+  conditions?: SelectedOption[]; // physical / functional condition impacts
+};
+
+export type QuoteResult = { final: number; base: number; breakdown: OrderSelection[] };
+
+// Pipeline: base + Σ spec impacts → apply age depreciation → − Σ condition impacts → floor & round.
+export function calculateQuote(input: QuoteInput | number, legacy?: SelectedOption[]): QuoteResult {
+  // Back-compat: calculateQuote(base, selectedOptions)
+  const norm: QuoteInput =
+    typeof input === "number" ? { base: input, conditions: legacy ?? [] } : input;
+
+  const base = norm.base;
+  const specs = norm.specs ?? [];
+  const conditions = norm.conditions ?? [];
   const breakdown: OrderSelection[] = [];
-  for (const s of selected) {
+  let total = base;
+
+  // 1) Configuration deltas (relative to base/reference config)
+  for (const s of specs) {
     const impact = optionImpact(base, s.kind, s.value);
     total += impact;
     breakdown.push({ group: s.group, option: s.label, kind: s.kind, value: s.value, impact });
   }
-  // Floor so a quote never goes absurdly low; round to nearest 50.
+
+  // 2) Age depreciation on the configured value
+  const { years, rate } = ageDepreciation(norm.year);
+  if (rate > 0) {
+    const ageImpact = -Math.round(total * rate);
+    total += ageImpact;
+    breakdown.push({
+      group: "Age",
+      option: `${years}+ year${years > 1 ? "s" : ""} old`,
+      kind: "deduct_percent",
+      value: Math.round(rate * 100),
+      impact: ageImpact,
+    });
+  }
+
+  // 3) Condition & accessory adjustments
+  for (const c of conditions) {
+    const impact = optionImpact(base, c.kind, c.value);
+    total += impact;
+    breakdown.push({ group: c.group, option: c.label, kind: c.kind, value: c.value, impact });
+  }
+
+  // Floor so a quote never goes absurdly low; round to nearest ₹100.
   const floor = Math.max(0, Math.round(base * 0.05));
-  const final = Math.max(floor, Math.round(total / 50) * 50);
-  return { final, breakdown };
+  const final = Math.max(floor, Math.round(total / 100) * 100);
+  return { final, base, breakdown };
 }
 
 // ---------------- Public read hooks ----------------
@@ -178,7 +248,7 @@ export function useDeviceBrands(categoryId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_brands")
-        .select("id, category_id, name, slug, logo, active, sort_order")
+        .select("id, category_id, name, slug, logo, platform, active, sort_order")
         .eq("category_id", categoryId!)
         .eq("active", true)
         .order("sort_order");
@@ -214,7 +284,7 @@ export function useDeviceModels(seriesId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_models")
-        .select("id, series_id, name, slug, base_price, image, active, sort_order")
+        .select("id, series_id, name, slug, base_price, year, image, active, sort_order")
         .eq("series_id", seriesId!)
         .eq("active", true)
         .order("sort_order");
@@ -235,7 +305,7 @@ export function useCategoryCatalog(categoryId?: string) {
     queryFn: async () => {
       const { data: brands, error: bErr } = await supabase
         .from("device_brands")
-        .select("id, category_id, name, slug, logo, active, sort_order")
+        .select("id, category_id, name, slug, logo, platform, active, sort_order")
         .eq("category_id", categoryId!)
         .eq("active", true)
         .order("sort_order");
@@ -269,7 +339,7 @@ export function useDeviceBrandBySlug(categoryId?: string, slug?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_brands")
-        .select("id, category_id, name, slug, logo, active, sort_order")
+        .select("id, category_id, name, slug, logo, platform, active, sort_order")
         .eq("category_id", categoryId!)
         .eq("slug", slug!)
         .eq("active", true)
@@ -307,7 +377,7 @@ export function useDeviceModelBySlug(seriesId?: string, slug?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_models")
-        .select("id, series_id, name, slug, base_price, image, active, sort_order")
+        .select("id, series_id, name, slug, base_price, year, image, active, sort_order")
         .eq("series_id", seriesId!)
         .eq("slug", slug!)
         .eq("active", true)
@@ -343,6 +413,45 @@ export function useConditionGroups(categoryId?: string) {
         options = opts as ConditionOption[];
       }
       return (groups as ConditionGroup[]).map((g) => ({
+        ...g,
+        options: options.filter((o) => o.group_id === g.id),
+      }));
+    },
+    staleTime: 60_000,
+  });
+}
+
+// Spec (configuration) groups for a category, filtered to the brand's platform.
+// platform IS NULL groups apply to every platform.
+export function useSpecGroups(categoryId?: string, platform?: string | null) {
+  return useQuery({
+    queryKey: ["device", "specs", categoryId, platform ?? "all"],
+    enabled: !!categoryId,
+    queryFn: async () => {
+      let q = supabase
+        .from("spec_groups")
+        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active")
+        .eq("category_id", categoryId!)
+        .eq("active", true);
+      if (platform) {
+        q = q.or(`platform.is.null,platform.eq.${platform}`);
+      } else {
+        q = q.is("platform", null);
+      }
+      const { data: groups, error } = await q.order("step_order");
+      if (error) throw error;
+      const ids = (groups ?? []).map((g) => g.id);
+      let options: SpecOption[] = [];
+      if (ids.length) {
+        const { data: opts, error: optErr } = await supabase
+          .from("spec_options")
+          .select("id, group_id, label, description, kind, value, sort_order")
+          .in("group_id", ids)
+          .order("sort_order");
+        if (optErr) throw optErr;
+        options = opts as SpecOption[];
+      }
+      return (groups as SpecGroup[]).map((g) => ({
         ...g,
         options: options.filter((o) => o.group_id === g.id),
       }));

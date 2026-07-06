@@ -36,6 +36,7 @@ import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
 import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category_.$brand'
+import { Route as SellOldLaptopBrandModelRouteImport } from './routes/sell-old-laptop.$brand_.$model'
 import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category_.$brand_.$series'
 import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category_.$brand_.$series_.$model'
 
@@ -174,6 +175,11 @@ const SellCategoryBrandRoute = SellCategoryBrandRouteImport.update({
   path: '/sell/$category/$brand',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellOldLaptopBrandModelRoute = SellOldLaptopBrandModelRouteImport.update({
+  id: '/sell-old-laptop/$brand_/$model',
+  path: '/sell-old-laptop/$brand/$model',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SellCategoryBrandSeriesRoute = SellCategoryBrandSeriesRouteImport.update({
   id: '/sell/$category_/$brand_/$series',
   path: '/sell/$category/$brand/$series',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
   '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
+  '/sell-old-laptop/$brand/$model': typeof SellOldLaptopBrandModelRoute
   '/sell/$category/$brand': typeof SellCategoryBrandRoute
   '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
   '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
@@ -244,6 +251,7 @@ export interface FileRoutesByTo {
   '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
   '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
+  '/sell-old-laptop/$brand/$model': typeof SellOldLaptopBrandModelRoute
   '/sell/$category/$brand': typeof SellCategoryBrandRoute
   '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
   '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
@@ -276,6 +284,7 @@ export interface FileRoutesById {
   '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
   '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
+  '/sell-old-laptop/$brand_/$model': typeof SellOldLaptopBrandModelRoute
   '/sell/$category_/$brand': typeof SellCategoryBrandRoute
   '/sell/$category_/$brand_/$series': typeof SellCategoryBrandSeriesRoute
   '/sell/$category_/$brand_/$series_/$model': typeof SellCategoryBrandSeriesModelRoute
@@ -309,6 +318,7 @@ export interface FileRouteTypes {
     | '/sell-old-laptop/$brand'
     | '/sell-used-laptop/$area'
     | '/sell/$category'
+    | '/sell-old-laptop/$brand/$model'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
     | '/sell/$category/$brand/$series/$model'
@@ -340,6 +350,7 @@ export interface FileRouteTypes {
     | '/sell-old-laptop/$brand'
     | '/sell-used-laptop/$area'
     | '/sell/$category'
+    | '/sell-old-laptop/$brand/$model'
     | '/sell/$category/$brand'
     | '/sell/$category/$brand/$series'
     | '/sell/$category/$brand/$series/$model'
@@ -371,6 +382,7 @@ export interface FileRouteTypes {
     | '/sell-old-laptop/$brand'
     | '/sell-used-laptop/$area'
     | '/sell/$category'
+    | '/sell-old-laptop/$brand_/$model'
     | '/sell/$category_/$brand'
     | '/sell/$category_/$brand_/$series'
     | '/sell/$category_/$brand_/$series_/$model'
@@ -403,6 +415,7 @@ export interface RootRouteChildren {
   SellOldLaptopBrandRoute: typeof SellOldLaptopBrandRoute
   SellUsedLaptopAreaRoute: typeof SellUsedLaptopAreaRoute
   SellCategoryRoute: typeof SellCategoryRoute
+  SellOldLaptopBrandModelRoute: typeof SellOldLaptopBrandModelRoute
   SellCategoryBrandRoute: typeof SellCategoryBrandRoute
   SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRoute
   SellCategoryBrandSeriesModelRoute: typeof SellCategoryBrandSeriesModelRoute
@@ -599,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SellCategoryBrandRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell-old-laptop/$brand_/$model': {
+      id: '/sell-old-laptop/$brand_/$model'
+      path: '/sell-old-laptop/$brand/$model'
+      fullPath: '/sell-old-laptop/$brand/$model'
+      preLoaderRoute: typeof SellOldLaptopBrandModelRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sell/$category_/$brand_/$series': {
       id: '/sell/$category_/$brand_/$series'
       path: '/sell/$category/$brand/$series'
@@ -643,6 +663,7 @@ const rootRouteChildren: RootRouteChildren = {
   SellOldLaptopBrandRoute: SellOldLaptopBrandRoute,
   SellUsedLaptopAreaRoute: SellUsedLaptopAreaRoute,
   SellCategoryRoute: SellCategoryRoute,
+  SellOldLaptopBrandModelRoute: SellOldLaptopBrandModelRoute,
   SellCategoryBrandRoute: SellCategoryBrandRoute,
   SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRoute,
   SellCategoryBrandSeriesModelRoute: SellCategoryBrandSeriesModelRoute,

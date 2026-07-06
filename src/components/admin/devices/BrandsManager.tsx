@@ -14,6 +14,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ImageField } from "@/components/admin/devices/ImageField";
 import { slugify, type DeviceBrand } from "@/lib/device-buyback";
 
@@ -28,7 +35,7 @@ export function BrandsManager({ categoryId }: { categoryId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_brands")
-        .select("id, category_id, name, slug, logo, active, sort_order")
+        .select("id, category_id, name, slug, logo, platform, active, sort_order")
         .eq("category_id", categoryId)
         .order("sort_order");
       if (error) throw error;
@@ -230,10 +237,11 @@ function BrandDialog({
 }) {
   const [name, setName] = useState(editing?.name ?? "");
   const [logo, setLogo] = useState<string | null>(editing?.logo ?? null);
+  const [platform, setPlatform] = useState<string>(editing?.platform ?? "windows");
 
   const save = useMutation({
     mutationFn: async () => {
-      const payload = { name: name.trim(), logo, slug: slugify(name) || "brand" };
+      const payload = { name: name.trim(), logo, platform, slug: slugify(name) || "brand" };
       if (editing) {
         const { error } = await supabase.from("device_brands").update(payload).eq("id", editing.id);
         if (error) throw error;
@@ -262,6 +270,21 @@ function BrandDialog({
           <div className="space-y-1.5">
             <Label className="text-xs">Brand name</Label>
             <Input placeholder="e.g. Apple" value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Platform</Label>
+            <Select value={platform} onValueChange={setPlatform}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="windows">Windows (Intel / AMD)</SelectItem>
+                <SelectItem value="apple">Apple (M-series / Intel)</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Controls which processor options show in the sell flow.
+            </p>
           </div>
           <ImageField
             label="Logo"

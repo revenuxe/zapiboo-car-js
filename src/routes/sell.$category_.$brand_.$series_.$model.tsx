@@ -31,6 +31,7 @@ import {
   calculateQuote,
   formatPrice,
   useConditionGroups,
+  useSpecGroups,
   useDeviceBrandBySlug,
   useDeviceCategory,
   useDeviceModelBySlug,
@@ -39,6 +40,7 @@ import {
   type ConditionOption,
   type DeviceModel,
   type OptionKind,
+  type QuoteResult,
 } from "@/lib/device-buyback";
 
 export const Route = createFileRoute("/sell/$category_/$brand_/$series_/$model")({
@@ -60,7 +62,7 @@ function cap(s: string) {
 }
 
 type Selections = Record<string, string[]>;
-type Phase = "intro" | "conditions" | "result" | "booking";
+type Phase = "intro" | "config" | "conditions" | "result" | "booking";
 
 const SLOTS = ["Morning (9am–12pm)", "Afternoon (12pm–4pm)", "Evening (4pm–8pm)"];
 
@@ -74,12 +76,15 @@ function EvaluatePage() {
   const { data: brandRow, isLoading: brandLoading } = useDeviceBrandBySlug(cat?.id, brand);
   const { data: seriesRow, isLoading: seriesLoading } = useDeviceSeriesBySlug(brandRow?.id, series);
   const { data: modelRow, isLoading: modelLoading } = useDeviceModelBySlug(seriesRow?.id, model);
+  const { data: specGroups = [] } = useSpecGroups(cat?.id, brandRow?.platform);
   const { data: groups = [] } = useConditionGroups(cat?.id);
 
   const storageKey = `hm_eval:${category}/${brand}/${series}/${model}`;
 
+  const [specSelections, setSpecSelections] = useState<Selections>({});
   const [selections, setSelections] = useState<Selections>({});
   const [phase, setPhase] = useState<Phase>("intro");
+  const [specStep, setSpecStep] = useState(0);
   const [condStep, setCondStep] = useState(0);
   const [done, setDone] = useState(false);
   const [invoice, setInvoice] = useState<BookingInvoiceData | null>(null);
@@ -93,8 +98,9 @@ function EvaluatePage() {
     try {
       const raw = sessionStorage.getItem(storageKey);
       if (raw) {
-        const saved = JSON.parse(raw) as { selections?: Selections };
+        const saved = JSON.parse(raw) as { selections?: Selections; specSelections?: Selections };
         if (saved.selections) setSelections(saved.selections);
+        if (saved.specSelections) setSpecSelections(saved.specSelections);
         setRestored(true);
       }
     } catch {
@@ -117,9 +123,20 @@ function EvaluatePage() {
     if (typeof window !== "undefined") {
       window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
     }
-  }, [phase, condStep, done]);
+  }, [phase, specStep, condStep, done]);
 
-  const selectedOptions = useMemo(() => {
+  const specOptions = useMemo(() => {
+    const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
+    for (const g of specGroups) {
+      for (const optId of specSelections[g.id] ?? []) {
+        const opt = g.options?.find((o) => o.id === optId);
+        if (opt) out.push({ kind: opt.kind, value: opt.value, label: opt.label, group: g.title });
+      }
+    }
+    return out;
+  }, [specGroups, specSelections]);
+
+  const conditionOptions = useMemo(() => {
     const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
     for (const g of groups) {
       for (const optId of selections[g.id] ?? []) {
@@ -130,9 +147,17 @@ function EvaluatePage() {
     return out;
   }, [groups, selections]);
 
-  const quote = useMemo(
-    () => (modelRow ? calculateQuote(modelRow.base_price, selectedOptions) : { final: 0, breakdown: [] }),
-    [modelRow, selectedOptions],
+  const quote = useMemo<QuoteResult>(
+    () =>
+      modelRow
+        ? calculateQuote({
+            base: modelRow.base_price,
+            year: modelRow.year,
+            specs: specOptions,
+            conditions: conditionOptions,
+          })
+        : { final: 0, base: 0, breakdown: [] },
+    [modelRow, specOptions, conditionOptions],
   );
 
   const loading = catLoading || brandLoading || seriesLoading || modelLoading;
@@ -199,18 +224,44 @@ function EvaluatePage() {
     );
   }
 
+  const specSteps = specGroups.length;
+  const specLabels = specGroups.map((g) => g.title);
+  const currentSpec = specGroups[specStep] ?? null;
+  const specAnswered = currentSpec ? (specSelections[currentSpec.id]?.length ?? 0) > 0 : true;
+
   const conditionSteps = groups.length;
   const stepLabels = groups.map((g) => g.title);
   const currentGroup = groups[condStep] ?? null;
   const stepAnswered = currentGroup ? (selections[currentGroup.id]?.length ?? 0) > 0 : true;
 
   const startEvaluation = () => {
-    if (conditionSteps === 0) {
-      setPhase("result");
+    if (specSteps > 0) {
+      setSpecStep(0);
+      setPhase("config");
       return;
     }
-    setCondStep(0);
-    setPhase("conditions");
+    if (conditionSteps > 0) {
+      setCondStep(0);
+      setPhase("conditions");
+      return;
+    }
+    setPhase("result");
+  };
+
+  const nextSpec = () => {
+    if (specStep < specSteps - 1) {
+      setSpecStep((s) => s + 1);
+    } else if (conditionSteps > 0) {
+      setCondStep(0);
+      setPhase("conditions");
+    } else {
+      setPhase("result");
+    }
+  };
+
+  const backSpec = () => {
+    if (specStep > 0) setSpecStep((s) => s - 1);
+    else setPhase("intro");
   };
 
   const nextCondition = () => {
@@ -223,12 +274,27 @@ function EvaluatePage() {
 
   const backCondition = () => {
     if (condStep > 0) setCondStep((s) => s - 1);
-    else setPhase("intro");
+    else if (specSteps > 0) {
+      setSpecStep(specSteps - 1);
+      setPhase("config");
+    } else setPhase("intro");
+  };
+
+  const backFromResult = () => {
+    if (conditionSteps > 0) {
+      setCondStep(conditionSteps - 1);
+      setPhase("conditions");
+    } else if (specSteps > 0) {
+      setSpecStep(specSteps - 1);
+      setPhase("config");
+    } else {
+      setPhase("intro");
+    }
   };
 
   const goToLogin = () => {
     if (typeof window !== "undefined") {
-      sessionStorage.setItem(storageKey, JSON.stringify({ selections }));
+      sessionStorage.setItem(storageKey, JSON.stringify({ selections, specSelections }));
       navigate({ to: "/auth", search: { redirectTo: window.location.pathname } as never });
     }
   };
@@ -263,9 +329,26 @@ function EvaluatePage() {
 
         {phase === "intro" && <IntroStep model={modelRow} onStart={startEvaluation} />}
 
+        {phase === "config" && currentSpec && (
+          <>
+            <Stepper labels={specLabels} current={specStep} accent="Configuration" />
+            <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
+              <ConditionStep
+                key={currentSpec.id}
+                group={currentSpec}
+                index={specStep}
+                total={specSteps}
+                selections={specSelections}
+                setSelections={setSpecSelections}
+                onAutoAdvance={nextSpec}
+              />
+            </div>
+          </>
+        )}
+
         {phase === "conditions" && currentGroup && (
           <>
-            <Stepper labels={stepLabels} current={condStep} />
+            <Stepper labels={stepLabels} current={condStep} accent="Condition" />
             <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
               <ConditionStep
                 key={currentGroup.id}
@@ -289,14 +372,7 @@ function EvaluatePage() {
                 model={modelRow}
                 brandName={brandName}
                 quote={quote}
-                onBack={() => {
-                  if (conditionSteps > 0) {
-                    setCondStep(conditionSteps - 1);
-                    setPhase("conditions");
-                  } else {
-                    setPhase("intro");
-                  }
-                }}
+                onBack={backFromResult}
                 onContinue={() => setPhase("booking")}
               />
             )}
@@ -323,6 +399,26 @@ function EvaluatePage() {
           </div>
         )}
       </div>
+
+      {/* Sticky action bar — configuration steps */}
+      {phase === "config" && (
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
+          <div className="mx-auto flex max-w-3xl items-center justify-end gap-2 px-1">
+            <Button variant="outline" size="lg" onClick={backSpec}>
+              <ArrowLeft className="size-4" /> Back
+            </Button>
+            <Button variant="hero" size="lg" disabled={!specAnswered} onClick={nextSpec}>
+              {specStep === specSteps - 1 && conditionSteps === 0 ? "See my price" : "Continue"}{" "}
+              <ArrowRight className="size-4" />
+            </Button>
+          </div>
+          {!specAnswered && (
+            <p className="mx-auto mt-1.5 max-w-3xl px-1 text-center text-[11px] text-muted-foreground">
+              Pick an option to continue.
+            </p>
+          )}
+        </div>
+      )}
 
       {/* Sticky action bar — condition steps only (no price shown) */}
       {phase === "conditions" && (
@@ -377,11 +473,22 @@ function IntroStep({ model, onStart }: { model: DeviceModel; onStart: () => void
   );
 }
 
-function Stepper({ labels, current }: { labels: string[]; current: number }) {
+function Stepper({
+  labels,
+  current,
+  accent,
+}: {
+  labels: string[];
+  current: number;
+  accent?: string;
+}) {
   const total = labels.length;
   const pct = Math.round(((current + 1) / total) * 100);
   return (
     <div className="mt-6">
+      {accent && (
+        <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary">{accent}</p>
+      )}
       <div className="mb-2 flex items-center justify-between">
         <p className="text-sm font-semibold">
           Step {Math.min(current + 1, total)} of {total}
@@ -533,7 +640,7 @@ function ResultStep({
 }: {
   model: DeviceModel;
   brandName: string;
-  quote: ReturnType<typeof calculateQuote>;
+  quote: QuoteResult;
   onBack: () => void;
   onContinue: () => void;
 }) {
@@ -546,9 +653,39 @@ function ResultStep({
           {brandName} {model.name}
         </p>
         <p className="mx-auto mt-4 max-w-sm text-xs text-navy-foreground/60">
-          This is your locked offer based on the condition details you shared. The exact amount is confirmed with a
-          free doorstep evaluation — and paid instantly.
+          This is your locked offer based on the configuration and condition details you shared. The exact amount is
+          confirmed with a free doorstep evaluation — and paid instantly.
         </p>
+      </div>
+
+      {/* Transparent price breakdown */}
+      <div className="mt-4 rounded-2xl border border-border bg-card p-5 shadow-soft">
+        <p className="text-sm font-bold">How we calculated your price</p>
+        <div className="mt-3 space-y-2 text-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-muted-foreground">Base value ({model.name})</span>
+            <span className="font-semibold">{formatPrice(quote.base)}</span>
+          </div>
+          {quote.breakdown.map((line, i) => (
+            <div key={`${line.group}-${line.option}-${i}`} className="flex items-center justify-between gap-3">
+              <span className="min-w-0 truncate text-muted-foreground">
+                {line.group}: <span className="text-foreground">{line.option}</span>
+              </span>
+              <span
+                className={`shrink-0 font-semibold ${
+                  line.impact >= 0 ? "text-primary" : "text-destructive"
+                }`}
+              >
+                {line.impact >= 0 ? "+" : "−"}
+                {formatPrice(Math.abs(line.impact))}
+              </span>
+            </div>
+          ))}
+          <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
+            <span className="font-bold">Your offer</span>
+            <span className="text-lg font-extrabold text-primary">{formatPrice(quote.final)}</span>
+          </div>
+        </div>
       </div>
 
       <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">

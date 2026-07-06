@@ -79,7 +79,7 @@ export function ModelsManager({ categoryId }: { categoryId: string }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("device_models")
-        .select("id, series_id, name, slug, base_price, image, active, sort_order")
+        .select("id, series_id, name, slug, base_price, year, image, active, sort_order")
         .eq("series_id", seriesId)
         .order("sort_order");
       if (error) throw error;
@@ -245,6 +245,7 @@ function ModelDialog({
 }) {
   const [name, setName] = useState(editing?.name ?? "");
   const [price, setPrice] = useState(editing ? String(editing.base_price) : "");
+  const [year, setYear] = useState(editing?.year ? String(editing.year) : "");
   const [image, setImage] = useState<string | null>(editing?.image ?? null);
 
   const save = useMutation({
@@ -253,6 +254,7 @@ function ModelDialog({
         name: name.trim(),
         slug: slugify(name) || "model",
         base_price: Number(price) || 0,
+        year: year.trim() ? Number(year) : null,
         image,
       };
       if (editing) {
@@ -298,7 +300,20 @@ function ModelDialog({
               onChange={(e) => setPrice(e.target.value)}
             />
             <p className="text-[11px] text-muted-foreground">
-              The best-case quote for a flawless unit. Conditions deduct from this.
+              The best-case quote for a flawless top-spec unit. Configuration & conditions adjust from this.
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Launch / manufacture year (optional)</Label>
+            <Input
+              type="number"
+              inputMode="numeric"
+              placeholder="e.g. 2022"
+              value={year}
+              onChange={(e) => setYear(e.target.value)}
+            />
+            <p className="text-[11px] text-muted-foreground">
+              Used for age-based depreciation. Leave blank to skip.
             </p>
           </div>
           <ImageField

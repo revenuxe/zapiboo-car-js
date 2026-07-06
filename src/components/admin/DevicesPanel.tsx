@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Inbox, Laptop, Layers, Loader2, SlidersHorizontal, Tag } from "lucide-react";
+import { Cpu, Inbox, Laptop, Layers, Loader2, SlidersHorizontal, Tag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
@@ -13,6 +13,7 @@ import { BrandsManager } from "@/components/admin/devices/BrandsManager";
 import { SeriesManager } from "@/components/admin/devices/SeriesManager";
 import { ModelsManager } from "@/components/admin/devices/ModelsManager";
 import { PricingManager } from "@/components/admin/devices/PricingManager";
+import { SpecsManager } from "@/components/admin/devices/SpecsManager";
 import { DeviceOrdersManager } from "@/components/admin/devices/DeviceOrdersManager";
 import type { DeviceCategory } from "@/lib/device-buyback";
 
@@ -21,7 +22,8 @@ const SUBTABS = [
   { value: "brands", label: "Brands", icon: Tag },
   { value: "series", label: "Series", icon: Layers },
   { value: "models", label: "Models", icon: Laptop },
-  { value: "pricing", label: "Buying price", icon: SlidersHorizontal },
+  { value: "specs", label: "Configuration", icon: Cpu },
+  { value: "pricing", label: "Condition price", icon: SlidersHorizontal },
 ] as const;
 
 export function DevicesPanel() {
@@ -105,6 +107,7 @@ export function DevicesPanel() {
           {tab === "brands" && <BrandsManager categoryId={categoryId} />}
           {tab === "series" && <SeriesManager categoryId={categoryId} />}
           {tab === "models" && <ModelsManager categoryId={categoryId} />}
+          {tab === "specs" && <SpecsManager categoryId={categoryId} />}
           {tab === "pricing" && <PricingManager categoryId={categoryId} />}
         </div>
       )}

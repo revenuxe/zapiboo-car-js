@@ -6,6 +6,7 @@ export type LaptopBrand = {
   name: string; // brand label, e.g. "Dell"
   displayName: string; // marketing name, e.g. "Dell laptop"
   headline: string;
+  h1?: string;
   tagline: string;
   intro: string[]; // paragraphs
   popularSeries: { name: string; note: string }[];
@@ -353,4 +354,19 @@ export const laptopBrands = brandData;
 
 export function getLaptopBrandBySlug(slug: string) {
   return brandData.find((b) => b.slug === slug);
+}
+
+export function modelSlug(name: string) {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+export function getLaptopModel(brandSlug: string, modelSlugParam: string) {
+  const brand = getLaptopBrandBySlug(brandSlug);
+  if (!brand) return null;
+  const name = brand.models.find((m) => modelSlug(m) === modelSlugParam);
+  if (!name) return null;
+  return { brand, name };
 }

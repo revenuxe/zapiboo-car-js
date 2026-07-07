@@ -658,40 +658,11 @@ function ResultStep({
         </p>
       </div>
 
-      {/* Transparent price breakdown */}
-      <div className="mt-4 rounded-2xl border border-border bg-card p-5 shadow-soft">
-        <p className="text-sm font-bold">How we calculated your price</p>
-        <div className="mt-3 space-y-2 text-sm">
-          <div className="flex items-center justify-between">
-            <span className="text-muted-foreground">Base value ({model.name})</span>
-            <span className="font-semibold">{formatPrice(quote.base)}</span>
-          </div>
-          {quote.breakdown.map((line, i) => (
-            <div key={`${line.group}-${line.option}-${i}`} className="flex items-center justify-between gap-3">
-              <span className="min-w-0 truncate text-muted-foreground">
-                {line.group}: <span className="text-foreground">{line.option}</span>
-              </span>
-              <span
-                className={`shrink-0 font-semibold ${
-                  line.impact >= 0 ? "text-primary" : "text-destructive"
-                }`}
-              >
-                {line.impact >= 0 ? "+" : "−"}
-                {formatPrice(Math.abs(line.impact))}
-              </span>
-            </div>
-          ))}
-          <div className="mt-2 flex items-center justify-between border-t border-border pt-3">
-            <span className="font-bold">Your offer</span>
-            <span className="text-lg font-extrabold text-primary">{formatPrice(quote.final)}</span>
-          </div>
-        </div>
-      </div>
-
       <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
         <ShieldCheck className="size-4 shrink-0 text-primary" />
         Price locked for your pickup. Instant payment after a quick on-site check.
       </div>
+
 
       <div className="mt-5 flex items-center justify-end gap-2">
         <Button variant="outline" size="lg" onClick={onBack}>

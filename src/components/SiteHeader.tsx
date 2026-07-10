@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Menu, ArrowRight, User as UserIcon, LogOut, Package, LayoutDashboard } from "lucide-react";
+import { Menu, ArrowRight, User as UserIcon, LogOut, Laptop, LayoutDashboard } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -81,7 +81,7 @@ export function SiteHeader() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/account">
-                    <Package className="size-4" /> My pickups
+                    <Laptop className="size-4" /> My laptop quotes
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -96,8 +96,8 @@ export function SiteHeader() {
             </Button>
           )}
           <Button asChild variant="hero" size="sm">
-            <Link to="/pickup">
-              Book a pickup
+            <Link to="/">
+              Sell laptop
               <ArrowRight />
             </Link>
           </Button>
@@ -151,8 +151,8 @@ export function SiteHeader() {
 
             <div className="mt-6 flex flex-col gap-3">
               <Button asChild variant="hero" size="lg" onClick={() => setOpen(false)}>
-                <Link to="/pickup">
-                  Book a pickup
+                <Link to="/">
+                  Sell laptop
                   <ArrowRight />
                 </Link>
               </Button>

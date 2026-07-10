@@ -8,7 +8,7 @@ export const Route = createFileRoute("/terms")({
       {
         name: "description",
         content:
-          "The terms and conditions governing your use of HuluMart's website and doorstep scrap-collection services.",
+          "The terms and conditions governing your use of HuluMart's website and used laptop buyback services.",
       },
       { property: "og:title", content: "Terms & Conditions | HuluMart" },
       {
@@ -28,31 +28,30 @@ const sections: { heading: string; body: string[] }[] = [
     heading: "1. Acceptance of terms",
     body: [
       "By accessing our website, requesting a quote, or booking a pickup, you agree to these Terms & Conditions. If you do not agree, please do not use our services.",
-      "These terms apply to all HuluMart services, including doorstep scrap collection and used laptop / device buyback.",
+      "These terms apply to HuluMart used laptop and device buyback services.",
     ],
   },
   {
     heading: "2. Our services",
     body: [
-      "HuluMart provides doorstep collection of household and commercial scrap and a buyback service for used laptops and electronic devices.",
-      "For scrap, we weigh materials on a certified digital scale at the time of pickup and pay you based on the live rate applicable at that time.",
+      "HuluMart provides a buyback service for used laptops and electronic devices.",
       "Service availability depends on your locality and pincode. We may decline or reschedule a pickup where an area is not yet serviceable or where conditions prevent safe collection.",
     ],
   },
   {
-    heading: "3. Scrap pricing and payment",
+    heading: "3. Pricing and payment",
     body: [
-      "Rates shown on our website are indicative and may change daily based on market conditions. The final price is calculated from the certified weight recorded at pickup and the rate in effect on that day.",
-      "Payment is made to you at the time of pickup through the method agreed at your door. You may review and approve the quote before any material is collected.",
+      "Prices shown on our website are indicative and may change based on market conditions. The final price is confirmed after physical device verification at pickup.",
+      "Payment is made to you at the time of pickup through the agreed method. You may review and approve the final quote before handing over your device.",
     ],
   },
   {
-    heading: "4. Used laptop & device buyback — how the quote works",
+    heading: "4. Used laptop and device buyback - how the quote works",
     body: [
       "The price you see online is an indicative offer generated from the condition details you select. It is not a final or guaranteed price.",
       "Your online quote is valid for 7 days from the date it is generated. Market changes or new model launches may affect pricing after this period.",
       "The final price is confirmed only after a free physical evaluation of the device at your doorstep by our trained executive.",
-      "If the device's actual condition matches the answers you provided, you are paid the quoted amount. If the condition differs — for example additional damage, faults, missing accessories, battery health issues, or activation locks — a revised price is offered. You are free to accept or decline the revised price with no obligation and no charge.",
+      "If the device's actual condition matches the answers you provided, you are paid the quoted amount. If the condition differs - for example additional damage, faults, missing accessories, battery health issues, or activation locks - a revised price is offered. You are free to accept or decline the revised price with no obligation and no charge.",
     ],
   },
   {
@@ -67,7 +66,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "6. Data, accounts and device locks",
     body: [
-      "Before handover you must back up and permanently remove all your personal data, and sign out of and remove all accounts and security locks — including Apple ID / Find My, Google account, Windows / Microsoft account, MDM and any anti-theft locks.",
+      "Before handover you must back up and permanently remove all your personal data, and sign out of and remove all accounts and security locks - including Apple ID / Find My, Google account, Windows / Microsoft account, MDM and any anti-theft locks.",
       "HuluMart is not responsible for any data left on the device. We recommend performing a factory reset before pickup.",
       "Devices that are reported lost or stolen, are blacklisted, or carry unremovable activation / ownership locks cannot be purchased.",
     ],
@@ -75,7 +74,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "7. Buyback payment and ownership transfer",
     body: [
-      "Once you accept the final price, payment is made instantly via UPI or bank transfer to the account or number you provide. Please verify your payment details carefully — HuluMart is not liable for payments sent to incorrect details provided by you.",
+      "Once you accept the final price, payment is made instantly via UPI or bank transfer to the account or number you provide. Please verify your payment details carefully - HuluMart is not liable for payments sent to incorrect details provided by you.",
       "Ownership of the device transfers to HuluMart only after payment is completed and you hand over the device. After successful purchase, the sale is final and the device will not be returned.",
     ],
   },
@@ -83,7 +82,6 @@ const sections: { heading: string; body: string[] }[] = [
     heading: "8. Your responsibilities",
     body: [
       "You confirm that the items offered for sale or collection are lawfully yours and that you are authorised to sell them.",
-      "You confirm that scrap materials are free of hazardous, prohibited or dangerous items unless expressly agreed in advance.",
       "You agree to provide accurate booking details and to be reachable at the phone number you provide so we can confirm and complete the pickup.",
     ],
   },

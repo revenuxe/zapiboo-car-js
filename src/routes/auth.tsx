@@ -107,7 +107,7 @@ function AuthPage() {
             </div>
             <div className="min-w-0">
               <p className="text-sm font-extrabold leading-tight">HuluMart</p>
-              <p className="truncate text-xs text-navy-foreground/65">Bengaluru scrap pickup</p>
+              <p className="truncate text-xs text-navy-foreground/65">Bengaluru laptop buyback</p>
             </div>
           </Link>
           <Button asChild variant="outlineLight" size="sm" className="shrink-0">
@@ -133,8 +133,8 @@ function AuthPage() {
               </h1>
               <p className="mt-1 text-sm text-muted-foreground">
                 {tab === "signin"
-                  ? "Sign in to track pickups faster."
-                  : "Save your details for quicker scrap pickups."}
+                  ? "Sign in to track laptop orders faster."
+                  : "Save your details for quicker laptop quotes."}
               </p>
             </div>
 

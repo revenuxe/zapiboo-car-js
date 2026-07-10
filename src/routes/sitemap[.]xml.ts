@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
-import { serviceAreas, siteUrl } from "@/lib/seo";
-import { sortedBlogPosts } from "@/lib/blog";
+import { siteUrl } from "@/lib/seo";
 import { laptopBrands, modelSlug } from "@/lib/laptop-brands";
 
 const BASE_URL = siteUrl;
@@ -18,35 +17,10 @@ export const Route = createFileRoute("/sitemap.xml")({
       GET: async () => {
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
-          { path: "/how-it-works", changefreq: "monthly", priority: "0.8" },
-          { path: "/materials", changefreq: "daily", priority: "0.9" },
-          { path: "/business", changefreq: "monthly", priority: "0.8" },
-          { path: "/top-scrap-buyers", changefreq: "monthly", priority: "0.85" },
-          { path: "/scrap-cars", changefreq: "monthly", priority: "0.9" },
-          { path: "/areas", changefreq: "weekly", priority: "0.9" },
-          { path: "/pickup", changefreq: "monthly", priority: "0.9" },
-          { path: "/listings", changefreq: "weekly", priority: "0.8" },
           { path: "/sell/laptops", changefreq: "weekly", priority: "0.8" },
-          { path: "/blog", changefreq: "weekly", priority: "0.8" },
-          { path: "/about", changefreq: "monthly", priority: "0.6" },
           { path: "/contact", changefreq: "yearly", priority: "0.5" },
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },
           { path: "/terms", changefreq: "yearly", priority: "0.3" },
-          ...sortedBlogPosts.map((post) => ({
-            path: `/blog/${post.slug}`,
-            changefreq: "monthly" as const,
-            priority: "0.75",
-          })),
-          ...serviceAreas.map((area) => ({
-            path: `/areas/${area.slug}`,
-            changefreq: "monthly" as const,
-            priority: "0.85",
-          })),
-          ...serviceAreas.map((area) => ({
-            path: `/sell-used-laptop/${area.slug}`,
-            changefreq: "monthly" as const,
-            priority: "0.8",
-          })),
           ...laptopBrands.map((brand) => ({
             path: `/sell-old-laptop/${brand.slug}`,
             changefreq: "monthly" as const,

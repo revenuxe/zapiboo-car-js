@@ -13,16 +13,16 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact HuluMart — Talk to Our Team" },
+      { title: "Contact HuluMart - Talk to Our Team" },
       {
         name: "description",
         content:
-          "Questions about doorstep pickup, pricing or selling scrap at scale? Contact the HuluMart team — we usually reply within one business day.",
+          "Questions about laptop buyback, pricing, pickup or payment? Contact the HuluMart team - we usually reply within one business day.",
       },
-      { property: "og:title", content: "Contact HuluMart — Talk to Our Team" },
+      { property: "og:title", content: "Contact HuluMart - Talk to Our Team" },
       {
         property: "og:description",
-        content: "Reach the HuluMart team about pickups, pricing, and business accounts.",
+        content: "Reach the HuluMart team about used laptop quotes, pickup, pricing and payment.",
       },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -71,8 +71,8 @@ function Contact() {
     <>
       <PageHeader
         eyebrow="Contact"
-        title={<>Let's <span className="text-gradient">talk scrap</span></>}
-        subtitle="Whether you're a household with a garage to clear or a plant moving tonnes a week, we'd love to help."
+        title={<>Let's <span className="text-gradient">talk laptops</span></>}
+        subtitle="Whether you want a laptop quote, pickup help, or payment support, we would love to help."
       />
 
       <section className="bg-background py-16 md:py-24">
@@ -124,11 +124,11 @@ function Contact() {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="cmsg">Message</Label>
-                <Textarea id="cmsg" name="message" required rows={5} placeholder="Tell us a bit about your scrap or question..." />
+                <Textarea id="cmsg" name="message" required rows={5} placeholder="Tell us about your laptop or question..." />
               </div>
             </div>
             <Button type="submit" variant="hero" size="xl" className="mt-8 w-full" disabled={sending}>
-              {sending ? "Sending…" : "Send message"}
+              {sending ? "Sending..." : "Send message"}
               {!sending && <Send />}
             </Button>
           </form>

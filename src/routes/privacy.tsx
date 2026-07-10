@@ -8,7 +8,7 @@ export const Route = createFileRoute("/privacy")({
       {
         name: "description",
         content:
-          "How HuluMart collects, uses, stores and protects your personal information when you book a doorstep scrap pickup or use our services.",
+          "How HuluMart collects, uses, stores and protects your personal information when you request a used laptop quote or use our services.",
       },
       { property: "og:title", content: "Privacy Policy | HuluMart" },
       {
@@ -27,13 +27,13 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "1. Who we are",
     body: [
-      "HuluMart (\"HuluMart\", \"we\", \"us\" or \"our\") operates a doorstep scrap-collection service and online platform. This Privacy Policy explains how we handle personal information when you visit our website, book a pickup, or otherwise interact with us.",
+      "HuluMart (\"HuluMart\", \"we\", \"us\" or \"our\") operates a used laptop buyback service and online platform. This Privacy Policy explains how we handle personal information when you visit our website, request a quote, or otherwise interact with us.",
     ],
   },
   {
     heading: "2. Information we collect",
     body: [
-      "Booking details: your name, phone number, service address, locality, pincode, preferred pickup date and time slot, and optional location coordinates or photos you choose to share.",
+      "Quote and pickup details: your name, phone number, service address, locality, pincode, preferred pickup date and time slot, device details, condition answers, and optional photos you choose to share.",
       "Account information: if you create an account, your email address and any profile details you provide (such as full name and phone number).",
       "Usage data: technical information such as your device, browser type, and pages visited, collected automatically to keep the service secure and reliable.",
     ],
@@ -41,15 +41,15 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "3. How we use your information",
     body: [
-      "To schedule, confirm and complete your scrap pickup and to contact you (including via WhatsApp or phone) about your booking.",
-      "To process payments due to you for collected materials and to keep records required for accounting and compliance.",
+      "To generate quotes, schedule pickup, complete laptop verification and contact you (including via WhatsApp or phone) about your request.",
+      "To process payments due to you for purchased devices and to keep records required for accounting and compliance.",
       "To improve our services, prevent fraud and abuse, and comply with legal obligations.",
     ],
   },
   {
     heading: "4. Sharing your information",
     body: [
-      "We share booking details only with the field agents and logistics partners who fulfil your pickup. We do not sell your personal information.",
+      "We share request details only with the field agents and logistics partners who fulfil your pickup. We do not sell your personal information.",
       "We may disclose information where required by law, regulation, legal process, or to protect the rights, property or safety of HuluMart, our users or others.",
     ],
   },

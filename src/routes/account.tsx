@@ -4,11 +4,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   Loader2,
   LogOut,
-  Package,
   MapPin,
   Clock,
   CalendarDays,
-  PlusCircle,
   User as UserIcon,
   Laptop,
   Ban,
@@ -43,26 +41,6 @@ export const Route = createFileRoute("/account")({
   component: AccountPage,
 });
 
-type Lead = {
-  id: string;
-  scrap_mode: string;
-  items: string[];
-  size_tier: string | null;
-  locality: string | null;
-  pincode: string | null;
-  preferred_date: string | null;
-  slot: string | null;
-  status: string;
-  created_at: string;
-};
-
-const statusStyles: Record<string, string> = {
-  new: "bg-secondary text-foreground",
-  scheduled: "bg-accent text-primary",
-  completed: "bg-gradient-brand text-primary-foreground",
-  cancelled: "bg-destructive/10 text-destructive",
-};
-
 function AccountPage() {
   const navigate = useNavigate();
   const qc = useQueryClient();
@@ -80,18 +58,6 @@ function AccountPage() {
     });
   }, [navigate]);
 
-  const { data: bookings = [], isLoading } = useQuery({
-    queryKey: ["my-bookings", user?.id],
-    enabled: !!user,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("id, scrap_mode, items, size_tier, locality, pincode, preferred_date, slot, status, created_at")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as Lead[];
-    },
-  });
 
   const signOut = async () => {
     await qc.cancelQueries();
@@ -130,69 +96,6 @@ function AccountPage() {
         {/* laptop / device buyback orders */}
         <LaptopOrders userId={user!.id} />
 
-        {/* bookings */}
-        <div className="mt-8 flex items-center justify-between">
-          <h2 className="text-lg font-bold">My pickups</h2>
-          <Button asChild variant="hero" size="sm">
-            <Link to="/pickup">
-              <PlusCircle className="size-4" /> Book a pickup
-            </Link>
-          </Button>
-        </div>
-
-        {isLoading ? (
-          <div className="flex justify-center py-16">
-            <Loader2 className="size-6 animate-spin text-primary" />
-          </div>
-        ) : bookings.length === 0 ? (
-          <div className="mt-5 rounded-3xl border border-dashed border-border bg-card p-10 text-center">
-            <Package className="mx-auto size-9 text-muted-foreground" />
-            <p className="mt-3 font-semibold">No pickups yet</p>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Book your first doorstep pickup and it'll show up here.
-            </p>
-            <Button asChild variant="hero" className="mt-5">
-              <Link to="/pickup">Book a pickup</Link>
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-5 space-y-3">
-            {bookings.map((b) => (
-              <div key={b.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="font-semibold capitalize">
-                      {b.scrap_mode === "mixed" ? "Mixed scrap" : b.items.join(", ") || "Scrap pickup"}
-                    </p>
-                    <p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
-                      <MapPin className="size-3.5 text-primary" />
-                      {b.locality || "—"}{b.pincode ? `, ${b.pincode}` : ""}
-                    </p>
-                  </div>
-                  <span
-                    className={`rounded-full px-2.5 py-1 text-xs font-bold capitalize ${
-                      statusStyles[b.status] ?? "bg-secondary text-foreground"
-                    }`}
-                  >
-                    {b.status}
-                  </span>
-                </div>
-                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
-                  {b.preferred_date && (
-                    <span className="flex items-center gap-1.5">
-                      <CalendarDays className="size-3.5 text-primary" /> {b.preferred_date}
-                    </span>
-                  )}
-                  {b.slot && (
-                    <span className="flex items-center gap-1.5">
-                      <Clock className="size-3.5 text-primary" /> {b.slot}
-                    </span>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
       </div>
     </div>
   );
@@ -278,7 +181,7 @@ function LaptopOrders({ userId }: { userId: string }) {
                   <div className="min-w-0">
                     <p className="truncate font-semibold">{o.model_name ?? "Device"}</p>
                     <p className="mt-0.5 truncate text-sm text-muted-foreground">
-                      {[o.brand_name, o.series_name].filter(Boolean).join(" · ")}
+                      {[o.brand_name, o.series_name].filter(Boolean).join(" Â· ")}
                     </p>
                   </div>
                   <span

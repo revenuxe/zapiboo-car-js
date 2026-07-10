@@ -138,8 +138,8 @@ function AdminLogin() {
           </h1>
           <p className="mt-1 text-sm text-navy-foreground/70">
             {mode === "setup"
-              ? "First time here — set up your admin login."
-              : "Manage leads, rates and categories."}
+              ? "First time here - set up your admin login."
+              : "Manage laptop orders and device pricing."}
           </p>
         </div>
 

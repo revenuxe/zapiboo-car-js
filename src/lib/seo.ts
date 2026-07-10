@@ -111,10 +111,11 @@ export function absoluteUrl(path = "/") {
 export function organizationSchema(path = "/") {
   return {
     "@context": "https://schema.org",
-    "@type": ["Organization", "LocalBusiness"],
+    "@type": "Organization",
     "@id": `${siteUrl}/#organization`,
     name: businessContact.name,
-    url: absoluteUrl(path),
+    url: siteUrl,
+    logo: `${siteUrl}/favicon.ico`,
     email: businessContact.email,
     telephone: `+91${businessContact.phone}`,
     address: {
@@ -133,12 +134,11 @@ export function organizationSchema(path = "/") {
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
-        name: "Doorstep scrap collection in Bangalore",
+        name: "Used laptop buyback in Bangalore",
       },
     },
   };
 }
-
 export function websiteSchema() {
   return {
     "@context": "https://schema.org",
@@ -146,39 +146,28 @@ export function websiteSchema() {
     "@id": `${siteUrl}/#website`,
     name: businessContact.name,
     url: siteUrl,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${siteUrl}/materials?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
-    },
   };
 }
 
 export function serviceSchema(path: string, area?: ServiceArea) {
   const name = area
-    ? `Scrap buyers in ${area.name}, Bangalore`
-    : "Doorstep scrap collection in Bangalore";
+    ? `Sell used laptop in ${area.name}, Bangalore`
+    : "Used laptop buyback in Bangalore";
 
   return {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": `${absoluteUrl(path)}#service`,
     name,
-    serviceType: "Scrap buying and doorstep scrap collection",
+    serviceType: "Used laptop buyback with doorstep pickup",
     provider: { "@id": `${siteUrl}/#organization` },
     areaServed: {
       "@type": "Place",
       name: area ? `${area.name}, Bangalore` : "Bangalore",
     },
-    offers: {
-      "@type": "Offer",
-      availability: "https://schema.org/InStock",
-      priceCurrency: "INR",
-      url: absoluteUrl(path),
-    },
+    url: absoluteUrl(path),
   };
 }
-
 export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
   return {
     "@context": "https://schema.org",

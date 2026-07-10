@@ -43,7 +43,7 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
     const area = getAreaBySlug(params.area);
     if (!area) return {};
     const path = `/sell-used-laptop/${area.slug}`;
-    const title = `Sell Used Laptop in ${area.name}, Bangalore — Instant Cash | HuluMart`;
+    const title = `Sell Used Laptop in ${area.name}, Bangalore - Instant Cash | HuluMart`;
     const description = `Sell your old or used laptop in ${area.name}, Bangalore for instant cash. Free instant quote, free doorstep pickup and same-day UPI payment for Apple, Dell, HP, Lenovo, Asus & more.`;
 
     return {
@@ -75,12 +75,6 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
               serviceType: "Used laptop buyback with free doorstep pickup",
               provider: { "@id": `${absoluteUrl("/")}#organization` },
               areaServed: { "@type": "Place", name: `${area.name}, Bangalore` },
-              offers: {
-                "@type": "Offer",
-                availability: "https://schema.org/InStock",
-                priceCurrency: "INR",
-                url: absoluteUrl(path),
-              },
             },
             breadcrumbSchema([
               { name: "Home", path: "/" },
@@ -94,7 +88,7 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
               },
               {
                 question: `Which laptop brands do you buy in ${area.name}?`,
-                answer: `We buy all major brands in ${area.name} including Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI — working or with minor issues.`,
+                answer: `We buy all major brands in ${area.name} including Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI - working or with minor issues.`,
               },
               {
                 question: `Is laptop pickup free in ${area.name}?`,
@@ -140,7 +134,7 @@ function SellLaptopArea() {
           </h1>
           <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg">
             Turn your old or used laptop into instant cash in {area.name}. HuluMart gives you the
-            best price for Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI laptops — with a free
+            best price for Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI laptops - with a free
             instant quote, free doorstep pickup and same-day UPI payment.
           </p>
 
@@ -187,14 +181,14 @@ function SellLaptopArea() {
                 Looking to <strong>sell your old laptop in {area.name}</strong>? HuluMart is the
                 trusted local laptop buyer for {area.name} and nearby areas. Whether your laptop is
                 a few months old or a few years old, working perfectly or has a cracked screen,
-                battery or keyboard issues — we make you a fair, transparent offer based on the
+                battery or keyboard issues - we make you a fair, transparent offer based on the
                 current Bangalore resale market.
               </p>
               <p>
-                We buy <strong>second hand laptops of every brand in {area.name}</strong> — Apple
+                We buy <strong>second hand laptops of every brand in {area.name}</strong> - Apple
                 MacBook Air and MacBook Pro, Dell XPS, Inspiron and Latitude, HP Pavilion, Envy and
                 EliteBook, Lenovo ThinkPad, IdeaPad and Legion, plus Asus, Acer and MSI gaming
-                laptops. No haggling, no lowball offers — just an honest price and instant payment
+                laptops. No haggling, no lowball offers - just an honest price and instant payment
                 at your doorstep.
               </p>
             </div>
@@ -283,7 +277,7 @@ function SellLaptopArea() {
               {
                 icon: Wallet,
                 title: "Instant payment",
-                text: "Once verified, get paid instantly via UPI or bank transfer — no waiting, no deductions.",
+                text: "Once verified, get paid instantly via UPI or bank transfer - no waiting, no deductions.",
               },
             ].map((s, i) => (
               <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-soft">
@@ -321,7 +315,7 @@ function SellLaptopArea() {
       <section className="bg-secondary/40 py-14">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-extrabold sm:text-3xl">
-            Selling a laptop in {area.name} — FAQs
+            Selling a laptop in {area.name} - FAQs
           </h2>
           <div className="mt-8 space-y-3">
             {[
@@ -331,7 +325,7 @@ function SellLaptopArea() {
               },
               {
                 q: `Which laptop brands do you buy in ${area.name}?`,
-                a: `We buy all major brands in ${area.name} — Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI — working or with minor issues.`,
+                a: `We buy all major brands in ${area.name} - Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI - working or with minor issues.`,
               },
               {
                 q: `Is the laptop pickup really free in ${area.name}?`,

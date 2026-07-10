@@ -29,13 +29,13 @@ import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availa
 export const Route = createFileRoute("/sell/$category")({
   head: () => ({
     meta: [
-      { title: "Sell Old Laptop in Bangalore â€” Instant Cash | HuluMart" },
+      { title: "Sell Old Laptop in Bangalore - Instant Cash | HuluMart" },
       {
         name: "description",
         content:
           "Sell your old or used laptop in Bangalore for instant cash. Get a free instant quote, free doorstep pickup and same-day payment. Apple, Dell, HP, Lenovo & more.",
       },
-      { property: "og:title", content: "Sell Old Laptop in Bangalore â€” Instant Cash | HuluMart" },
+      { property: "og:title", content: "Sell Old Laptop in Bangalore - Instant Cash | HuluMart" },
       {
         property: "og:description",
         content:
@@ -194,13 +194,13 @@ function Landing({
             {available === true && (
               <div className="mt-2 flex items-center gap-2 rounded-xl bg-brand-green/15 px-3 py-2 text-xs font-medium text-brand-green">
                 <CheckCircle2 className="size-4 shrink-0" />
-                Great news â€” we offer free pickup at {pincode}.
+                Great news - we offer free pickup at {pincode}.
               </div>
             )}
             {available === false && (
               <div className="mt-2 flex items-center gap-2 rounded-xl bg-navy-foreground/10 px-3 py-2 text-xs font-medium text-navy-foreground/80">
                 <XCircle className="size-4 shrink-0 text-amber-300" />
-                Pincode not available yet â€” but you can still book and we'll reach out.
+                Pincode not available yet - but you can still book and we'll reach out.
               </div>
             )}
 
@@ -236,7 +236,7 @@ function Landing({
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search brandsâ€¦"
+              placeholder="Search brands..."
               className="mt-5 h-12 max-w-md rounded-2xl"
             />
           )}
@@ -290,7 +290,7 @@ function Landing({
             {[
               { icon: BadgeIndianRupee, title: "Get an instant quote", text: `Select your ${lower}, answer a few condition questions and see your price instantly.` },
               { icon: Truck, title: "Free doorstep pickup", text: "Book a slot. Our verified agent comes to your Bangalore address and verifies the device." },
-              { icon: Wallet, title: "Instant payment", text: "Once verified, get paid instantly via UPI or bank transfer â€” no waiting." },
+              { icon: Wallet, title: "Instant payment", text: "Once verified, get paid instantly via UPI or bank transfer - no waiting." },
             ].map((s, i) => (
               <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-soft">
                 <span className="absolute right-5 top-5 text-4xl font-black text-secondary">{i + 1}</span>
@@ -329,7 +329,7 @@ function Landing({
           <h2 className="text-center text-2xl font-extrabold sm:text-3xl">Frequently asked questions</h2>
           <div className="mt-8 space-y-3">
             {[
-              { q: `How is my ${lower}'s price calculated?`, a: `We start from the best-case price for your exact model, then adjust for its physical condition, any functional issues, age and the accessories you have â€” just like the top buyback brands.` },
+              { q: `How is my ${lower}'s price calculated?`, a: `We start from the best-case price for your exact model, then adjust for its physical condition, any functional issues, age and the accessories you have - just like the top buyback brands.` },
               { q: "Which areas in Bangalore do you cover?", a: "We offer free doorstep pickup across all major Bangalore localities including Whitefield, HSR Layout, Indiranagar, Koramangala, Electronic City and more." },
               { q: "When do I get paid?", a: "Instantly. Once our agent verifies your device at pickup, payment is transferred via UPI or bank transfer on the spot." },
               { q: "Is my data safe?", a: "Yes. We perform certified data wiping on every device so your personal information is permanently removed." },
@@ -343,7 +343,7 @@ function Landing({
         </div>
       </section>
 
-      {/* SELL BY BRAND â€” simple SEO links above footer */}
+      {/* SELL BY BRAND - simple SEO links above footer */}
       {category === "laptops" && <BrandLinksSection />}
     </>
   );

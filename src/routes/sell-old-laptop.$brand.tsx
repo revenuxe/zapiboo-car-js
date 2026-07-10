@@ -36,7 +36,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand")({
     const brand = getLaptopBrandBySlug(params.brand);
     if (!brand) return {};
     const path = `/sell-old-laptop/${brand.slug}`;
-    const title = `Sell Used ${brand.name} Laptop in Bangalore — Instant Cash | HuluMart`;
+    const title = `Sell Used ${brand.name} Laptop in Bangalore - Instant Cash | HuluMart`;
     const description = `Sell your old or used ${brand.name} laptop in Bangalore for instant cash. Free instant quote, free doorstep pickup and same-day UPI payment. ${brand.priceRange} for ${brand.popularSeries
       .map((s) => s.name)
       .slice(0, 3)
@@ -69,12 +69,6 @@ export const Route = createFileRoute("/sell-old-laptop/$brand")({
               serviceType: `Used ${brand.name} laptop buyback with free doorstep pickup`,
               provider: { "@id": `${absoluteUrl("/")}#organization` },
               areaServed: { "@type": "Place", name: "Bangalore" },
-              offers: {
-                "@type": "Offer",
-                availability: "https://schema.org/InStock",
-                priceCurrency: "INR",
-                url: absoluteUrl(path),
-              },
             },
             breadcrumbSchema([
               { name: "Home", path: "/" },
@@ -271,7 +265,7 @@ function SellBrandLaptop() {
               {
                 icon: Wallet,
                 title: "Instant payment",
-                text: "Once verified, get paid instantly via UPI or bank transfer — no waiting, no deductions.",
+                text: "Once verified, get paid instantly via UPI or bank transfer - no waiting, no deductions.",
               },
             ].map((s, i) => (
               <div key={s.title} className="relative rounded-2xl border border-border bg-card p-6 shadow-soft">
@@ -335,7 +329,7 @@ function SellBrandLaptop() {
       <section className="bg-secondary/40 py-14">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
           <h2 className="text-center text-2xl font-extrabold sm:text-3xl">
-            Selling a {brand.name} laptop — FAQs
+            Selling a {brand.name} laptop - FAQs
           </h2>
           <div className="mt-8 space-y-3">
             {brand.faqs.map((f) => (

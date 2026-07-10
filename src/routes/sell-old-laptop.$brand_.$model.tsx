@@ -34,7 +34,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand_/$model")({
     if (!found) return {};
     const { brand, name } = found;
     const path = `/sell-old-laptop/${brand.slug}/${modelSlug(name)}`;
-    const title = `Sell ${name} in Bangalore — Instant Cash Price | HuluMart`;
+    const title = `Sell ${name} in Bangalore - Instant Cash Price | HuluMart`;
     const description = `Sell your used ${name} in Bangalore for the best price. Free instant quote, free doorstep pickup and same-day UPI payment. Certified data wiping on every laptop.`;
     return {
       meta: [
@@ -51,7 +51,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand_/$model")({
         { property: "og:title", content: title },
         { property: "og:description", content: description },
         { property: "og:url", content: absoluteUrl(path) },
-        { property: "og:type", content: "product" },
+        { property: "og:type", content: "website" },
         { name: "twitter:card", content: "summary_large_image" },
         { name: "twitter:title", content: title },
         { name: "twitter:description", content: description },
@@ -62,19 +62,6 @@ export const Route = createFileRoute("/sell-old-laptop/$brand_/$model")({
           type: "application/ld+json",
           children: JSON.stringify([
             organizationSchema(path),
-            {
-              "@context": "https://schema.org",
-              "@type": "Product",
-              name: `${name} (used)`,
-              category: `Used ${brand.name} laptop`,
-              brand: { "@type": "Brand", name: brand.name },
-              offers: {
-                "@type": "Offer",
-                priceCurrency: "INR",
-                availability: "https://schema.org/InStock",
-                url: absoluteUrl(path),
-              },
-            },
             breadcrumbSchema([
               { name: "Home", path: "/" },
               { name: "Sell Laptop", path: "/sell/laptops" },
@@ -88,7 +75,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand_/$model")({
               },
               {
                 question: `Do you buy a ${name} with a cracked screen or battery issues?`,
-                answer: `Yes. We buy every ${name} — working perfectly or with issues like a cracked screen, weak battery or slow performance. The price is adjusted fairly and you still get instant cash.`,
+                answer: `Yes. We buy every ${name} - working perfectly or with issues like a cracked screen, weak battery or slow performance. The price is adjusted fairly and you still get instant cash.`,
               },
               {
                 question: `Is my data safe when I sell my ${name}?`,
@@ -163,7 +150,7 @@ function SellModelPage() {
               <p>
                 Want to sell your old {name}? HuluMart pays the best resale price in Bangalore. Our
                 valuation is benchmarked to the live second-hand market and accounts for your exact
-                configuration — processor, RAM, storage and graphics — so you get a fair, transparent
+                configuration - processor, RAM, storage and graphics - so you get a fair, transparent
                 offer every time.
               </p>
               <p>

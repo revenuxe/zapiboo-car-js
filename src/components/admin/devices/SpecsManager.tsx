@@ -379,6 +379,22 @@ function GroupDialog({
               <Input type="number" value={step} onChange={(e) => setStep(e.target.value)} />
             </div>
           </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Only show when processor family is</Label>
+            <Select value={dependsFamily} onValueChange={setDependsFamily}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Always show</SelectItem>
+                <SelectItem value="intel">Intel processor selected</SelectItem>
+                <SelectItem value="amd">AMD Ryzen processor selected</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Use this for follow-up questions like “Which Intel generation?” — the step is skipped if the user picks a different family.
+            </p>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>

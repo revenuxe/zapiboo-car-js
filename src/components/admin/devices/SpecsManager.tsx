@@ -65,7 +65,7 @@ export function SpecsManager({ categoryId }: { categoryId: string }) {
     queryFn: async () => {
       const { data: g, error } = await supabase
         .from("spec_groups")
-        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active")
+        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active, depends_family")
         .eq("category_id", categoryId)
         .order("step_order");
       if (error) throw error;
@@ -74,7 +74,7 @@ export function SpecsManager({ categoryId }: { categoryId: string }) {
       if (ids.length) {
         const { data: o, error: oErr } = await supabase
           .from("spec_options")
-          .select("id, group_id, label, description, kind, value, sort_order")
+          .select("id, group_id, label, description, kind, value, sort_order, family")
           .in("group_id", ids)
           .order("sort_order");
         if (oErr) throw oErr;

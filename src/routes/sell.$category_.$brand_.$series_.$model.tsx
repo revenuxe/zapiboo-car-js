@@ -29,13 +29,9 @@ import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
 import { PINCODE_KEY } from "@/routes/sell.$category";
 import {
   calculateQuote,
+  filterVisibleSpecGroups,
   formatPrice,
-  useConditionGroups,
-  useSpecGroups,
-  useDeviceBrandBySlug,
-  useDeviceCategory,
-  useDeviceModelBySlug,
-  useDeviceSeriesBySlug,
+  useDevicePath,
   type ConditionGroup,
   type ConditionOption,
   type DeviceModel,

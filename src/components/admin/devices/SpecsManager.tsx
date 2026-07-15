@@ -429,6 +429,7 @@ function OptionDialog({
   const [description, setDescription] = useState(editing?.description ?? "");
   const [kind, setKind] = useState<OptionKind>(editing?.kind ?? "deduct_fixed");
   const [value, setValue] = useState(editing ? String(editing.value) : "");
+  const [family, setFamily] = useState<string>(editing?.family ?? "none");
 
   const save = useMutation({
     mutationFn: async () => {
@@ -437,6 +438,7 @@ function OptionDialog({
         description: description.trim() || null,
         kind,
         value: Number(value) || 0,
+        family: family === "none" ? null : family,
       };
       if (editing) {
         const { error } = await supabase.from("spec_options").update(payload).eq("id", editing.id);

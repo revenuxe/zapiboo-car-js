@@ -69,8 +69,11 @@ export type ConditionGroup = {
   options?: ConditionOption[];
 };
 
-// Configuration specs (processor / RAM / storage / GPU). Options reuse ConditionOption shape.
-export type SpecOption = ConditionOption;
+// Configuration specs (processor / RAM / storage / GPU).
+export type SpecOption = ConditionOption & {
+  // Processor family (used to branch the next question, e.g. Intel vs AMD generation).
+  family?: string | null;
+};
 
 export type SpecGroup = {
   id: string;
@@ -82,6 +85,9 @@ export type SpecGroup = {
   selection: "single" | "multi";
   step_order: number;
   active: boolean;
+  // If set, group only shows when a spec option with matching family is selected
+  // (e.g. Intel-generation group depends on family = 'intel').
+  depends_family?: string | null;
   options?: SpecOption[];
 };
 

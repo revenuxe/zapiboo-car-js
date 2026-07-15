@@ -292,6 +292,7 @@ function GroupDialog({
   const [platform, setPlatform] = useState<string>(editing?.platform ?? "all");
   const [selection, setSelection] = useState<"single" | "multi">(editing?.selection ?? "single");
   const [step, setStep] = useState(String(editing?.step_order ?? nextOrder));
+  const [dependsFamily, setDependsFamily] = useState<string>(editing?.depends_family ?? "none");
 
   const save = useMutation({
     mutationFn: async () => {
@@ -302,6 +303,7 @@ function GroupDialog({
         selection,
         step_order: Number(step) || nextOrder,
         key: editing?.key ?? (slugify(title) || "spec"),
+        depends_family: dependsFamily === "none" ? null : dependsFamily,
       };
       if (editing) {
         const { error } = await supabase.from("spec_groups").update(payload).eq("id", editing.id);

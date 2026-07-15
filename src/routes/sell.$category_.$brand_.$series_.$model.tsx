@@ -536,6 +536,21 @@ function ConditionStep({
 }) {
   const multi = group.selection === "multi";
   const picked = selections[group.id] ?? [];
+  const allOptions = group.options ?? [];
+  const [query, setQuery] = useState("");
+  const showSearch = allOptions.length > 7;
+  const visibleOptions = useMemo(() => {
+    if (!showSearch || !query.trim()) return allOptions;
+    const q = query.trim().toLowerCase();
+    return allOptions.filter(
+      (o) => o.label.toLowerCase().includes(q) || (o.description ?? "").toLowerCase().includes(q),
+    );
+  }, [allOptions, query, showSearch]);
+
+  // Reset the filter every time the step changes.
+  useEffect(() => {
+    setQuery("");
+  }, [group.id]);
 
   const toggle = (optId: string) => {
     setSelections((prev) => {
@@ -567,8 +582,19 @@ function ConditionStep({
         {multi ? "Select all that apply." : "Pick the one that matches best."}
       </p>
 
+      {showSearch && (
+        <div className="relative mt-4">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${allOptions.length} options…`}
+            className="h-11 rounded-xl pl-4"
+          />
+        </div>
+      )}
+
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-        {(group.options ?? []).map((o) => (
+        {visibleOptions.map((o) => (
           <ConditionChoice
             key={o.id}
             option={o}
@@ -577,6 +603,11 @@ function ConditionStep({
             onClick={() => toggle(o.id)}
           />
         ))}
+        {showSearch && visibleOptions.length === 0 && (
+          <p className="col-span-full rounded-xl border border-dashed border-border bg-background p-6 text-center text-xs text-muted-foreground">
+            No matches for “{query}”.
+          </p>
+        )}
       </div>
     </div>
   );

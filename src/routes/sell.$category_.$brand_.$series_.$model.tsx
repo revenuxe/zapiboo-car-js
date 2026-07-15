@@ -122,6 +122,13 @@ function EvaluatePage() {
     }
   }, [phase, specStep, condStep, done]);
 
+  // Only the currently-visible spec groups count toward the price (e.g. an
+  // AMD-generation answer is ignored if the user later switches to Intel).
+  const specGroups = useMemo(
+    () => filterVisibleSpecGroups(allSpecGroups, specSelections),
+    [allSpecGroups, specSelections],
+  );
+
   const specOptions = useMemo(() => {
     const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
     for (const g of specGroups) {
@@ -157,7 +164,7 @@ function EvaluatePage() {
     [modelRow, specOptions, conditionOptions],
   );
 
-  const loading = catLoading || brandLoading || seriesLoading || modelLoading;
+  const loading = pathLoading;
   const brandName = brandRow?.name ?? cap(brand);
   const seriesName = seriesRow?.name ?? cap(series);
 

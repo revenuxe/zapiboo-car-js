@@ -68,12 +68,13 @@ function EvaluatePage() {
   });
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
-  const { data: brandRow, isLoading: brandLoading } = useDeviceBrandBySlug(cat?.id, brand);
-  const { data: seriesRow, isLoading: seriesLoading } = useDeviceSeriesBySlug(brandRow?.id, series);
-  const { data: modelRow, isLoading: modelLoading } = useDeviceModelBySlug(seriesRow?.id, model);
-  const { data: specGroups = [] } = useSpecGroups(cat?.id, brandRow?.platform);
-  const { data: groups = [] } = useConditionGroups(cat?.id);
+  const { data: path, isLoading: pathLoading } = useDevicePath(category, brand, series, model);
+  const cat = path?.category ?? null;
+  const brandRow = path?.brand ?? null;
+  const seriesRow = path?.series ?? null;
+  const modelRow = path?.model ?? null;
+  const allSpecGroups = path?.specGroups ?? [];
+  const groups = path?.conditionGroups ?? [];
 
   const storageKey = `hm_eval:${category}/${brand}/${series}/${model}`;
 

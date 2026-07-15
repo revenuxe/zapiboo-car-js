@@ -508,6 +508,22 @@ function OptionDialog({
               />
             </div>
           </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Processor family (optional)</Label>
+            <Select value={family} onValueChange={setFamily}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Not a processor</SelectItem>
+                <SelectItem value="intel">Intel</SelectItem>
+                <SelectItem value="amd">AMD Ryzen</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Set this on processor options so the right generation question shows next.
+            </p>
+          </div>
           <p className="text-[11px] text-muted-foreground">
             {KIND_OPTIONS.find((k) => k.value === kind)?.hint}
           </p>

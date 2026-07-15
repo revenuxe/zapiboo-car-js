@@ -29,13 +29,9 @@ import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
 import { PINCODE_KEY } from "@/routes/sell.$category";
 import {
   calculateQuote,
+  filterVisibleSpecGroups,
   formatPrice,
-  useConditionGroups,
-  useSpecGroups,
-  useDeviceBrandBySlug,
-  useDeviceCategory,
-  useDeviceModelBySlug,
-  useDeviceSeriesBySlug,
+  useDevicePath,
   type ConditionGroup,
   type ConditionOption,
   type DeviceModel,
@@ -72,12 +68,13 @@ function EvaluatePage() {
   });
   const navigate = useNavigate();
   const { user, loading: authLoading } = useAuth();
-  const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
-  const { data: brandRow, isLoading: brandLoading } = useDeviceBrandBySlug(cat?.id, brand);
-  const { data: seriesRow, isLoading: seriesLoading } = useDeviceSeriesBySlug(brandRow?.id, series);
-  const { data: modelRow, isLoading: modelLoading } = useDeviceModelBySlug(seriesRow?.id, model);
-  const { data: specGroups = [] } = useSpecGroups(cat?.id, brandRow?.platform);
-  const { data: groups = [] } = useConditionGroups(cat?.id);
+  const { data: path, isLoading: pathLoading } = useDevicePath(category, brand, series, model);
+  const cat = path?.category ?? null;
+  const brandRow = path?.brand ?? null;
+  const seriesRow = path?.series ?? null;
+  const modelRow = path?.model ?? null;
+  const allSpecGroups = path?.specGroups ?? [];
+  const groups = path?.conditionGroups ?? [];
 
   const storageKey = `hm_eval:${category}/${brand}/${series}/${model}`;
 
@@ -125,6 +122,13 @@ function EvaluatePage() {
     }
   }, [phase, specStep, condStep, done]);
 
+  // Only the currently-visible spec groups count toward the price (e.g. an
+  // AMD-generation answer is ignored if the user later switches to Intel).
+  const specGroups = useMemo(
+    () => filterVisibleSpecGroups(allSpecGroups, specSelections),
+    [allSpecGroups, specSelections],
+  );
+
   const specOptions = useMemo(() => {
     const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
     for (const g of specGroups) {
@@ -160,7 +164,7 @@ function EvaluatePage() {
     [modelRow, specOptions, conditionOptions],
   );
 
-  const loading = catLoading || brandLoading || seriesLoading || modelLoading;
+  const loading = pathLoading;
   const brandName = brandRow?.name ?? cap(brand);
   const seriesName = seriesRow?.name ?? cap(series);
 
@@ -532,6 +536,21 @@ function ConditionStep({
 }) {
   const multi = group.selection === "multi";
   const picked = selections[group.id] ?? [];
+  const allOptions = group.options ?? [];
+  const [query, setQuery] = useState("");
+  const showSearch = allOptions.length > 7;
+  const visibleOptions = useMemo(() => {
+    if (!showSearch || !query.trim()) return allOptions;
+    const q = query.trim().toLowerCase();
+    return allOptions.filter(
+      (o) => o.label.toLowerCase().includes(q) || (o.description ?? "").toLowerCase().includes(q),
+    );
+  }, [allOptions, query, showSearch]);
+
+  // Reset the filter every time the step changes.
+  useEffect(() => {
+    setQuery("");
+  }, [group.id]);
 
   const toggle = (optId: string) => {
     setSelections((prev) => {
@@ -563,8 +582,19 @@ function ConditionStep({
         {multi ? "Select all that apply." : "Pick the one that matches best."}
       </p>
 
+      {showSearch && (
+        <div className="relative mt-4">
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={`Search ${allOptions.length} options…`}
+            className="h-11 rounded-xl pl-4"
+          />
+        </div>
+      )}
+
       <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-        {(group.options ?? []).map((o) => (
+        {visibleOptions.map((o) => (
           <ConditionChoice
             key={o.id}
             option={o}
@@ -573,6 +603,11 @@ function ConditionStep({
             onClick={() => toggle(o.id)}
           />
         ))}
+        {showSearch && visibleOptions.length === 0 && (
+          <p className="col-span-full rounded-xl border border-dashed border-border bg-background p-6 text-center text-xs text-muted-foreground">
+            No matches for “{query}”.
+          </p>
+        )}
       </div>
     </div>
   );

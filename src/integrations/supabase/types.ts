@@ -636,6 +636,7 @@ export type Database = {
           active: boolean
           category_id: string
           created_at: string
+          depends_family: string | null
           id: string
           key: string
           platform: string | null
@@ -649,6 +650,7 @@ export type Database = {
           active?: boolean
           category_id: string
           created_at?: string
+          depends_family?: string | null
           id?: string
           key: string
           platform?: string | null
@@ -662,6 +664,7 @@ export type Database = {
           active?: boolean
           category_id?: string
           created_at?: string
+          depends_family?: string | null
           id?: string
           key?: string
           platform?: string | null
@@ -685,6 +688,7 @@ export type Database = {
         Row: {
           created_at: string
           description: string | null
+          family: string | null
           group_id: string
           id: string
           kind: string
@@ -696,6 +700,7 @@ export type Database = {
         Insert: {
           created_at?: string
           description?: string | null
+          family?: string | null
           group_id: string
           id?: string
           kind?: string
@@ -707,6 +712,7 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string | null
+          family?: string | null
           group_id?: string
           id?: string
           kind?: string
@@ -795,6 +801,15 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      resolve_device_path: {
+        Args: {
+          _brand: string
+          _category: string
+          _model: string
+          _series: string
+        }
+        Returns: Json
       }
     }
     Enums: {

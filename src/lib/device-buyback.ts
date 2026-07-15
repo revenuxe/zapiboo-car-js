@@ -69,8 +69,11 @@ export type ConditionGroup = {
   options?: ConditionOption[];
 };
 
-// Configuration specs (processor / RAM / storage / GPU). Options reuse ConditionOption shape.
-export type SpecOption = ConditionOption;
+// Configuration specs (processor / RAM / storage / GPU).
+export type SpecOption = ConditionOption & {
+  // Processor family (used to branch the next question, e.g. Intel vs AMD generation).
+  family?: string | null;
+};
 
 export type SpecGroup = {
   id: string;
@@ -82,6 +85,9 @@ export type SpecGroup = {
   selection: "single" | "multi";
   step_order: number;
   active: boolean;
+  // If set, group only shows when a spec option with matching family is selected
+  // (e.g. Intel-generation group depends on family = 'intel').
+  depends_family?: string | null;
   options?: SpecOption[];
 };
 
@@ -430,7 +436,7 @@ export function useSpecGroups(categoryId?: string, platform?: string | null) {
     queryFn: async () => {
       let q = supabase
         .from("spec_groups")
-        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active")
+        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active, depends_family")
         .eq("category_id", categoryId!)
         .eq("active", true);
       if (platform) {
@@ -445,7 +451,7 @@ export function useSpecGroups(categoryId?: string, platform?: string | null) {
       if (ids.length) {
         const { data: opts, error: optErr } = await supabase
           .from("spec_options")
-          .select("id, group_id, label, description, kind, value, sort_order")
+          .select("id, group_id, label, description, kind, value, sort_order, family")
           .in("group_id", ids)
           .order("sort_order");
         if (optErr) throw optErr;
@@ -458,4 +464,71 @@ export function useSpecGroups(categoryId?: string, platform?: string | null) {
     },
     staleTime: 60_000,
   });
+}
+
+// ---------------- Combined single-round-trip resolver ----------------
+// Server RPC returns category + brand + series + model + spec_groups + condition_groups
+// in ONE request. Replaces a 4-level slug waterfall (category → brand → series → model)
+// + 2 dependent queries (specs + conditions) with a single fast call.
+export type DevicePath = {
+  category: DeviceCategory | null;
+  brand: DeviceBrand | null;
+  series: DeviceSeries | null;
+  model: DeviceModel | null;
+  specGroups: SpecGroup[];
+  conditionGroups: ConditionGroup[];
+};
+
+export function useDevicePath(category?: string, brand?: string, series?: string, model?: string) {
+  return useQuery({
+    queryKey: ["device", "path", category, brand, series, model],
+    enabled: !!category && !!brand && !!series && !!model,
+    staleTime: 60_000,
+    queryFn: async (): Promise<DevicePath> => {
+      // RPC not yet in generated types; cast payload once here.
+      const { data, error } = await (supabase.rpc as unknown as (
+        fn: string,
+        args: Record<string, unknown>,
+      ) => Promise<{ data: unknown; error: unknown }>)("resolve_device_path", {
+        _category: category,
+        _brand: brand,
+        _series: series,
+        _model: model,
+      });
+      if (error) throw error as Error;
+      const r = (data ?? {}) as {
+        category?: DeviceCategory;
+        brand?: DeviceBrand;
+        series?: DeviceSeries;
+        model?: DeviceModel;
+        spec_groups?: SpecGroup[];
+        condition_groups?: ConditionGroup[];
+      };
+      return {
+        category: r.category ?? null,
+        brand: r.brand ?? null,
+        series: r.series ?? null,
+        model: r.model ?? null,
+        specGroups: r.spec_groups ?? [],
+        conditionGroups: r.condition_groups ?? [],
+      };
+    },
+  });
+}
+
+// Compute which spec groups the user should see, given their current selections.
+// A group with `depends_family` (e.g. Intel-generation) shows only when the user
+// has selected a spec option carrying that family (e.g. Intel processor).
+export function filterVisibleSpecGroups(
+  groups: SpecGroup[],
+  selections: Record<string, string[]>,
+): SpecGroup[] {
+  const activeFamilies = new Set<string>();
+  for (const g of groups) {
+    for (const optId of selections[g.id] ?? []) {
+      const opt = g.options?.find((o) => o.id === optId);
+      if (opt?.family) activeFamilies.add(opt.family);
+    }
+  }
+  return groups.filter((g) => !g.depends_family || activeFamilies.has(g.depends_family));
 }

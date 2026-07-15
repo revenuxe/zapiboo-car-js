@@ -65,7 +65,7 @@ export function SpecsManager({ categoryId }: { categoryId: string }) {
     queryFn: async () => {
       const { data: g, error } = await supabase
         .from("spec_groups")
-        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active")
+        .select("id, category_id, platform, key, title, subtitle, selection, step_order, active, depends_family")
         .eq("category_id", categoryId)
         .order("step_order");
       if (error) throw error;
@@ -74,7 +74,7 @@ export function SpecsManager({ categoryId }: { categoryId: string }) {
       if (ids.length) {
         const { data: o, error: oErr } = await supabase
           .from("spec_options")
-          .select("id, group_id, label, description, kind, value, sort_order")
+          .select("id, group_id, label, description, kind, value, sort_order, family")
           .in("group_id", ids)
           .order("sort_order");
         if (oErr) throw oErr;
@@ -292,6 +292,7 @@ function GroupDialog({
   const [platform, setPlatform] = useState<string>(editing?.platform ?? "all");
   const [selection, setSelection] = useState<"single" | "multi">(editing?.selection ?? "single");
   const [step, setStep] = useState(String(editing?.step_order ?? nextOrder));
+  const [dependsFamily, setDependsFamily] = useState<string>(editing?.depends_family ?? "none");
 
   const save = useMutation({
     mutationFn: async () => {
@@ -302,6 +303,7 @@ function GroupDialog({
         selection,
         step_order: Number(step) || nextOrder,
         key: editing?.key ?? (slugify(title) || "spec"),
+        depends_family: dependsFamily === "none" ? null : dependsFamily,
       };
       if (editing) {
         const { error } = await supabase.from("spec_groups").update(payload).eq("id", editing.id);
@@ -377,6 +379,22 @@ function GroupDialog({
               <Input type="number" value={step} onChange={(e) => setStep(e.target.value)} />
             </div>
           </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Only show when processor family is</Label>
+            <Select value={dependsFamily} onValueChange={setDependsFamily}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Always show</SelectItem>
+                <SelectItem value="intel">Intel processor selected</SelectItem>
+                <SelectItem value="amd">AMD Ryzen processor selected</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Use this for follow-up questions like “Which Intel generation?” — the step is skipped if the user picks a different family.
+            </p>
+          </div>
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
@@ -411,6 +429,7 @@ function OptionDialog({
   const [description, setDescription] = useState(editing?.description ?? "");
   const [kind, setKind] = useState<OptionKind>(editing?.kind ?? "deduct_fixed");
   const [value, setValue] = useState(editing ? String(editing.value) : "");
+  const [family, setFamily] = useState<string>(editing?.family ?? "none");
 
   const save = useMutation({
     mutationFn: async () => {
@@ -419,6 +438,7 @@ function OptionDialog({
         description: description.trim() || null,
         kind,
         value: Number(value) || 0,
+        family: family === "none" ? null : family,
       };
       if (editing) {
         const { error } = await supabase.from("spec_options").update(payload).eq("id", editing.id);
@@ -487,6 +507,22 @@ function OptionDialog({
                 onChange={(e) => setValue(e.target.value)}
               />
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label className="text-xs">Processor family (optional)</Label>
+            <Select value={family} onValueChange={setFamily}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">Not a processor</SelectItem>
+                <SelectItem value="intel">Intel</SelectItem>
+                <SelectItem value="amd">AMD Ryzen</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="text-[11px] text-muted-foreground">
+              Set this on processor options so the right generation question shows next.
+            </p>
           </div>
           <p className="text-[11px] text-muted-foreground">
             {KIND_OPTIONS.find((k) => k.value === kind)?.hint}

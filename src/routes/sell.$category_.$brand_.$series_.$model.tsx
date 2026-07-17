@@ -24,8 +24,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Breadcrumbs } from "@/components/sell/CatalogShell";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { useAuth } from "@/hooks/use-auth";
 import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
+import { businessContact } from "@/lib/seo";
 import { PINCODE_KEY } from "@/routes/sell.$category";
 import {
   calculateQuote,
@@ -447,8 +449,32 @@ function EvaluatePage() {
 }
 
 function IntroStep({ model, onStart }: { model: DeviceModel; onStart: () => void }) {
+  const waHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
+    `Hi HuluMart, I want to sell my ${model.name} in Bangalore. Please help me get a quote.`,
+  )}`;
   return (
     <div className="mt-5">
+      {/* WhatsApp quick-chat card */}
+      <a
+        href={waHref}
+        target="_blank"
+        rel="noreferrer"
+        className="group mb-4 flex items-center gap-3 rounded-3xl border border-[#25D366]/25 bg-[#25D366]/8 p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated sm:p-5"
+      >
+        <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#25D366] shadow-soft sm:size-12">
+          <WhatsAppIcon className="size-6 sm:size-7" />
+        </span>
+        <span className="flex-1">
+          <span className="block text-sm font-bold text-foreground sm:text-base">
+            Prefer to chat? Sell on WhatsApp
+          </span>
+          <span className="mt-0.5 block text-xs text-muted-foreground">
+            Send a photo of your {model.name} and get a quote in minutes.
+          </span>
+        </span>
+        <ArrowRight className="size-5 shrink-0 text-[#128C7E] transition-transform group-hover:translate-x-0.5" />
+      </a>
+
       <div className="overflow-hidden rounded-3xl bg-gradient-navy p-6 text-navy-foreground shadow-soft">
         <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Best price up to</p>
         <p className="mt-1 text-4xl font-extrabold text-gradient sm:text-5xl">{formatPrice(model.base_price)}</p>

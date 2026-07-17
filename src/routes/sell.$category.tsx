@@ -75,15 +75,9 @@ export function SellLaptopHome() {
 function SellCategoryLanding({ category }: { category: string }) {
   const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
 
-  if (catLoading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="size-7 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (!cat) {
+  // Render the shell immediately — the hero doesn't depend on DB data. Only
+  // gate the "category not available" fallback until the lookup finishes.
+  if (!cat && !catLoading) {
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
         <Laptop className="mx-auto size-10 text-muted-foreground" />
@@ -100,7 +94,13 @@ function SellCategoryLanding({ category }: { category: string }) {
     );
   }
 
-  return <Landing category={category} categoryId={cat.id} categoryName={cat.name} />;
+  return (
+    <Landing
+      category={category}
+      categoryId={cat?.id}
+      categoryName={cat?.name ?? (category === "laptops" ? "Laptop" : category)}
+    />
+  );
 }
 
 function Landing({
@@ -109,7 +109,7 @@ function Landing({
   categoryName,
 }: {
   category: string;
-  categoryId: string;
+  categoryId?: string;
   categoryName: string;
 }) {
   const lower = categoryName.toLowerCase();

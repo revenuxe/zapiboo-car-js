@@ -1,6 +1,38 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 export { compressImage, slugify } from "@/lib/scrap-listings";
+
+// Combined category + brands lookup by slug — one round trip, cacheable, used
+// by loaders to warm the cache before the homepage / funnel render.
+export function categoryWithBrandsQuery(slug: string) {
+  return queryOptions({
+    queryKey: ["device", "categoryWithBrands", slug],
+    queryFn: async () => {
+      const { data: cat, error: catErr } = await supabase
+        .from("device_categories")
+        .select("id, name, slug, icon, active, sort_order")
+        .eq("slug", slug)
+        .eq("active", true)
+        .maybeSingle();
+      if (catErr) throw catErr;
+      if (!cat) return { category: null as DeviceCategory | null, brands: [] as DeviceBrand[] };
+      const { data: brands, error: bErr } = await supabase
+        .from("device_brands")
+        .select("id, category_id, name, slug, logo, platform, active, sort_order")
+        .eq("category_id", cat.id)
+        .eq("active", true)
+        .order("sort_order");
+      if (bErr) throw bErr;
+      return { category: cat as DeviceCategory, brands: (brands ?? []) as DeviceBrand[] };
+    },
+    staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
+  });
+}
+
+export function useCategoryWithBrands(slug: string) {
+  return useQuery(categoryWithBrandsQuery(slug));
+}
 
 // ---------------- Types ----------------
 export type DeviceCategory = {

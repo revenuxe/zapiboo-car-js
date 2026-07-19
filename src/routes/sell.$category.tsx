@@ -239,18 +239,24 @@ function Landing({
             Choose a brand to find your exact model and get an instant price.
           </p>
 
-          {brands.length > 8 && (
+          <div className="relative mt-5 max-w-md">
             <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search brands..."
-              className="mt-5 h-12 max-w-md rounded-2xl"
+              placeholder={`Search ${lower} brands…`}
+              aria-label="Search brands"
+              className="h-12 rounded-2xl pl-4"
             />
-          )}
+          </div>
 
           {brandsLoading ? (
-            <div className="flex justify-center py-16">
-              <Loader2 className="size-7 animate-spin text-primary" />
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="h-[132px] animate-pulse rounded-2xl border border-border bg-card"
+                />
+              ))}
             </div>
           ) : filtered.length === 0 ? (
             <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-12 text-center text-sm text-muted-foreground">
@@ -258,7 +264,7 @@ function Landing({
             </div>
           ) : (
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-              {filtered.map((b) => (
+              {filtered.map((b, i) => (
                 <button
                   key={b.id}
                   onClick={() => goToBrand(b.slug)}
@@ -266,7 +272,16 @@ function Landing({
                 >
                   <div className="flex size-16 items-center justify-center">
                     {b.logo ? (
-                      <img src={b.logo} alt={b.name} className="max-h-full max-w-full object-contain" />
+                      <img
+                        src={b.logo}
+                        alt={`${b.name} logo`}
+                        width={64}
+                        height={64}
+                        loading={i < 10 ? "eager" : "lazy"}
+                        fetchPriority={i < 5 ? "high" : "auto"}
+                        decoding="async"
+                        className="max-h-full max-w-full object-contain"
+                      />
                     ) : (
                       <Tag className="size-8 text-primary" />
                     )}
@@ -276,6 +291,7 @@ function Landing({
               ))}
             </div>
           )}
+
         </div>
       </section>
 

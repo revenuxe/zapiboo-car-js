@@ -275,7 +275,7 @@ export function useDeviceCategory(slug: string) {
       if (error) throw error;
       return (data as DeviceCategory) ?? null;
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -293,7 +293,7 @@ export function useDeviceBrands(categoryId?: string) {
       if (error) throw error;
       return data as DeviceBrand[];
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -311,7 +311,7 @@ export function useDeviceSeries(brandId?: string) {
       if (error) throw error;
       return data as DeviceSeries[];
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -329,7 +329,7 @@ export function useDeviceModels(seriesId?: string) {
       if (error) throw error;
       return data as DeviceModel[];
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -365,7 +365,7 @@ export function useCategoryCatalog(categoryId?: string) {
         series: series.filter((s) => s.brand_id === b.id),
       })) as BrandWithSeries[];
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -385,7 +385,7 @@ export function useDeviceBrandBySlug(categoryId?: string, slug?: string) {
       if (error) throw error;
       return (data as DeviceBrand) ?? null;
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -404,7 +404,7 @@ export function useDeviceSeriesBySlug(brandId?: string, slug?: string) {
       if (error) throw error;
       return (data as DeviceSeries) ?? null;
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -423,7 +423,7 @@ export function useDeviceModelBySlug(seriesId?: string, slug?: string) {
       if (error) throw error;
       return (data as DeviceModel) ?? null;
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -455,7 +455,7 @@ export function useConditionGroups(categoryId?: string) {
         options: options.filter((o) => o.group_id === g.id),
       }));
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -494,7 +494,7 @@ export function useSpecGroups(categoryId?: string, platform?: string | null) {
         options: options.filter((o) => o.group_id === g.id),
       }));
     },
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
   });
 }
 
@@ -515,7 +515,7 @@ export function useDevicePath(category?: string, brand?: string, series?: string
   return useQuery({
     queryKey: ["device", "path", category, brand, series, model],
     enabled: !!category && !!brand && !!series && !!model,
-    staleTime: 60_000,
+    staleTime: 5 * 60_000,
     queryFn: async (): Promise<DevicePath> => {
       // RPC not yet in generated types; cast payload once here.
       const { data, error } = await (supabase.rpc as unknown as (

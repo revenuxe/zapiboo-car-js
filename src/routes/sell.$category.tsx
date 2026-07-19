@@ -57,6 +57,8 @@ export const Route = createFileRoute("/sell/$category")({
       },
     ],
   }),
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(categoryWithBrandsQuery(params.category)),
   component: SellLanding,
 });
 

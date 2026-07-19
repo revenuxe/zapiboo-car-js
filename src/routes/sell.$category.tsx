@@ -14,6 +14,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BrandLogo } from "@/components/sell/BrandLogo";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { businessContact } from "@/lib/seo";
 import { Input } from "@/components/ui/input";

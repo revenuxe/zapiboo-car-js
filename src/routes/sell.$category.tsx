@@ -19,8 +19,8 @@ import { businessContact } from "@/lib/seo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  useDeviceBrands,
-  useDeviceCategory,
+  categoryWithBrandsQuery,
+  useCategoryWithBrands,
 } from "@/lib/device-buyback";
 import { featuredServiceAreas, serviceAreas } from "@/lib/seo";
 import { laptopBrands } from "@/lib/laptop-brands";

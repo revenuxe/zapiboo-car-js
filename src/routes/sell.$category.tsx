@@ -271,22 +271,13 @@ function Landing({
                   onClick={() => goToBrand(b.slug)}
                   className="group flex flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-card p-5 shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
                 >
-                  <div className="flex size-16 items-center justify-center">
-                    {b.logo ? (
-                      <img
-                        src={b.logo}
-                        alt={`${b.name} logo`}
-                        width={64}
-                        height={64}
-                        loading={i < 10 ? "eager" : "lazy"}
-                        fetchPriority={i < 5 ? "high" : "auto"}
-                        decoding="async"
-                        className="max-h-full max-w-full object-contain"
-                      />
-                    ) : (
-                      <Tag className="size-8 text-primary" />
-                    )}
-                  </div>
+                  <BrandLogo
+                    src={b.logo}
+                    name={b.name}
+                    eager={i < 10}
+                    highPriority={i < 5}
+                  />
+
                   <span className="text-sm font-semibold">{b.name}</span>
                 </button>
               ))}

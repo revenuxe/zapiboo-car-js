@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { SellLaptopHome } from "@/routes/sell.$category";
+import { categoryWithBrandsQuery } from "@/lib/device-buyback";
 
 const homepageTitle = "Sell Old Laptop in Bangalore - Instant Cash | HuluMart";
 const homepageDescription =
@@ -18,5 +19,7 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "/" }],
   }),
+  loader: ({ context }) =>
+    context.queryClient.ensureQueryData(categoryWithBrandsQuery("laptops")),
   component: SellLaptopHome,
 });

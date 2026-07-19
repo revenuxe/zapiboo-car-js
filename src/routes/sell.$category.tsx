@@ -19,8 +19,8 @@ import { businessContact } from "@/lib/seo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
-  useDeviceBrands,
-  useDeviceCategory,
+  categoryWithBrandsQuery,
+  useCategoryWithBrands,
 } from "@/lib/device-buyback";
 import { featuredServiceAreas, serviceAreas } from "@/lib/seo";
 import { laptopBrands } from "@/lib/laptop-brands";
@@ -57,6 +57,8 @@ export const Route = createFileRoute("/sell/$category")({
       },
     ],
   }),
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(categoryWithBrandsQuery(params.category)),
   component: SellLanding,
 });
 
@@ -73,11 +75,13 @@ export function SellLaptopHome() {
 }
 
 function SellCategoryLanding({ category }: { category: string }) {
-  const { data: cat, isLoading: catLoading } = useDeviceCategory(category);
+  const { data, isLoading } = useCategoryWithBrands(category);
+  const cat = data?.category ?? null;
+  const brands = data?.brands ?? [];
 
   // Render the shell immediately — the hero doesn't depend on DB data. Only
   // gate the "category not available" fallback until the lookup finishes.
-  if (!cat && !catLoading) {
+  if (!cat && !isLoading) {
     return (
       <div className="mx-auto max-w-md px-4 py-24 text-center">
         <Laptop className="mx-auto size-10 text-muted-foreground" />
@@ -97,28 +101,31 @@ function SellCategoryLanding({ category }: { category: string }) {
   return (
     <Landing
       category={category}
-      categoryId={cat?.id}
       categoryName={cat?.name ?? (category === "laptops" ? "Laptop" : category)}
+      brands={brands}
+      brandsLoading={isLoading && brands.length === 0}
     />
   );
 }
 
 function Landing({
   category,
-  categoryId,
   categoryName,
+  brands,
+  brandsLoading,
 }: {
   category: string;
-  categoryId?: string;
   categoryName: string;
+  brands: import("@/lib/device-buyback").DeviceBrand[];
+  brandsLoading: boolean;
 }) {
   const lower = categoryName.toLowerCase();
   const navigate = useNavigate();
-  const { data: brands = [], isLoading: brandsLoading } = useDeviceBrands(categoryId);
   const { data: availability } = useServiceAvailability();
   const [pincode, setPincode] = useState("");
   const [checkedPin, setCheckedPin] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+
 
   const savePincode = (v: string) => {
     if (typeof window !== "undefined") sessionStorage.setItem(PINCODE_KEY, v);

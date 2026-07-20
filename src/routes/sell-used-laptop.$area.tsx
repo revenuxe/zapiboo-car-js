@@ -13,6 +13,7 @@ import { Reveal } from "@/components/Reveal";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { SellLocationHero } from "@/components/sell/SellLocationHero";
 import { LaptopBrandsSection } from "@/components/sell/LaptopBrandsSection";
+import { categoryWithBrandsQuery } from "@/lib/device-buyback";
 import {
   absoluteUrl,
   breadcrumbSchema,

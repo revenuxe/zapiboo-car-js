@@ -125,6 +125,11 @@ function SellLaptopArea() {
         whatsappMessage={`Hi HuluMart, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`}
       />
 
+      <LaptopBrandsSection
+        heading={`Sell any laptop brand in ${area.name}`}
+        subtitle={`Instant quote for Apple, Dell, HP, Lenovo, Asus, Acer & MSI — free doorstep pickup across ${area.name}.`}
+      />
+
       {/* INTRO CONTENT + WHY US */}
       <section className="bg-background py-16 md:py-20">
         <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">

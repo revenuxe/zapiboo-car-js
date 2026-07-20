@@ -4,16 +4,14 @@ import {
   BadgeIndianRupee,
   CheckCircle2,
   Laptop,
-  MapPin,
-  Phone,
   ShieldCheck,
-  Star,
   Truck,
   Wallet,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
+import { SellLocationHero } from "@/components/sell/SellLocationHero";
 import {
   absoluteUrl,
   breadcrumbSchema,

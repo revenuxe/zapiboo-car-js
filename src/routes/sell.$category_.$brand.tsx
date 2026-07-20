@@ -64,7 +64,7 @@ function SeriesPage() {
       emptyText="No series available for this brand yet."
     >
       <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3">
-        {filtered.map((s) => (
+        {filtered.map((s, i) => (
           <button
             key={s.id}
             onClick={() =>
@@ -73,10 +73,24 @@ function SeriesPage() {
                 params: { category, brand, series: s.slug },
               })
             }
-            className="group flex items-center justify-between gap-2 rounded-2xl border border-border bg-card px-4 py-4 text-left shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-elevated"
+            className="group relative flex flex-col items-start gap-3 overflow-hidden rounded-2xl border border-border bg-card p-4 text-left shadow-soft transition-all hover:-translate-y-1 hover:border-primary hover:shadow-elevated sm:p-5"
           >
-            <span className="text-sm font-semibold leading-snug">{s.name}</span>
-            <ArrowRight className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary" />
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full bg-primary/10 opacity-0 blur-2xl transition-opacity group-hover:opacity-100"
+            />
+            <span className="flex size-10 items-center justify-center rounded-xl bg-primary/10 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+              <Tag className="size-5" />
+            </span>
+            <span className="min-h-[2.5rem] text-sm font-semibold leading-snug sm:text-base">
+              {s.name}
+            </span>
+            <span className="mt-auto flex w-full items-center justify-between text-xs font-medium text-muted-foreground">
+              <span>{i + 1} of {filtered.length}</span>
+              <span className="inline-flex items-center gap-1 text-primary transition-transform group-hover:translate-x-0.5">
+                View <ArrowRight className="size-3.5" />
+              </span>
+            </span>
           </button>
         ))}
       </div>

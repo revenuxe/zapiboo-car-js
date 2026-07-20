@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { SellLocationHero } from "@/components/sell/SellLocationHero";
+import { LaptopBrandsSection } from "@/components/sell/LaptopBrandsSection";
+import { categoryWithBrandsQuery } from "@/lib/device-buyback";
 import {
   absoluteUrl,
   breadcrumbSchema,
@@ -32,9 +34,11 @@ const laptopBrands = [
 ];
 
 export const Route = createFileRoute("/sell-used-laptop/$area")({
-  loader: ({ params }) => {
+  loader: ({ params, context }) => {
     const area = getAreaBySlug(params.area);
     if (!area) throw notFound();
+    // Prefetch laptop brands so the brand grid renders instantly.
+    context.queryClient.prefetchQuery(categoryWithBrandsQuery("laptops"));
     return { area };
   },
   head: ({ params }) => {
@@ -122,6 +126,11 @@ function SellLaptopArea() {
         subtitle={`Get the best price for your used laptop in ${area.name}, Bangalore. Free doorstep pickup and instant payment the moment we collect it.`}
         defaultPincode={area.pincode ?? ""}
         whatsappMessage={`Hi HuluMart, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`}
+      />
+
+      <LaptopBrandsSection
+        heading={`Sell any laptop brand in ${area.name}`}
+        subtitle={`Instant quote for Apple, Dell, HP, Lenovo, Asus, Acer & MSI — free doorstep pickup across ${area.name}.`}
       />
 
       {/* INTRO CONTENT + WHY US */}

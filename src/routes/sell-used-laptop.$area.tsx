@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { SellLocationHero } from "@/components/sell/SellLocationHero";
+import { LaptopBrandsSection } from "@/components/sell/LaptopBrandsSection";
 import {
   absoluteUrl,
   breadcrumbSchema,

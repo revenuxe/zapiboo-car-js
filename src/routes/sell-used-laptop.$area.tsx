@@ -113,56 +113,16 @@ function SellLaptopArea() {
 
   return (
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-navy text-navy-foreground">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 size-80 rounded-full bg-brand-green/20 blur-3xl"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -bottom-32 -left-16 size-72 rounded-full bg-brand-green/10 blur-3xl"
-        />
-        <div className="relative mx-auto max-w-4xl px-4 py-16 sm:px-6 md:py-24 lg:px-8">
-          <p className="text-sm font-semibold uppercase tracking-[0.28em] text-brand-green">
-            Sell laptop in {area.name}
-          </p>
-          <h1 className="mt-4 text-3xl font-extrabold leading-[1.08] sm:text-5xl">
-            Sell Used Laptop in <span className="text-gradient">{area.name}</span>, Bangalore
-          </h1>
-          <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg">
-            Turn your old or used laptop into instant cash in {area.name}. HuluMart gives you the
-            best price for Apple MacBook, Dell, HP, Lenovo, Asus, Acer and MSI laptops - with a free
-            instant quote, free doorstep pickup and same-day UPI payment.
-          </p>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <Button asChild variant="hero" size="xl">
-              <Link to="/sell/$category" params={{ category: "laptops" }}>
-                Get instant laptop quote
-                <ArrowRight />
-              </Link>
-            </Button>
-            <Button asChild variant="outlineLight" size="xl">
-              <a href={businessContact.phoneHref}>
-                <Phone className="size-4" /> Call {businessContact.phone}
-              </a>
-            </Button>
-          </div>
-
-          <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-navy-foreground/70">
-            <span className="flex items-center gap-1.5">
-              <Star className="size-4 fill-brand-green text-brand-green" /> 4.9/5 seller rating
-            </span>
-            <span className="flex items-center gap-1.5">
-              <CheckCircle2 className="size-4 text-brand-green" /> Same-day pickup slots
-            </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin className="size-4 text-brand-green" /> Pincode {area.pincode}
-            </span>
-          </div>
-        </div>
-      </section>
+      <SellLocationHero
+        heading={
+          <>
+            Sell your old <span className="text-gradient">laptop</span> in {area.name}
+          </>
+        }
+        subtitle={`Get the best price for your used laptop in ${area.name}, Bangalore. Free doorstep pickup and instant payment the moment we collect it.`}
+        defaultPincode={area.pincode ?? ""}
+        whatsappMessage={`Hi HuluMart, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`}
+      />
 
       {/* INTRO CONTENT + WHY US */}
       <section className="bg-background py-16 md:py-20">

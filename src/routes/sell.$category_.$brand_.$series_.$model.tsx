@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  ArrowLeft,
   ArrowRight,
   BadgeIndianRupee,
   CheckCircle2,

@@ -1,18 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-router";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import {
-  ArrowLeft,
   ArrowRight,
   BadgeIndianRupee,
-  Check,
   CheckCircle2,
   Download,
   Laptop,
   Loader2,
   LogIn,
   Phone,
-  ShieldCheck,
   Truck,
   Wallet,
 } from "lucide-react";
@@ -29,42 +26,29 @@ import { useAuth } from "@/hooks/use-auth";
 import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
 import { businessContact } from "@/lib/seo";
 import { PINCODE_KEY } from "@/routes/sell.$category";
-import {
-  calculateQuote,
-  filterVisibleSpecGroups,
-  formatPrice,
-  useDevicePath,
-  type ConditionGroup,
-  type ConditionOption,
-  type DeviceModel,
-  type OptionKind,
-  type QuoteResult,
-} from "@/lib/device-buyback";
+import { useDevicePath, type DeviceModel } from "@/lib/device-buyback";
 
 export const Route = createFileRoute("/sell/$category_/$brand_/$series_/$model")({
   head: ({ params }) => ({
     meta: [
-      { title: `Sell ${cap(params.model)} in Bangalore — Instant Quote | HuluMart` },
+      { title: `Sell ${cap(params.model)} in Bangalore — Book Free Pickup | HuluMart` },
       {
         name: "description",
-        content: `Get an instant buyback price for your ${cap(params.model)} in Bangalore. Answer a few condition questions, see your price and book free doorstep pickup.`,
+        content: `Book a free doorstep pickup for your ${cap(params.model)} in Bangalore. Our team will inspect, quote and pay you on the spot.`,
       },
       { name: "robots", content: "noindex" },
     ],
   }),
-  component: EvaluatePage,
+  component: SellModelPage,
 });
 
 function cap(s: string) {
   return s.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
-type Selections = Record<string, string[]>;
-type Phase = "intro" | "config" | "conditions" | "result" | "booking";
-
 const SLOTS = ["Morning (9am–12pm)", "Afternoon (12pm–4pm)", "Evening (4pm–8pm)"];
 
-function EvaluatePage() {
+function SellModelPage() {
   const { category, brand, series, model } = useParams({
     from: "/sell/$category_/$brand_/$series_/$model",
   });
@@ -75,98 +59,21 @@ function EvaluatePage() {
   const brandRow = path?.brand ?? null;
   const seriesRow = path?.series ?? null;
   const modelRow = path?.model ?? null;
-  const allSpecGroups = path?.specGroups ?? [];
-  const groups = path?.conditionGroups ?? [];
 
-  const storageKey = `hm_eval:${category}/${brand}/${series}/${model}`;
-
-  const [specSelections, setSpecSelections] = useState<Selections>({});
-  const [selections, setSelections] = useState<Selections>({});
-  const [phase, setPhase] = useState<Phase>("intro");
-  const [specStep, setSpecStep] = useState(0);
-  const [condStep, setCondStep] = useState(0);
+  const [pincode, setPincode] = useState("");
   const [done, setDone] = useState(false);
   const [invoice, setInvoice] = useState<BookingInvoiceData | null>(null);
-  const [pincode, setPincode] = useState("");
-  const [restored, setRestored] = useState(false);
 
-  // Restore evaluation state (e.g. after a login round-trip).
   useEffect(() => {
     if (typeof window === "undefined") return;
     setPincode(sessionStorage.getItem(PINCODE_KEY) ?? "");
-    try {
-      const raw = sessionStorage.getItem(storageKey);
-      if (raw) {
-        const saved = JSON.parse(raw) as { selections?: Selections; specSelections?: Selections };
-        if (saved.selections) setSelections(saved.selections);
-        if (saved.specSelections) setSpecSelections(saved.specSelections);
-        setRestored(true);
-      }
-    } catch {
-      /* ignore */
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storageKey]);
+  }, []);
 
-  // After returning from login with saved progress, land on the result screen.
   useEffect(() => {
-    if (restored && !authLoading && user) {
-      setPhase("result");
-      setRestored(false);
-      sessionStorage.removeItem(storageKey);
-    }
-  }, [restored, authLoading, user, storageKey]);
+    if (typeof window !== "undefined") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [done]);
 
-  // Every step / screen change should start from the very top.
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
-    }
-  }, [phase, specStep, condStep, done]);
-
-  // Only the currently-visible spec groups count toward the price (e.g. an
-  // AMD-generation answer is ignored if the user later switches to Intel).
-  const specGroups = useMemo(
-    () => filterVisibleSpecGroups(allSpecGroups, specSelections),
-    [allSpecGroups, specSelections],
-  );
-
-  const specOptions = useMemo(() => {
-    const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
-    for (const g of specGroups) {
-      for (const optId of specSelections[g.id] ?? []) {
-        const opt = g.options?.find((o) => o.id === optId);
-        if (opt) out.push({ kind: opt.kind, value: opt.value, label: opt.label, group: g.title });
-      }
-    }
-    return out;
-  }, [specGroups, specSelections]);
-
-  const conditionOptions = useMemo(() => {
-    const out: { kind: OptionKind; value: number; label: string; group: string }[] = [];
-    for (const g of groups) {
-      for (const optId of selections[g.id] ?? []) {
-        const opt = g.options?.find((o) => o.id === optId);
-        if (opt) out.push({ kind: opt.kind, value: opt.value, label: opt.label, group: g.title });
-      }
-    }
-    return out;
-  }, [groups, selections]);
-
-  const quote = useMemo<QuoteResult>(
-    () =>
-      modelRow
-        ? calculateQuote({
-            base: modelRow.base_price,
-            year: modelRow.year,
-            specs: specOptions,
-            conditions: conditionOptions,
-          })
-        : { final: 0, base: 0, breakdown: [] },
-    [modelRow, specOptions, conditionOptions],
-  );
-
-  const loading = pathLoading;
+  const loading = pathLoading || authLoading;
   const brandName = brandRow?.name ?? cap(brand);
   const seriesName = seriesRow?.name ?? cap(series);
 
@@ -202,15 +109,16 @@ function EvaluatePage() {
             </div>
             <h2 className="mt-4 text-2xl font-bold">Pickup requested!</h2>
             <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-              Our team will call you shortly to confirm your {modelRow.name} pickup and final price of{" "}
-              <span className="font-bold text-primary">{formatPrice(quote.final)}</span>. Your booking invoice has been
+              Our team will call you shortly to confirm your {modelRow.name} pickup. Your booking invoice has been
               downloaded.
             </p>
             <div className="mt-6 flex flex-wrap justify-center gap-2">
               {invoice && (
                 <Button
                   variant="navy"
-                  onClick={() => downloadBookingInvoice(invoice).catch(() => toast.error("Couldn't generate the invoice."))}
+                  onClick={() =>
+                    downloadBookingInvoice(invoice).catch(() => toast.error("Couldn't generate the invoice."))
+                  }
                 >
                   <Download className="size-4" /> Download invoice
                 </Button>
@@ -230,83 +138,18 @@ function EvaluatePage() {
     );
   }
 
-  const specSteps = specGroups.length;
-  const specLabels = specGroups.map((g) => g.title);
-  const currentSpec = specGroups[specStep] ?? null;
-  const specAnswered = currentSpec ? (specSelections[currentSpec.id]?.length ?? 0) > 0 : true;
-
-  const conditionSteps = groups.length;
-  const stepLabels = groups.map((g) => g.title);
-  const currentGroup = groups[condStep] ?? null;
-  const stepAnswered = currentGroup ? (selections[currentGroup.id]?.length ?? 0) > 0 : true;
-
-  const startEvaluation = () => {
-    if (specSteps > 0) {
-      setSpecStep(0);
-      setPhase("config");
-      return;
-    }
-    if (conditionSteps > 0) {
-      setCondStep(0);
-      setPhase("conditions");
-      return;
-    }
-    setPhase("result");
-  };
-
-  const nextSpec = () => {
-    if (specStep < specSteps - 1) {
-      setSpecStep((s) => s + 1);
-    } else if (conditionSteps > 0) {
-      setCondStep(0);
-      setPhase("conditions");
-    } else {
-      setPhase("result");
-    }
-  };
-
-  const backSpec = () => {
-    if (specStep > 0) setSpecStep((s) => s - 1);
-    else setPhase("intro");
-  };
-
-  const nextCondition = () => {
-    if (condStep < conditionSteps - 1) {
-      setCondStep((s) => s + 1);
-    } else {
-      setPhase("result");
-    }
-  };
-
-  const backCondition = () => {
-    if (condStep > 0) setCondStep((s) => s - 1);
-    else if (specSteps > 0) {
-      setSpecStep(specSteps - 1);
-      setPhase("config");
-    } else setPhase("intro");
-  };
-
-  const backFromResult = () => {
-    if (conditionSteps > 0) {
-      setCondStep(conditionSteps - 1);
-      setPhase("conditions");
-    } else if (specSteps > 0) {
-      setSpecStep(specSteps - 1);
-      setPhase("config");
-    } else {
-      setPhase("intro");
-    }
-  };
-
   const goToLogin = () => {
     if (typeof window !== "undefined") {
-      sessionStorage.setItem(storageKey, JSON.stringify({ selections, specSelections }));
       navigate({ to: "/auth", search: { redirectTo: window.location.pathname } as never });
     }
   };
 
+  const waHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
+    `Hi HuluMart, I want to sell my ${modelRow.name} in Bangalore. Please help me book a free pickup.`,
+  )}`;
+
   return (
-    <div className="bg-secondary/30 pb-28">
+    <div className="bg-secondary/30 pb-16">
       <div className="mx-auto max-w-3xl px-4 py-6 sm:px-6 sm:py-9 lg:px-8">
         <Breadcrumbs
           crumbs={[
@@ -328,411 +171,90 @@ function EvaluatePage() {
             )}
           </div>
           <div className="min-w-0">
-            <p className="text-xs text-muted-foreground">{brandName} · {seriesName}</p>
+            <p className="text-xs text-muted-foreground">
+              {brandName} · {seriesName}
+            </p>
             <p className="truncate font-bold leading-tight">{modelRow.name}</p>
           </div>
         </div>
 
-        {phase === "intro" && <IntroStep model={modelRow} onStart={startEvaluation} />}
+        {/* WhatsApp quick-chat CTA */}
+        <a
+          href={waHref}
+          target="_blank"
+          rel="noreferrer"
+          className="group mt-4 flex items-center gap-3 rounded-3xl border border-[#25D366]/25 bg-[#25D366]/8 p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated sm:p-5"
+        >
+          <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#25D366] shadow-soft sm:size-12">
+            <WhatsAppIcon className="size-6 sm:size-7" />
+          </span>
+          <span className="flex-1">
+            <span className="block text-sm font-bold text-foreground sm:text-base">
+              Prefer to chat? Sell on WhatsApp
+            </span>
+            <span className="mt-0.5 block text-xs text-muted-foreground">
+              Send a photo of your {modelRow.name} and get a quote in minutes.
+            </span>
+          </span>
+          <ArrowRight className="size-5 shrink-0 text-[#128C7E] transition-transform group-hover:translate-x-0.5" />
+        </a>
 
-        {phase === "config" && currentSpec && (
-          <>
-            <Stepper labels={specLabels} current={specStep} accent="Configuration" />
-            <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
-              <ConditionStep
-                key={currentSpec.id}
-                group={currentSpec}
-                index={specStep}
-                total={specSteps}
-                selections={specSelections}
-                setSelections={setSpecSelections}
-                onAutoAdvance={nextSpec}
-              />
-            </div>
-          </>
-        )}
-
-        {phase === "conditions" && currentGroup && (
-          <>
-            <Stepper labels={stepLabels} current={condStep} accent="Condition" />
-            <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
-              <ConditionStep
-                key={currentGroup.id}
-                group={currentGroup}
-                index={condStep}
-                total={conditionSteps}
-                selections={selections}
-                setSelections={setSelections}
-                onAutoAdvance={nextCondition}
-              />
-            </div>
-          </>
-        )}
-
-        {phase === "result" && (
-          <div className="mt-5">
-            {!user ? (
-              <LoginPrompt onLogin={goToLogin} />
-            ) : (
-              <ResultStep
-                model={modelRow}
+        {/* Auth-gated booking */}
+        <div className="mt-5">
+          {!user ? (
+            <LoginPrompt onLogin={goToLogin} model={modelRow} />
+          ) : (
+            <div className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
+              <BookingForm
+                categoryId={cat!.id}
+                categoryName={cat!.name}
                 brandName={brandName}
-                quote={quote}
-                onBack={backFromResult}
-                onContinue={() => setPhase("booking")}
-              />
-            )}
-          </div>
-        )}
-
-        {phase === "booking" && (
-          <div className="mt-5 rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-7">
-            <BookingForm
-              categoryId={cat!.id}
-              categoryName={cat!.name}
-              brandName={brandName}
-              seriesName={seriesName}
-              model={modelRow}
-              quote={quote}
-              pincode={pincode}
-              userId={user?.id ?? null}
-              onBack={() => setPhase("result")}
-              onBooked={(inv) => {
-                setInvoice(inv);
-                setDone(true);
-              }}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* Sticky action bar — configuration steps */}
-      {phase === "config" && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-3xl items-center justify-end gap-2 px-1">
-            <Button variant="outline" size="lg" onClick={backSpec}>
-              <ArrowLeft className="size-4" /> Back
-            </Button>
-            <Button variant="hero" size="lg" disabled={!specAnswered} onClick={nextSpec}>
-              {specStep === specSteps - 1 && conditionSteps === 0 ? "See my price" : "Continue"}{" "}
-              <ArrowRight className="size-4" />
-            </Button>
-          </div>
-          {!specAnswered && (
-            <p className="mx-auto mt-1.5 max-w-3xl px-1 text-center text-[11px] text-muted-foreground">
-              Pick an option to continue.
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Sticky action bar — condition steps only (no price shown) */}
-      {phase === "conditions" && (
-        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-background/95 p-3 backdrop-blur-xl">
-          <div className="mx-auto flex max-w-3xl items-center justify-end gap-2 px-1">
-            <Button variant="outline" size="lg" onClick={backCondition}>
-              <ArrowLeft className="size-4" /> Back
-            </Button>
-            <Button variant="hero" size="lg" disabled={!stepAnswered} onClick={nextCondition}>
-              {condStep === conditionSteps - 1 ? "See my price" : "Continue"} <ArrowRight className="size-4" />
-            </Button>
-          </div>
-          {!stepAnswered && (
-            <p className="mx-auto mt-1.5 max-w-3xl px-1 text-center text-[11px] text-muted-foreground">
-              Pick an option to continue.
-            </p>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
-function IntroStep({ model, onStart }: { model: DeviceModel; onStart: () => void }) {
-  const waHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell my ${model.name} in Bangalore. Please help me get a quote.`,
-  )}`;
-  return (
-    <div className="mt-5">
-      {/* WhatsApp quick-chat card */}
-      <a
-        href={waHref}
-        target="_blank"
-        rel="noreferrer"
-        className="group mb-4 flex items-center gap-3 rounded-3xl border border-[#25D366]/25 bg-[#25D366]/8 p-4 shadow-soft transition-all hover:-translate-y-0.5 hover:shadow-elevated sm:p-5"
-      >
-        <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-[#25D366] shadow-soft sm:size-12">
-          <WhatsAppIcon className="size-6 sm:size-7" />
-        </span>
-        <span className="flex-1">
-          <span className="block text-sm font-bold text-foreground sm:text-base">
-            Prefer to chat? Sell on WhatsApp
-          </span>
-          <span className="mt-0.5 block text-xs text-muted-foreground">
-            Send a photo of your {model.name} and get a quote in minutes.
-          </span>
-        </span>
-        <ArrowRight className="size-5 shrink-0 text-[#128C7E] transition-transform group-hover:translate-x-0.5" />
-      </a>
-
-      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-6 text-navy-foreground shadow-soft">
-        <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Best price up to</p>
-        <p className="mt-1 text-4xl font-extrabold text-gradient sm:text-5xl">{formatPrice(model.base_price)}</p>
-        <p className="mt-2 max-w-sm text-sm text-navy-foreground/75">
-          Answer a few quick questions about your {model.name}'s condition to lock in your exact price.
-        </p>
-        <Button variant="hero" size="lg" className="mt-5 w-full sm:w-auto" onClick={onStart}>
-          Sell now <ArrowRight className="size-4" />
-        </Button>
-      </div>
-
-      <div className="mt-4 grid gap-3 sm:grid-cols-3">
-        {[
-          { icon: BadgeIndianRupee, title: "Instant price", text: "See your exact quote in under a minute." },
-          { icon: Truck, title: "Free pickup", text: "Doorstep collection across Bangalore." },
-          { icon: Wallet, title: "Instant payment", text: "Get paid the moment we verify your device." },
-        ].map((f) => (
-          <div key={f.title} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-            <f.icon className="size-6 text-primary" />
-            <h3 className="mt-2 text-sm font-bold">{f.title}</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">{f.text}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function Stepper({
-  labels,
-  current,
-  accent,
-}: {
-  labels: string[];
-  current: number;
-  accent?: string;
-}) {
-  const total = labels.length;
-  const pct = Math.round(((current + 1) / total) * 100);
-  return (
-    <div className="mt-6">
-      {accent && (
-        <p className="mb-1 text-[11px] font-bold uppercase tracking-wider text-primary">{accent}</p>
-      )}
-      <div className="mb-2 flex items-center justify-between">
-        <p className="text-sm font-semibold">
-          Step {Math.min(current + 1, total)} of {total}
-          <span className="ml-2 font-normal text-muted-foreground">{labels[current]}</span>
-        </p>
-        <span className="text-xs font-bold text-primary">{pct}%</span>
-      </div>
-      <div className="flex items-center gap-1.5">
-        {labels.map((label, i) => {
-          const stateDone = i < current;
-          const active = i === current;
-          return (
-            <div key={`${label}-${i}`} className="flex flex-1 items-center gap-1.5">
-              <div
-                className={`h-1.5 flex-1 rounded-full transition-colors ${
-                  stateDone || active ? "bg-primary" : "bg-border"
-                }`}
+                seriesName={seriesName}
+                model={modelRow}
+                pincode={pincode}
+                userId={user.id}
+                onBooked={(inv) => {
+                  setInvoice(inv);
+                  setDone(true);
+                }}
               />
             </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function ConditionStep({
-  group,
-  index,
-  total,
-  selections,
-  setSelections,
-  onAutoAdvance,
-}: {
-  group: ConditionGroup;
-  index: number;
-  total: number;
-  selections: Selections;
-  setSelections: React.Dispatch<React.SetStateAction<Selections>>;
-  onAutoAdvance: () => void;
-}) {
-  const multi = group.selection === "multi";
-  const picked = selections[group.id] ?? [];
-  const allOptions = group.options ?? [];
-  const [query, setQuery] = useState("");
-  const showSearch = allOptions.length > 7;
-  const visibleOptions = useMemo(() => {
-    if (!showSearch || !query.trim()) return allOptions;
-    const q = query.trim().toLowerCase();
-    return allOptions.filter(
-      (o) => o.label.toLowerCase().includes(q) || (o.description ?? "").toLowerCase().includes(q),
-    );
-  }, [allOptions, query, showSearch]);
-
-  // Reset the filter every time the step changes.
-  useEffect(() => {
-    setQuery("");
-  }, [group.id]);
-
-  const toggle = (optId: string) => {
-    setSelections((prev) => {
-      const current = prev[group.id] ?? [];
-      if (multi) {
-        return {
-          ...prev,
-          [group.id]: current.includes(optId)
-            ? current.filter((x) => x !== optId)
-            : [...current, optId],
-        };
-      }
-      return { ...prev, [group.id]: current.includes(optId) ? [] : [optId] };
-    });
-    // Single-select: jump straight to the next step for a fast, slick feel.
-    if (!multi) {
-      window.setTimeout(() => onAutoAdvance(), 220);
-    }
-  };
-
-  return (
-    <div>
-      <p className="text-xs font-semibold uppercase tracking-wide text-primary">
-        Step {index + 1} of {total}
-      </p>
-      <h1 className="mt-1 text-xl font-bold sm:text-2xl">{group.title}</h1>
-      {group.subtitle && <p className="mt-1 text-sm text-muted-foreground">{group.subtitle}</p>}
-      <p className="mt-1 text-xs text-muted-foreground">
-        {multi ? "Select all that apply." : "Pick the one that matches best."}
-      </p>
-
-      {showSearch && (
-        <div className="relative mt-4">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={`Search ${allOptions.length} options…`}
-            className="h-11 rounded-xl pl-4"
-          />
+          )}
         </div>
-      )}
 
-      <div className="mt-5 grid gap-2.5 sm:grid-cols-2">
-        {visibleOptions.map((o) => (
-          <ConditionChoice
-            key={o.id}
-            option={o}
-            selected={picked.includes(o.id)}
-            multi={multi}
-            onClick={() => toggle(o.id)}
-          />
-        ))}
-        {showSearch && visibleOptions.length === 0 && (
-          <p className="col-span-full rounded-xl border border-dashed border-border bg-background p-6 text-center text-xs text-muted-foreground">
-            No matches for “{query}”.
-          </p>
-        )}
+        {/* Trust strip */}
+        <div className="mt-6 grid gap-3 sm:grid-cols-3">
+          {[
+            { icon: BadgeIndianRupee, title: "Best price", text: "Fair, market-linked quote at pickup." },
+            { icon: Truck, title: "Free pickup", text: "Doorstep collection across Bangalore." },
+            { icon: Wallet, title: "Instant payment", text: "Get paid the moment we verify your device." },
+          ].map((f) => (
+            <div key={f.title} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
+              <f.icon className="size-6 text-primary" />
+              <h3 className="mt-2 text-sm font-bold">{f.title}</h3>
+              <p className="mt-0.5 text-xs text-muted-foreground">{f.text}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function ConditionChoice({
-  option,
-  selected,
-  multi,
-  onClick,
-}: {
-  option: ConditionOption;
-  selected: boolean;
-  multi: boolean;
-  onClick: () => void;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex items-start gap-3 rounded-2xl border p-3.5 text-left transition-all ${
-        selected ? "border-primary bg-primary/5 shadow-soft" : "border-border bg-background hover:border-primary/40"
-      }`}
-    >
-      <span
-        className={`mt-0.5 flex size-5 shrink-0 items-center justify-center border ${
-          multi ? "rounded-md" : "rounded-full"
-        } ${selected ? "border-primary bg-primary text-primary-foreground" : "border-muted-foreground/40"}`}
-      >
-        {selected && <Check className="size-3.5" />}
-      </span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-sm font-semibold">{option.label}</span>
-        {option.description && (
-          <span className="block text-xs text-muted-foreground">{option.description}</span>
-        )}
-      </span>
-    </button>
-  );
-}
-
-function LoginPrompt({ onLogin }: { onLogin: () => void }) {
+function LoginPrompt({ onLogin, model }: { onLogin: () => void; model: DeviceModel }) {
   return (
     <div className="rounded-3xl border border-border bg-card p-7 text-center shadow-soft">
       <div className="mx-auto flex size-16 items-center justify-center rounded-full bg-primary/10 text-primary">
         <LogIn className="size-8" />
       </div>
-      <h2 className="mt-4 text-2xl font-bold">Almost there — sign in to see your price</h2>
+      <h2 className="mt-4 text-2xl font-bold">Sign in to book your free pickup</h2>
       <p className="mx-auto mt-2 max-w-sm text-sm text-muted-foreground">
-        Log in or create a free account to unlock your final quote and book a free doorstep pickup. We'll bring you
-        right back here.
+        Log in or create a free account to book a doorstep pickup for your {model.name}. We'll bring you right back
+        here.
       </p>
       <Button variant="hero" size="lg" className="mt-6 w-full sm:w-auto" onClick={onLogin}>
         <LogIn className="size-4" /> Login to continue
       </Button>
-    </div>
-  );
-}
-
-function ResultStep({
-  model,
-  brandName,
-  quote,
-  onBack,
-  onContinue,
-}: {
-  model: DeviceModel;
-  brandName: string;
-  quote: QuoteResult;
-  onBack: () => void;
-  onContinue: () => void;
-}) {
-  return (
-    <div>
-      <div className="overflow-hidden rounded-3xl bg-gradient-navy p-7 text-center text-navy-foreground shadow-soft">
-        <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Your final quote</p>
-        <p className="mt-2 text-5xl font-extrabold text-gradient sm:text-6xl">{formatPrice(quote.final)}</p>
-        <p className="mt-2 text-sm text-navy-foreground/75">
-          {brandName} {model.name}
-        </p>
-        <p className="mx-auto mt-4 max-w-sm text-xs text-navy-foreground/60">
-          This is your locked offer based on the configuration and condition details you shared. The exact amount is
-          confirmed with a free doorstep evaluation — and paid instantly.
-        </p>
-      </div>
-
-      <div className="mt-3 flex items-center gap-2 rounded-xl bg-primary/5 p-3 text-xs text-muted-foreground">
-        <ShieldCheck className="size-4 shrink-0 text-primary" />
-        Price locked for your pickup. Instant payment after a quick on-site check.
-      </div>
-
-
-      <div className="mt-5 flex items-center justify-end gap-2">
-        <Button variant="outline" size="lg" onClick={onBack}>
-          <ArrowLeft className="size-4" /> Back
-        </Button>
-        <Button variant="hero" size="lg" onClick={onContinue}>
-          Continue <ArrowRight className="size-4" />
-        </Button>
-      </div>
     </div>
   );
 }
@@ -743,10 +265,8 @@ function BookingForm({
   brandName,
   seriesName,
   model,
-  quote,
   pincode,
   userId,
-  onBack,
   onBooked,
 }: {
   categoryId: string;
@@ -754,10 +274,8 @@ function BookingForm({
   brandName: string;
   seriesName: string | null;
   model: DeviceModel;
-  quote: ReturnType<typeof calculateQuote>;
   pincode: string;
-  userId: string | null;
-  onBack: () => void;
+  userId: string;
   onBooked: (invoice: BookingInvoiceData) => void;
 }) {
   const [name, setName] = useState("");
@@ -771,8 +289,6 @@ function BookingForm({
   const [agreed, setAgreed] = useState(false);
   const [prefilled, setPrefilled] = useState(false);
 
-  // Auto-fill from the saved profile (and account details) so returning users
-  // don't retype everything. Their details are saved back on every booking.
   const { data: prefill } = useQuery({
     queryKey: ["booking-prefill", userId],
     enabled: !!userId,
@@ -782,7 +298,7 @@ function BookingForm({
         supabase
           .from("user_profiles")
           .select("full_name, whatsapp, address, pincode")
-          .eq("user_id", userId!)
+          .eq("user_id", userId)
           .maybeSingle(),
         supabase.auth.getUser(),
       ]);
@@ -819,8 +335,8 @@ function BookingForm({
           series_name: seriesName,
           model_name: model.name,
           base_price: model.base_price,
-          final_price: quote.final,
-          selections: quote.breakdown as unknown as never,
+          final_price: model.base_price,
+          selections: [] as unknown as never,
           name: name.trim(),
           phone: phone.trim(),
           email: email.trim() || null,
@@ -835,19 +351,16 @@ function BookingForm({
         .single();
       if (error) throw error;
 
-      // Persist the customer's details to their profile for next time.
-      if (userId) {
-        await supabase.from("user_profiles").upsert(
-          {
-            user_id: userId,
-            full_name: name.trim() || null,
-            whatsapp: phone.trim() || null,
-            address: address.trim() || null,
-            pincode: pin.trim() || null,
-          },
-          { onConflict: "user_id" },
-        );
-      }
+      await supabase.from("user_profiles").upsert(
+        {
+          user_id: userId,
+          full_name: name.trim() || null,
+          whatsapp: phone.trim() || null,
+          address: address.trim() || null,
+          pincode: pin.trim() || null,
+        },
+        { onConflict: "user_id" },
+      );
 
       const reference = `HM-${String(inserted?.id ?? "").slice(0, 8).toUpperCase() || Date.now().toString(36).toUpperCase()}`;
       return {
@@ -866,15 +379,16 @@ function BookingForm({
           series: seriesName,
           model: model.name,
         },
-        finalPrice: quote.final,
+        finalPrice: 0,
         preferredDate: date || null,
         slot,
         notes: notes.trim() || null,
       };
     },
     onSuccess: (inv) => {
-      // Auto-download the booking invoice, then advance to the thank-you screen.
-      downloadBookingInvoice(inv).catch(() => toast.error("Booking saved, but the invoice couldn't be generated."));
+      downloadBookingInvoice(inv).catch(() =>
+        toast.error("Booking saved, but the invoice couldn't be generated."),
+      );
       onBooked(inv);
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't submit your request."),
@@ -884,17 +398,11 @@ function BookingForm({
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-3 rounded-2xl bg-primary/5 p-4">
-        <div>
-          <p className="text-xs uppercase tracking-wide text-muted-foreground">Locked quote</p>
-          <p className="text-2xl font-extrabold text-primary">{formatPrice(quote.final)}</p>
-        </div>
-        <Button variant="ghost" size="sm" onClick={onBack}>
-          <ArrowLeft className="size-4" /> Back
-        </Button>
-      </div>
+      <h3 className="text-lg font-bold">Book your free pickup</h3>
+      <p className="mt-1 text-xs text-muted-foreground">
+        Our team will visit your address, evaluate the device on the spot and pay you instantly.
+      </p>
 
-      <h3 className="mt-6 text-lg font-bold">Book your free pickup</h3>
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label className="text-xs">Full name *</Label>
@@ -915,11 +423,21 @@ function BookingForm({
         </div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label className="text-xs">Pickup address</Label>
-          <Textarea value={address} onChange={(e) => setAddress(e.target.value)} placeholder="House / flat, street, area, Bangalore" rows={2} />
+          <Textarea
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="House / flat, street, area, Bangalore"
+            rows={2}
+          />
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Pincode</Label>
-          <Input value={pin} onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" placeholder="560001" />
+          <Input
+            value={pin}
+            onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            inputMode="numeric"
+            placeholder="560001"
+          />
         </div>
         <div className="space-y-1.5">
           <Label className="text-xs">Preferred date</Label>
@@ -933,7 +451,9 @@ function BookingForm({
                 key={s}
                 onClick={() => setSlot(s)}
                 className={`rounded-xl border p-2.5 text-xs font-medium transition-colors ${
-                  slot === s ? "border-primary bg-primary/5 text-primary" : "border-border text-muted-foreground hover:border-primary/40"
+                  slot === s
+                    ? "border-primary bg-primary/5 text-primary"
+                    : "border-border text-muted-foreground hover:border-primary/40"
                 }`}
               >
                 {s}
@@ -943,16 +463,17 @@ function BookingForm({
         </div>
         <div className="space-y-1.5 sm:col-span-2">
           <Label className="text-xs">Notes (optional)</Label>
-          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Anything we should know?" rows={2} />
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            placeholder="Anything we should know?"
+            rows={2}
+          />
         </div>
       </div>
 
       <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-secondary/40 p-3.5">
-        <Checkbox
-          checked={agreed}
-          onCheckedChange={(v) => setAgreed(v === true)}
-          className="mt-0.5"
-        />
+        <Checkbox checked={agreed} onCheckedChange={(v) => setAgreed(v === true)} className="mt-0.5" />
         <span className="text-xs leading-relaxed text-muted-foreground">
           I agree to HuluMart's{" "}
           <Link to="/terms" target="_blank" className="font-semibold text-primary underline-offset-2 hover:underline">
@@ -970,7 +491,7 @@ function BookingForm({
         onClick={() => book.mutate()}
       >
         {book.isPending ? <Loader2 className="size-4 animate-spin" /> : <Phone className="size-4" />}
-        Confirm pickup · {formatPrice(quote.final)}
+        Confirm free pickup
       </Button>
       {!valid && (
         <p className="mt-2 text-center text-xs text-muted-foreground">

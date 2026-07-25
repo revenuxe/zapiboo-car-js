@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Cpu, Inbox, Laptop, Layers, Loader2, SlidersHorizontal, Tag } from "lucide-react";
+import { Laptop, Layers, Loader2, Tag } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Select,
@@ -12,23 +12,17 @@ import {
 import { BrandsManager } from "@/components/admin/devices/BrandsManager";
 import { SeriesManager } from "@/components/admin/devices/SeriesManager";
 import { ModelsManager } from "@/components/admin/devices/ModelsManager";
-import { PricingManager } from "@/components/admin/devices/PricingManager";
-import { SpecsManager } from "@/components/admin/devices/SpecsManager";
-import { DeviceOrdersManager } from "@/components/admin/devices/DeviceOrdersManager";
 import type { DeviceCategory } from "@/lib/device-buyback";
 
 const SUBTABS = [
-  { value: "orders", label: "Orders", icon: Inbox },
   { value: "brands", label: "Brands", icon: Tag },
   { value: "series", label: "Series", icon: Layers },
   { value: "models", label: "Models", icon: Laptop },
-  { value: "specs", label: "Configuration", icon: Cpu },
-  { value: "pricing", label: "Condition price", icon: SlidersHorizontal },
 ] as const;
 
 export function DevicesPanel() {
   const [categoryId, setCategoryId] = useState("");
-  const [tab, setTab] = useState<(typeof SUBTABS)[number]["value"]>("orders");
+  const [tab, setTab] = useState<(typeof SUBTABS)[number]["value"]>("brands");
 
   const { data: categories = [], isLoading } = useQuery({
     queryKey: ["admin", "device_categories"],
@@ -58,9 +52,9 @@ export function DevicesPanel() {
     <div className="space-y-5">
       <div className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="font-bold">Device buyback</h2>
+          <h2 className="font-bold">Device catalog</h2>
           <p className="text-xs text-muted-foreground">
-            Manage the sell-your-device catalog, pricing and orders.
+            Manage brands, series and models for the sell-your-device pages.
           </p>
         </div>
         <Select value={categoryId} onValueChange={setCategoryId}>
@@ -103,14 +97,12 @@ export function DevicesPanel() {
         </p>
       ) : (
         <div>
-          {tab === "orders" && <DeviceOrdersManager />}
           {tab === "brands" && <BrandsManager categoryId={categoryId} />}
           {tab === "series" && <SeriesManager categoryId={categoryId} />}
           {tab === "models" && <ModelsManager categoryId={categoryId} />}
-          {tab === "specs" && <SpecsManager categoryId={categoryId} />}
-          {tab === "pricing" && <PricingManager categoryId={categoryId} />}
         </div>
       )}
     </div>
   );
 }
+

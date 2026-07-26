@@ -511,11 +511,12 @@ export type DevicePath = {
   conditionGroups: ConditionGroup[];
 };
 
-export function useDevicePath(category?: string, brand?: string, series?: string, model?: string) {
-  return useQuery({
+export function devicePathQuery(category?: string, brand?: string, series?: string, model?: string) {
+  return queryOptions({
     queryKey: ["device", "path", category, brand, series, model],
     enabled: !!category && !!brand && !!series && !!model,
     staleTime: 5 * 60_000,
+    gcTime: 30 * 60_000,
     queryFn: async (): Promise<DevicePath> => {
       // RPC not yet in generated types; cast payload once here.
       const { data, error } = await (supabase.rpc as unknown as (
@@ -546,6 +547,10 @@ export function useDevicePath(category?: string, brand?: string, series?: string
       };
     },
   });
+}
+
+export function useDevicePath(category?: string, brand?: string, series?: string, model?: string) {
+  return useQuery(devicePathQuery(category, brand, series, model));
 }
 
 // Compute which spec groups the user should see, given their current selections.

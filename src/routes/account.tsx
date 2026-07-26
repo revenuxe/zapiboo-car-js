@@ -16,8 +16,9 @@ import type { User } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { displayName } from "@/hooks/use-auth";
-import { formatPrice, statusLabel, type DeviceOrder } from "@/lib/device-buyback";
+import { statusLabel, type DeviceOrder } from "@/lib/device-buyback";
 import { Button } from "@/components/ui/button";
+import { PageLoader } from "@/components/PageLoader";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -67,11 +68,7 @@ function AccountPage() {
   };
 
   if (checking) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="size-7 animate-spin text-primary" />
-      </div>
-    );
+    return <PageLoader label="Loading your account" />;
   }
 
   return (
@@ -194,9 +191,6 @@ function LaptopOrders({ userId }: { userId: string }) {
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1.5 font-bold text-primary">
-                    {formatPrice(o.final_price)}
-                  </span>
                   {o.preferred_date && (
                     <span className="flex items-center gap-1.5">
                       <CalendarDays className="size-3.5 text-primary" /> {o.preferred_date}

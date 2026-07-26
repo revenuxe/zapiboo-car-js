@@ -26,7 +26,8 @@ import { useAuth } from "@/hooks/use-auth";
 import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
 import { businessContact } from "@/lib/seo";
 import { PINCODE_KEY } from "@/routes/sell.$category";
-import { useDevicePath, type DeviceModel } from "@/lib/device-buyback";
+import { devicePathQuery, useDevicePath, type DeviceModel } from "@/lib/device-buyback";
+import { PageLoader } from "@/components/PageLoader";
 
 export const Route = createFileRoute("/sell/$category_/$brand_/$series_/$model")({
   head: ({ params }) => ({
@@ -39,6 +40,10 @@ export const Route = createFileRoute("/sell/$category_/$brand_/$series_/$model")
       { name: "robots", content: "noindex" },
     ],
   }),
+  loader: ({ context, params }) =>
+    context.queryClient.ensureQueryData(
+      devicePathQuery(params.category, params.brand, params.series, params.model),
+    ),
   component: SellModelPage,
 });
 
@@ -78,11 +83,7 @@ function SellModelPage() {
   const seriesName = seriesRow?.name ?? cap(series);
 
   if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="size-7 animate-spin text-primary" />
-      </div>
-    );
+    return <PageLoader label="Getting your device ready" />;
   }
 
   if (!modelRow) {

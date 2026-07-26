@@ -1,6 +1,5 @@
 import { jsPDF } from "jspdf";
 import logoAsset from "@/assets/hulumart-logo.webp.asset.json";
-import { formatPrice } from "@/lib/device-buyback";
 
 export type BookingInvoiceData = {
   reference: string;
@@ -105,21 +104,22 @@ export async function downloadBookingInvoice(data: BookingInvoiceData): Promise<
 
   let y = 150;
 
-  // ---- Quote highlight ----
+  // ---- Booking confirmation banner (no pricing shown; final quote is
+  // confirmed on-site after the free doorstep evaluation) ----
   doc.setFillColor(240, 250, 246);
   doc.roundedRect(margin, y, contentW, 70, 10, 10, "F");
   doc.setTextColor(...MUTED);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text("CONFIRMED QUOTE", margin + 18, y + 26);
+  doc.text("BOOKING CONFIRMED", margin + 18, y + 26);
+  doc.setTextColor(...NAVY);
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("Free doorstep pickup scheduled", margin + 18, y + 52);
   doc.setTextColor(...GREEN);
   doc.setFont("helvetica", "bold");
-  doc.setFontSize(28);
-  doc.text(formatPrice(data.finalPrice), margin + 18, y + 54);
-  doc.setTextColor(...MUTED);
-  doc.setFont("helvetica", "normal");
-  doc.setFontSize(9);
-  doc.text("Payable instantly after doorstep evaluation", pageW - margin - 18, y + 50, { align: "right" });
+  doc.setFontSize(11);
+  doc.text("Final price confirmed at pickup", pageW - margin - 18, y + 50, { align: "right" });
   y += 100;
 
   // ---- Two columns: device + customer ----

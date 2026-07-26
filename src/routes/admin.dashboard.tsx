@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { Loader2, LogOut, LayoutDashboard, Smartphone } from "lucide-react";
+import { LogOut, LayoutDashboard, Smartphone, Inbox } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Logo } from "@/components/Logo";
+import { PageLoader } from "@/components/PageLoader";
 import { OverviewPanel } from "@/components/admin/OverviewPanel";
 import { DevicesPanel } from "@/components/admin/DevicesPanel";
+import { LeadsPanel } from "@/components/admin/LeadsPanel";
 
 export const Route = createFileRoute("/admin/dashboard")({
   ssr: false,
@@ -62,7 +64,7 @@ function AdminDashboard() {
   if (checking) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="size-7 animate-spin text-primary" />
+        <PageLoader label="Checking admin access" />
       </div>
     );
   }
@@ -86,13 +88,16 @@ function AdminDashboard() {
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-bold sm:text-3xl">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage laptop buyback orders, device catalog, specs and pricing.
+          Manage laptop buyback bookings, device catalog and customer leads.
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-2 gap-1 sm:w-auto sm:inline-grid">
+          <TabsList className="grid w-full grid-cols-3 gap-1 sm:w-auto sm:inline-grid">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="leads" className="gap-1.5">
+              <Inbox className="size-4" /> <span className="hidden sm:inline">Leads</span>
             </TabsTrigger>
             <TabsTrigger value="devices" className="gap-1.5">
               <Smartphone className="size-4" /> <span className="hidden sm:inline">Devices</span>
@@ -101,6 +106,9 @@ function AdminDashboard() {
 
           <TabsContent value="overview" className="mt-5">
             <OverviewPanel />
+          </TabsContent>
+          <TabsContent value="leads" className="mt-5">
+            <LeadsPanel />
           </TabsContent>
           <TabsContent value="devices" className="mt-5">
             <DevicesPanel />

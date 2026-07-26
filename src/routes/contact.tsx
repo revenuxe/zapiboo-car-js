@@ -37,6 +37,15 @@ function Contact() {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
+
+    // Honeypot: real visitors never fill this hidden field, bots that
+    // auto-fill every input do. Pretend to succeed without writing anything.
+    if (String(formData.get("website") ?? "").trim()) {
+      form.reset();
+      toast.success("Message sent! We'll get back to you within one business day.");
+      return;
+    }
+
     const name = String(formData.get("name") ?? "").trim();
     const email = String(formData.get("email") ?? "").trim();
     const phone = String(formData.get("phone") ?? "").trim();
@@ -106,6 +115,10 @@ function Contact() {
             className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-10"
           >
             <div className="grid gap-5 sm:grid-cols-2">
+              <div className="absolute left-[-9999px] top-auto size-px overflow-hidden" aria-hidden="true">
+                <label htmlFor="cwebsite">Leave this field empty</label>
+                <input id="cwebsite" name="website" type="text" tabIndex={-1} autoComplete="off" />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="cname">Name</Label>
                 <Input id="cname" name="name" required placeholder="Your name" />

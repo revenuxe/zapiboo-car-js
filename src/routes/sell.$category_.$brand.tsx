@@ -3,6 +3,8 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { ArrowRight, Loader2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CatalogShell } from "@/components/sell/CatalogShell";
+import { absoluteUrl } from "@/lib/seo";
+import { getLaptopBrandBySlug } from "@/lib/laptop-brands";
 import {
   useDeviceBrandBySlug,
   useDeviceCategory,
@@ -10,15 +12,28 @@ import {
 } from "@/lib/device-buyback";
 
 export const Route = createFileRoute("/sell/$category_/$brand")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Sell ${cap(params.brand)} ${cap(params.category)} in Bangalore | HuluMart` },
-      {
-        name: "description",
-        content: `Pick your ${cap(params.brand)} series and get an instant price for your ${params.category} in Bangalore with free doorstep pickup.`,
-      },
-    ],
-  }),
+  head: ({ params }) => {
+    const path = `/sell/${params.category}/${params.brand}`;
+    const title = `Sell ${cap(params.brand)} ${cap(params.category)} in Bangalore | HuluMart`;
+    const description = `Pick your ${cap(params.brand)} series and get an instant price for your ${params.category} in Bangalore with free doorstep pickup.`;
+    // The static /sell-old-laptop/{brand} content page covers the same brand
+    // keyword with deeper content — canonicalize to it there to avoid
+    // cannibalizing our own rankings instead of competing against them.
+    const staticBrand = params.category === "laptops" ? getLaptopBrandBySlug(params.brand) : null;
+    const canonicalPath = staticBrand ? `/sell-old-laptop/${staticBrand.slug}` : path;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: absoluteUrl(path) },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: canonicalPath }],
+    };
+  },
   component: SeriesPage,
 });
 

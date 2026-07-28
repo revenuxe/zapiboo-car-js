@@ -30,13 +30,13 @@ import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availa
 export const Route = createFileRoute("/sell/$category")({
   head: () => ({
     meta: [
-      { title: "Sell Old Laptop in Bangalore - Instant Cash | HuluMart" },
+      { title: "Sell Used Laptop in Bangalore - Instant Cash | HuluMart" },
       {
         name: "description",
         content:
           "Sell your old or used laptop in Bangalore for instant cash. Get a free instant quote, free doorstep pickup and same-day payment. Apple, Dell, HP, Lenovo & more.",
       },
-      { property: "og:title", content: "Sell Old Laptop in Bangalore - Instant Cash | HuluMart" },
+      { property: "og:title", content: "Sell Used Laptop in Bangalore - Instant Cash | HuluMart" },
       {
         property: "og:description",
         content:
@@ -50,7 +50,7 @@ export const Route = createFileRoute("/sell/$category")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Service",
-          name: "Sell Old Laptop in Bangalore",
+          name: "Sell Used Laptop in Bangalore",
           areaServed: "Bengaluru",
           provider: { "@type": "Organization", name: "HuluMart" },
           serviceType: "Used laptop buyback with doorstep pickup",
@@ -164,7 +164,7 @@ function Landing({
         <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-16 size-72 rounded-full bg-brand-green/10 blur-3xl" />
         <div className="relative mx-auto max-w-3xl px-4 py-16 text-center sm:px-6 md:py-24 lg:px-8">
           <h1 className="text-3xl font-extrabold leading-[1.1] sm:text-4xl md:text-5xl">
-            Sell your old <span className="text-gradient">{lower}</span> in Bangalore
+            Sell your used <span className="text-gradient">{lower}</span> in Bangalore
           </h1>
           <p className="mx-auto mt-4 max-w-md text-navy-foreground/75">
             Get the best price for your used {lower} in minutes. Free doorstep pickup across Bengaluru

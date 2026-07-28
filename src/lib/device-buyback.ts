@@ -1,6 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-export { compressImage, slugify } from "@/lib/scrap-listings";
+export { compressImage, slugify } from "@/lib/image-utils";
 
 // Combined category + brands lookup by slug — one round trip, cacheable, used
 // by loaders to warm the cache before the homepage / funnel render.

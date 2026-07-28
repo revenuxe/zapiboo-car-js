@@ -3,7 +3,6 @@ import {
   Outlet,
   Link,
   createRootRouteWithContext,
-  redirect,
   useRouter,
   useRouterState,
   HeadContent,
@@ -19,22 +18,10 @@ import { FloatingWhatsApp } from "../components/FloatingWhatsApp";
 import { Toaster } from "../components/ui/sonner";
 import { absoluteUrl, organizationSchema, websiteSchema } from "../lib/seo";
 
-const rootTitle = "HuluMart | Sell Old Laptop in Bangalore";
+const rootTitle = "HuluMart | Sell Used Laptop in Bangalore";
 const rootDescription =
   "Sell your old or used laptop in Bangalore with HuluMart. Get an instant quote, free doorstep pickup and same-day payment.";
 
-const hiddenLegacyPrefixes = [
-  "/about",
-  "/areas",
-  "/blog",
-  "/business",
-  "/how-it-works",
-  "/listings",
-  "/materials",
-  "/pickup",
-  "/scrap-cars",
-  "/top-scrap-buyers",
-];
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -96,15 +83,6 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  beforeLoad: ({ location }) => {
-    if (
-      hiddenLegacyPrefixes.some(
-        (path) => location.pathname === path || location.pathname.startsWith(`${path}/`),
-      )
-    ) {
-      throw redirect({ to: "/", replace: true });
-    }
-  },
   head: () => ({
     meta: [
       { charSet: "utf-8" },

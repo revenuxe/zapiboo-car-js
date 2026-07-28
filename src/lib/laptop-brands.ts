@@ -24,7 +24,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Apple MacBook in Bangalore",
     tagline: "Top cash for MacBook Air & MacBook Pro — Intel and M-series.",
     intro: [
-      "Want to sell your old Apple MacBook in Bangalore? HuluMart pays the best resale price for every MacBook Air and MacBook Pro — from older Intel models to the latest M1, M2, M3 and M4 chips. Because MacBooks hold their value better than any other laptop, you get more cash back when you sell with us.",
+      "Want to sell your used Apple MacBook in Bangalore? HuluMart pays the best resale price for every MacBook Air and MacBook Pro — from older Intel models to the latest M1, M2, M3 and M4 chips. Because MacBooks hold their value better than any other laptop, you get more cash back when you sell with us.",
       "Whether your MacBook is in mint condition, has a few dents, a battery that drains fast or even a cracked screen, we make a fair, transparent offer based on the live Bangalore resale market. Get a free instant quote, free doorstep pickup and same-day UPI payment — no lowball offers, no haggling.",
     ],
     popularSeries: [
@@ -46,7 +46,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹12,000 – ₹1,20,000+",
     keywords: [
       "sell used macbook bangalore",
-      "sell old apple laptop bangalore",
+      "macbook resale value bangalore",
       "macbook buyer bangalore",
       "second hand macbook price bangalore",
       "sell macbook pro for cash",
@@ -73,7 +73,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Dell Laptop in Bangalore",
     tagline: "Instant cash for Dell XPS, Inspiron, Latitude & Vostro.",
     intro: [
-      "Looking to sell your old Dell laptop in Bangalore? HuluMart is the trusted buyer for every Dell series — XPS, Inspiron, Latitude, Vostro, G-series gaming and Alienware. Get the best resale price for your used Dell with a free instant quote, free doorstep pickup and instant payment.",
+      "Looking to sell your used Dell laptop in Bangalore? HuluMart is the trusted buyer for every Dell series — XPS, Inspiron, Latitude, Vostro, G-series gaming and Alienware. Get the best resale price for your used Dell with a free instant quote, free doorstep pickup and instant payment.",
       "From slim XPS ultrabooks to everyday Inspiron and business-grade Latitude laptops, we buy them all — working perfectly or with minor issues like a weak battery, cracked screen or slow performance. Our valuation is benchmarked to the current Bangalore second-hand market, so you always get a fair deal.",
     ],
     popularSeries: [
@@ -93,7 +93,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹6,000 – ₹90,000+",
     keywords: [
       "sell used dell laptop bangalore",
-      "sell old dell laptop bangalore",
+      "dell laptop exchange offer bangalore",
       "dell laptop buyer bangalore",
       "second hand dell laptop price bangalore",
       "sell dell xps for cash",
@@ -104,7 +104,7 @@ const brandData: LaptopBrand[] = [
         a: "It depends on the model, generation, RAM, SSD and condition. Inspiron and Vostro models typically fetch ₹6,000–₹30,000, while XPS and Alienware can go up to ₹90,000+. Get a free instant quote for your exact figure.",
       },
       {
-        q: "Do you buy old or damaged Dell laptops?",
+        q: "Do you buy used or damaged Dell laptops?",
         a: "Yes. We buy Dell laptops that are a few years old or have issues like a cracked screen, weak battery, broken hinge or slow performance. The price reflects the condition, but you still get instant cash.",
       },
       {
@@ -120,7 +120,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used HP Laptop in Bangalore",
     tagline: "Best price for HP Pavilion, Envy, Victus, Omen & EliteBook.",
     intro: [
-      "Sell your old HP laptop in Bangalore for instant cash with HuluMart. We buy every HP series — Pavilion, Envy, Victus, Omen gaming, EliteBook, ProBook and Spectre — at the best resale price, with a free instant quote and free doorstep pickup.",
+      "Sell your used HP laptop in Bangalore for instant cash with HuluMart. We buy every HP series — Pavilion, Envy, Victus, Omen gaming, EliteBook, ProBook and Spectre — at the best resale price, with a free instant quote and free doorstep pickup.",
       "Whether it's a budget Pavilion, a sleek Spectre convertible or a powerful Omen gaming rig, we make a transparent offer based on the live Bangalore market. Working laptops, ageing devices and units with cracked screens or battery problems are all welcome — you get fair value and same-day payment.",
     ],
     popularSeries: [
@@ -140,7 +140,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹5,000 – ₹80,000+",
     keywords: [
       "sell used hp laptop bangalore",
-      "sell old hp laptop bangalore",
+      "hp laptop resale value bangalore",
       "hp laptop buyer bangalore",
       "second hand hp laptop price bangalore",
       "sell hp pavilion for cash",
@@ -167,7 +167,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Lenovo Laptop in Bangalore",
     tagline: "Instant cash for ThinkPad, IdeaPad, Legion, Yoga & LOQ.",
     intro: [
-      "Sell your old Lenovo laptop in Bangalore with HuluMart and get the best resale price instantly. We buy every Lenovo series — ThinkPad, IdeaPad, Legion, Yoga, LOQ and ThinkBook — with a free instant quote, free doorstep pickup and same-day UPI payment.",
+      "Sell your used Lenovo laptop in Bangalore with HuluMart and get the best resale price instantly. We buy every Lenovo series — ThinkPad, IdeaPad, Legion, Yoga, LOQ and ThinkBook — with a free instant quote, free doorstep pickup and same-day UPI payment.",
       "From rugged ThinkPad business machines to Legion and LOQ gaming laptops and flexible Yoga convertibles, we value them all against the current Bangalore second-hand market. Even laptops with a cracked screen, weak battery or minor faults are bought at a fair price.",
     ],
     popularSeries: [
@@ -187,7 +187,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹5,000 – ₹95,000+",
     keywords: [
       "sell used lenovo laptop bangalore",
-      "sell old lenovo laptop bangalore",
+      "lenovo laptop exchange offer bangalore",
       "lenovo laptop buyer bangalore",
       "second hand lenovo laptop price bangalore",
       "sell thinkpad for cash",
@@ -198,7 +198,7 @@ const brandData: LaptopBrand[] = [
         a: "IdeaPad and budget models typically fetch ₹5,000–₹28,000, while ThinkPad X1 and Legion gaming laptops can reach ₹95,000+. Get a free instant quote to see your exact price.",
       },
       {
-        q: "Do you buy older or damaged Lenovo laptops?",
+        q: "Do you buy used or damaged Lenovo laptops?",
         a: "Yes. We buy Lenovo laptops with cracked screens, battery issues, hinge damage or slow performance. The price reflects the condition and you still get instant cash.",
       },
       {
@@ -214,7 +214,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Asus Laptop in Bangalore",
     tagline: "Top cash for ROG, TUF, Zenbook & Vivobook.",
     intro: [
-      "Sell your old Asus laptop in Bangalore for the best price with HuluMart. We buy every Asus series — ROG and TUF gaming laptops, Zenbook ultrabooks and Vivobook everyday laptops — with a free instant quote, free doorstep pickup and instant payment.",
+      "Sell your used Asus laptop in Bangalore for the best price with HuluMart. We buy every Asus series — ROG and TUF gaming laptops, Zenbook ultrabooks and Vivobook everyday laptops — with a free instant quote, free doorstep pickup and instant payment.",
       "Asus gaming laptops are in high demand on the Bangalore resale market, so you get excellent buyback value. Working laptops or units with a cracked screen, battery or performance issues are all bought at a fair, transparent price.",
     ],
     popularSeries: [
@@ -234,7 +234,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹5,000 – ₹1,00,000+",
     keywords: [
       "sell used asus laptop bangalore",
-      "sell old asus laptop bangalore",
+      "asus laptop resale value bangalore",
       "asus laptop buyer bangalore",
       "second hand asus laptop price bangalore",
       "sell asus rog for cash",
@@ -261,7 +261,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Acer Laptop in Bangalore",
     tagline: "Best price for Aspire, Swift, Nitro & Predator.",
     intro: [
-      "Sell your old Acer laptop in Bangalore with HuluMart and get instant cash. We buy every Acer series — Aspire, Swift, Nitro gaming and Predator — with a free instant quote, free doorstep pickup and same-day payment.",
+      "Sell your used Acer laptop in Bangalore with HuluMart and get instant cash. We buy every Acer series — Aspire, Swift, Nitro gaming and Predator — with a free instant quote, free doorstep pickup and same-day payment.",
       "From budget Aspire laptops to slim Swift ultrabooks and powerful Nitro and Predator gaming machines, we make a fair offer based on the live Bangalore resale market. Even laptops with minor faults or cosmetic damage are welcome.",
     ],
     popularSeries: [
@@ -281,7 +281,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹4,000 – ₹85,000+",
     keywords: [
       "sell used acer laptop bangalore",
-      "sell old acer laptop bangalore",
+      "acer laptop exchange offer bangalore",
       "acer laptop buyer bangalore",
       "second hand acer laptop price bangalore",
       "sell acer nitro for cash",
@@ -292,7 +292,7 @@ const brandData: LaptopBrand[] = [
         a: "Aspire and Swift models typically fetch ₹4,000–₹28,000, while Nitro and Predator gaming laptops can reach ₹85,000+. Get a free instant quote for your exact price.",
       },
       {
-        q: "Do you buy old Acer laptops with problems?",
+        q: "Do you buy used Acer laptops with problems?",
         a: "Yes. We buy Acer laptops with cracked screens, battery issues or slow performance at a fair, condition-adjusted price with instant payment.",
       },
       {
@@ -308,7 +308,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used MSI Laptop in Bangalore",
     tagline: "Premium cash for MSI gaming & creator laptops.",
     intro: [
-      "Sell your old MSI laptop in Bangalore for top cash with HuluMart. We buy every MSI series — Gaming (Katana, Stealth, Raider), Creator and Modern — with a free instant quote, free doorstep pickup and instant payment.",
+      "Sell your used MSI laptop in Bangalore for top cash with HuluMart. We buy every MSI series — Gaming (Katana, Stealth, Raider), Creator and Modern — with a free instant quote, free doorstep pickup and instant payment.",
       "MSI gaming and creator laptops are highly sought after on the Bangalore resale market, so you get premium buyback value. Working units or laptops with a cracked screen, battery or performance issues are all bought at a fair, transparent price.",
     ],
     popularSeries: [
@@ -328,7 +328,7 @@ const brandData: LaptopBrand[] = [
     priceRange: "₹8,000 – ₹1,10,000+",
     keywords: [
       "sell used msi laptop bangalore",
-      "sell old msi laptop bangalore",
+      "msi gaming laptop resale value bangalore",
       "msi laptop buyer bangalore",
       "second hand msi laptop price bangalore",
       "sell msi gaming laptop for cash",

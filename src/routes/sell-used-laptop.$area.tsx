@@ -54,7 +54,7 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
         { name: "description", content: description },
         {
           name: "keywords",
-          content: `sell used laptop ${area.name}, sell old laptop ${area.name} Bangalore, laptop buyer ${area.name}, second hand laptop price ${area.name}, sell laptop for cash ${area.name}`,
+          content: `sell used laptop ${area.name}, laptop resale value ${area.name} Bangalore, laptop buyer ${area.name}, second hand laptop price ${area.name}, sell laptop for cash ${area.name}`,
         },
         { property: "og:title", content: title },
         { property: "og:description", content: description },
@@ -120,7 +120,7 @@ function SellLaptopArea() {
       <SellLocationHero
         heading={
           <>
-            Sell your old <span className="text-gradient">laptop</span> in {area.name}
+            Sell your used <span className="text-gradient">laptop</span> in {area.name}
           </>
         }
         subtitle={`Get the best price for your used laptop in ${area.name}, Bangalore. Free doorstep pickup and instant payment the moment we collect it.`}
@@ -145,7 +145,7 @@ function SellLaptopArea() {
             </h2>
             <div className="mt-4 space-y-4 text-muted-foreground">
               <p>
-                Looking to <strong>sell your old laptop in {area.name}</strong>? HuluMart is the
+                Looking to <strong>sell your used laptop in {area.name}</strong>? HuluMart is the
                 trusted local laptop buyer for {area.name} and nearby areas. Whether your laptop is
                 a few months old or a few years old, working perfectly or has a cracked screen,
                 battery or keyboard issues - we make you a fair, transparent offer based on the

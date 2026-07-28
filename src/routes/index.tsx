@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SellLaptopHome } from "@/routes/sell.$category";
 import { categoryWithBrandsQuery } from "@/lib/device-buyback";
 
-const homepageTitle = "Sell Old Laptop in Bangalore - Instant Cash | HuluMart";
+const homepageTitle = "Sell Used Laptop in Bangalore - Instant Cash | HuluMart";
 const homepageDescription =
-  "Sell your old or used laptop in Bangalore for instant cash. Get a free instant quote, free doorstep pickup and same-day payment for Apple, Dell, HP, Lenovo and more.";
+  "Sell your used laptop in Bangalore for instant cash. Get a free instant quote, free doorstep pickup and same-day payment for Apple, Dell, HP, Lenovo and more.";
 
 export const Route = createFileRoute("/")({
   head: () => ({

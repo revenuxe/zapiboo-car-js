@@ -111,7 +111,7 @@ function SellBrandLaptop() {
           <h1 className="mt-4 text-3xl font-extrabold leading-[1.08] sm:text-5xl">
             {brand.h1 ?? (
               <>
-                Sell Old <span className="text-gradient">{brand.name}</span> Laptop in Bangalore
+                Sell Your Used <span className="text-gradient">{brand.name}</span> Laptop in Bangalore
               </>
             )}
           </h1>

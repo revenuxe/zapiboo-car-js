@@ -23,7 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Breadcrumbs } from "@/components/sell/CatalogShell";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { useAuth } from "@/hooks/use-auth";
-import { downloadBookingInvoice, type BookingInvoiceData } from "@/lib/invoice";
+import type { BookingInvoiceData } from "@/lib/invoice";
 import { businessContact } from "@/lib/seo";
 import { PINCODE_KEY } from "@/routes/sell.$category";
 import { devicePathQuery, useDevicePath, type DeviceModel } from "@/lib/device-buyback";
@@ -118,7 +118,9 @@ function SellModelPage() {
                 <Button
                   variant="navy"
                   onClick={() =>
-                    downloadBookingInvoice(invoice).catch(() => toast.error("Couldn't generate the invoice."))
+                    import("@/lib/invoice")
+                      .then(({ downloadBookingInvoice }) => downloadBookingInvoice(invoice))
+                      .catch(() => toast.error("Couldn't generate the invoice."))
                   }
                 >
                   <Download className="size-4" /> Download invoice
@@ -387,9 +389,9 @@ function BookingForm({
       };
     },
     onSuccess: (inv) => {
-      downloadBookingInvoice(inv).catch(() =>
-        toast.error("Booking saved, but the invoice couldn't be generated."),
-      );
+      import("@/lib/invoice")
+        .then(({ downloadBookingInvoice }) => downloadBookingInvoice(inv))
+        .catch(() => toast.error("Booking saved, but the invoice couldn't be generated."));
       onBooked(inv);
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't submit your request."),

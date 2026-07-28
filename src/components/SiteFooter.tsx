@@ -20,14 +20,14 @@ export function SiteFooter() {
           >
             <Sparkles className="mx-auto size-9 text-brand-green" />
             <h2 className="mx-auto mt-5 max-w-2xl text-3xl font-bold sm:text-4xl">
-              Ready to sell your old laptop?
+              Ready to sell your used laptop?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/80">
               Get an instant HuluMart quote in minutes. We will verify the device at your doorstep
               and pay you the same day.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Button asChild size="xl" variant="secondary">
+              <Button asChild size="xl" variant="hero">
                 <Link to="/">
                   Sell Laptop Now
                   <ArrowRight />

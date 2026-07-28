@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate, useParams } from "@tanstack/react-r
 import { ArrowRight, Laptop, Loader2, Tag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { CatalogShell } from "@/components/sell/CatalogShell";
+import { absoluteUrl } from "@/lib/seo";
 import {
   useDeviceBrandBySlug,
   useDeviceCategory,
@@ -11,15 +12,23 @@ import {
 } from "@/lib/device-buyback";
 
 export const Route = createFileRoute("/sell/$category_/$brand_/$series")({
-  head: ({ params }) => ({
-    meta: [
-      { title: `Sell ${cap(params.brand)} ${cap(params.series)} in Bangalore | HuluMart` },
-      {
-        name: "description",
-        content: `Select your ${cap(params.brand)} ${cap(params.series)} model and get an instant buyback price with free doorstep pickup in Bangalore.`,
-      },
-    ],
-  }),
+  head: ({ params }) => {
+    const path = `/sell/${params.category}/${params.brand}/${params.series}`;
+    const title = `Sell ${cap(params.brand)} ${cap(params.series)} in Bangalore | HuluMart`;
+    const description = `Select your ${cap(params.brand)} ${cap(params.series)} model and get an instant buyback price with free doorstep pickup in Bangalore.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:url", content: absoluteUrl(path) },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [{ rel: "canonical", href: path }],
+    };
+  },
   component: ModelsPage,
 });
 
@@ -92,7 +101,13 @@ function ModelsPage() {
           >
             <div className="flex aspect-square w-full items-center justify-center overflow-hidden rounded-xl bg-secondary/60">
               {m.image ? (
-                <img src={m.image} alt={m.name} className="max-h-full max-w-full object-contain p-2" />
+                <img
+                  src={m.image}
+                  alt={m.name}
+                  loading="lazy"
+                  decoding="async"
+                  className="max-h-full max-w-full object-contain p-2"
+                />
               ) : (
                 <Laptop className="size-10 text-muted-foreground" />
               )}

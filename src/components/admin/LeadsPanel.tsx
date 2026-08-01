@@ -48,6 +48,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { isSpamLead } from "@/lib/spam-filter";
 
 type Lead = {
   id: string;

@@ -7,7 +7,7 @@
 const VOWELS = /[aeiou]/i;
 
 /** "EXiWpigSHaKbtfhhFAHHDVFK" style random strings. */
-export function looksLikeGibberish(value: string) {
+export function looksLikeGibberish(value: string): boolean {
   const v = value.trim();
   if (v.length < 8) return false;
   if (/\s/.test(v)) {

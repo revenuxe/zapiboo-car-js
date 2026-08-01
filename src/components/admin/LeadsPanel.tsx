@@ -130,9 +130,21 @@ export function LeadsPanel() {
     },
   });
 
+  const spamIds = useMemo(
+    () => leads.filter((l) => isQueryLead(l) && isSpamLead(l)).map((l) => l.id),
+    [leads],
+  );
+  const spamSet = useMemo(() => new Set(spamIds), [spamIds]);
+
   const filtered = useMemo(() => {
     return leads.filter((l) => {
-      if (filter !== "all" && l.status !== filter) return false;
+      if (filter === "spam") {
+        if (!spamSet.has(l.id)) return false;
+      } else if (filter === "all") {
+        if (spamSet.has(l.id)) return false;
+      } else if (l.status !== filter || spamSet.has(l.id)) {
+        return false;
+      }
       if (!query.trim()) return true;
       const q = query.toLowerCase();
       return (
@@ -145,7 +157,8 @@ export function LeadsPanel() {
         (l.pincode ?? "").includes(q)
       );
     });
-  }, [leads, query, filter]);
+  }, [leads, query, filter, spamSet]);
+
 
   const openLead = (lead: Lead) => {
     setSelected(lead);

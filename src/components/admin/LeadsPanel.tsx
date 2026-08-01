@@ -48,6 +48,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { cn } from "@/lib/utils";
+import { isSpamLead } from "@/lib/spam-filter";
 
 type Lead = {
   id: string;
@@ -130,9 +131,21 @@ export function LeadsPanel() {
     },
   });
 
+  const spamIds = useMemo(
+    () => leads.filter((l) => isQueryLead(l) && isSpamLead(l)).map((l) => l.id),
+    [leads],
+  );
+  const spamSet = useMemo(() => new Set(spamIds), [spamIds]);
+
   const filtered = useMemo(() => {
     return leads.filter((l) => {
-      if (filter !== "all" && l.status !== filter) return false;
+      if (filter === "spam") {
+        if (!spamSet.has(l.id)) return false;
+      } else if (filter === "all") {
+        if (spamSet.has(l.id)) return false;
+      } else if (l.status !== filter || spamSet.has(l.id)) {
+        return false;
+      }
       if (!query.trim()) return true;
       const q = query.toLowerCase();
       return (
@@ -145,7 +158,8 @@ export function LeadsPanel() {
         (l.pincode ?? "").includes(q)
       );
     });
-  }, [leads, query, filter]);
+  }, [leads, query, filter, spamSet]);
+
 
   const openLead = (lead: Lead) => {
     setSelected(lead);
@@ -183,6 +197,19 @@ export function LeadsPanel() {
     onError: () => toast.error("Couldn't delete the lead."),
   });
 
+  const purgeSpam = useMutation({
+    mutationFn: async () => {
+      if (!spamIds.length) return;
+      const { error } = await supabase.from("leads").delete().in("id", spamIds);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin", "leads"] });
+      toast.success("Spam leads deleted.");
+    },
+    onError: () => toast.error("Couldn't delete spam leads."),
+  });
+
   return (
     <div>
       {/* controls */}
@@ -207,9 +234,43 @@ export function LeadsPanel() {
                 {s}
               </SelectItem>
             ))}
+            <SelectItem value="spam">Suspected spam ({spamIds.length})</SelectItem>
           </SelectContent>
         </Select>
       </div>
+
+      {spamIds.length > 0 && (
+        <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-dashed border-border bg-secondary/40 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-muted-foreground">
+            {spamIds.length} bot-looking {spamIds.length === 1 ? "submission is" : "submissions are"} hidden from the main list.
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline" size="sm" className="text-destructive">
+                <Trash2 className="size-4" /> Delete all spam
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-3xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete {spamIds.length} spam leads?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  These look machine generated. This can't be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => purgeSpam.mutate()}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      )}
+
 
       {/* list */}
       {isLoading ? (

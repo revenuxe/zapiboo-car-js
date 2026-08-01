@@ -9,6 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/PageHeader";
 import { businessContact } from "@/lib/seo";
 import { supabase } from "@/integrations/supabase/client";
+import { isSpamLead } from "@/lib/spam-filter";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({

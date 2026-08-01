@@ -10,6 +10,7 @@ import { PageLoader } from "@/components/PageLoader";
 import { OverviewPanel } from "@/components/admin/OverviewPanel";
 import { DevicesPanel } from "@/components/admin/DevicesPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
+import { DeviceOrdersManager } from "@/components/admin/devices/DeviceOrdersManager";
 
 export const Route = createFileRoute("/admin/dashboard")({
   ssr: false,

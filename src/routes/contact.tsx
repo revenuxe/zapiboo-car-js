@@ -52,6 +52,16 @@ function Contact() {
     const subject = String(formData.get("subject") ?? "").trim();
     const message = String(formData.get("message") ?? "").trim();
 
+    // Bot heuristics: random strings, dot-stuffed emails, link spam.
+    // Silently accept so bots don't learn, but never store the row.
+    if (isSpamLead({ name, email, subject, notes: message })) {
+      form.reset();
+      toast.success("Message sent! We'll get back to you within one business day.");
+      return;
+    }
+
+
+
     setSending(true);
     const { error } = await supabase.from("leads").insert({
       lead_type: "query",

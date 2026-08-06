@@ -182,14 +182,14 @@ export function DeviceOrdersManager() {
               </SheetHeader>
               <div className="mt-4 space-y-5 text-sm">
                 <div className="rounded-2xl bg-gradient-navy p-4 text-navy-foreground">
-                  <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Final quote</p>
-                  <p className="text-3xl font-extrabold text-gradient">{formatPrice(active.final_price)}</p>
+                  <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Device</p>
+                  <p className="text-lg font-extrabold">{active.model_name ?? "Device"}</p>
                   <p className="mt-1 text-xs text-navy-foreground/70">
-                    Base {formatPrice(active.base_price)} ·{" "}
                     {active.brand_name}
                     {active.series_name ? ` · ${active.series_name}` : ""}
                   </p>
                 </div>
+
 
                 <div className="space-y-1.5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</p>

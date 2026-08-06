@@ -231,19 +231,12 @@ export function DeviceOrdersManager() {
                     </p>
                     <div className="space-y-1.5">
                       {active.selections.map((s, i) => (
-                        <div key={i} className="flex items-center justify-between gap-2 rounded-lg border border-border p-2">
-                          <span className="min-w-0 flex-1 truncate">
-                            <span className="text-muted-foreground">{s.group}: </span>
-                            {s.option}
-                          </span>
-                          <span
-                            className={`shrink-0 font-bold ${s.impact >= 0 ? "text-primary" : "text-destructive"}`}
-                          >
-                            {s.impact >= 0 ? "+" : "−"}
-                            {formatPrice(Math.abs(s.impact)).replace("₹", "₹")}
-                          </span>
+                        <div key={i} className="rounded-lg border border-border p-2">
+                          <span className="text-muted-foreground">{s.group}: </span>
+                          {s.option}
                         </div>
                       ))}
+
                     </div>
                   </div>
                 )}

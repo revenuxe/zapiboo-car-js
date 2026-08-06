@@ -1,5 +1,6 @@
 export const navLinks = [
   { to: "/", label: "Sell Laptop" },
+  { to: "/blog", label: "Blog" },
   { to: "/contact", label: "Contact" },
 ] as const;
 

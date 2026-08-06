@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { serviceAreas, siteUrl } from "@/lib/seo";
+import { blogPosts } from "@/lib/blog";
 import { getLaptopBrandBySlug, laptopBrands, modelSlug } from "@/lib/laptop-brands";
 
 const BASE_URL = siteUrl;
@@ -28,6 +29,13 @@ export const Route = createFileRoute("/sitemap.xml")({
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/sell/laptops", changefreq: "weekly", priority: "0.8" },
           { path: "/contact", changefreq: "yearly", priority: "0.5" },
+          { path: "/blog", changefreq: "weekly", priority: "0.7" },
+          ...blogPosts.map((post) => ({
+            path: `/blog/${post.slug}`,
+            changefreq: "monthly" as const,
+            priority: post.cluster === "pillar" ? "0.9" : "0.7",
+            lastmod: post.dateModified,
+          })),
           { path: "/privacy", changefreq: "yearly", priority: "0.3" },
           { path: "/terms", changefreq: "yearly", priority: "0.3" },
           ...serviceAreas.map((area) => ({

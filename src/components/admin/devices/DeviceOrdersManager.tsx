@@ -30,7 +30,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
-  formatPrice,
   ORDER_STATUSES,
   statusLabel,
   type DeviceOrder,
@@ -164,9 +163,10 @@ export function DeviceOrdersManager() {
                   {o.series_name ? ` · ${o.series_name}` : ""} · {o.name} · {o.phone}
                 </p>
               </div>
-              <span className="shrink-0 text-base font-extrabold text-primary">
-                {formatPrice(o.final_price)}
+              <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                {new Date(o.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
               </span>
+
             </button>
           ))}
         </div>
@@ -181,14 +181,14 @@ export function DeviceOrdersManager() {
               </SheetHeader>
               <div className="mt-4 space-y-5 text-sm">
                 <div className="rounded-2xl bg-gradient-navy p-4 text-navy-foreground">
-                  <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Final quote</p>
-                  <p className="text-3xl font-extrabold text-gradient">{formatPrice(active.final_price)}</p>
+                  <p className="text-xs uppercase tracking-wide text-navy-foreground/70">Device</p>
+                  <p className="text-lg font-extrabold">{active.model_name ?? "Device"}</p>
                   <p className="mt-1 text-xs text-navy-foreground/70">
-                    Base {formatPrice(active.base_price)} ·{" "}
                     {active.brand_name}
                     {active.series_name ? ` · ${active.series_name}` : ""}
                   </p>
                 </div>
+
 
                 <div className="space-y-1.5">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Status</p>
@@ -230,19 +230,12 @@ export function DeviceOrdersManager() {
                     </p>
                     <div className="space-y-1.5">
                       {active.selections.map((s, i) => (
-                        <div key={i} className="flex items-center justify-between gap-2 rounded-lg border border-border p-2">
-                          <span className="min-w-0 flex-1 truncate">
-                            <span className="text-muted-foreground">{s.group}: </span>
-                            {s.option}
-                          </span>
-                          <span
-                            className={`shrink-0 font-bold ${s.impact >= 0 ? "text-primary" : "text-destructive"}`}
-                          >
-                            {s.impact >= 0 ? "+" : "−"}
-                            {formatPrice(Math.abs(s.impact)).replace("₹", "₹")}
-                          </span>
+                        <div key={i} className="rounded-lg border border-border p-2">
+                          <span className="text-muted-foreground">{s.group}: </span>
+                          {s.option}
                         </div>
                       ))}
+
                     </div>
                   </div>
                 )}

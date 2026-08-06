@@ -30,7 +30,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
-  formatPrice,
   ORDER_STATUSES,
   statusLabel,
   type DeviceOrder,

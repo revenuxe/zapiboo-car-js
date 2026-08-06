@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, LayoutDashboard, Smartphone, Inbox, ClipboardList } from "lucide-react";
+import { LogOut, LayoutDashboard, Smartphone, Inbox, ClipboardList, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,6 +10,7 @@ import { PageLoader } from "@/components/PageLoader";
 import { OverviewPanel } from "@/components/admin/OverviewPanel";
 import { DevicesPanel } from "@/components/admin/DevicesPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
+import { UsersPanel } from "@/components/admin/UsersPanel";
 import { DeviceOrdersManager } from "@/components/admin/devices/DeviceOrdersManager";
 
 export const Route = createFileRoute("/admin/dashboard")({
@@ -93,7 +94,7 @@ function AdminDashboard() {
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-4 gap-1 sm:w-auto sm:inline-grid">
+          <TabsList className="grid w-full grid-cols-5 gap-1 sm:w-auto sm:inline-grid">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
@@ -102,6 +103,9 @@ function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5">
               <Inbox className="size-4" /> <span className="hidden sm:inline">Leads</span>
+            </TabsTrigger>
+            <TabsTrigger value="users" className="gap-1.5">
+              <Users className="size-4" /> <span className="hidden sm:inline">Users</span>
             </TabsTrigger>
             <TabsTrigger value="devices" className="gap-1.5">
               <Smartphone className="size-4" /> <span className="hidden sm:inline">Devices</span>
@@ -116,6 +120,9 @@ function AdminDashboard() {
           </TabsContent>
           <TabsContent value="leads" className="mt-5">
             <LeadsPanel />
+          </TabsContent>
+          <TabsContent value="users" className="mt-5">
+            <UsersPanel />
           </TabsContent>
           <TabsContent value="devices" className="mt-5">
             <DevicesPanel />

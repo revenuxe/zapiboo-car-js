@@ -164,9 +164,10 @@ export function DeviceOrdersManager() {
                   {o.series_name ? ` · ${o.series_name}` : ""} · {o.name} · {o.phone}
                 </p>
               </div>
-              <span className="shrink-0 text-base font-extrabold text-primary">
-                {formatPrice(o.final_price)}
+              <span className="shrink-0 text-xs font-medium text-muted-foreground">
+                {new Date(o.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}
               </span>
+
             </button>
           ))}
         </div>

@@ -686,7 +686,420 @@ const timing: BlogPost = {
   ],
 };
 
-export const blogPosts: BlogPost[] = [pillar, pricing, safety, brand, timing];
+/* ------------------------------------------------------------------ */
+/* Instant cash cluster                                                */
+/* ------------------------------------------------------------------ */
+
+const instantCash: BlogPost = {
+  slug: "sell-laptop-in-bangalore-instant-cash",
+  title: "Sell Laptop in Bangalore for Instant Cash: The Same-Day Doorstep Payment Guide",
+  cardTitle: "Sell laptop in Bangalore for instant cash",
+  metaTitle: "Sell Laptop in Bangalore for Instant Cash - Same Day Pickup | HuluMart",
+  description:
+    "Sell your laptop in Bangalore and get paid the same day. Real instant-cash price bands, the 6-point doorstep check, documents to keep, area-wise pickup timings and how to avoid lowball offers.",
+  excerpt:
+    "What 'instant cash' really means in Bangalore's laptop market: how payment is released at your door, what gets checked in six minutes, and the price bands you should expect before anyone rings your bell.",
+  keywords: [
+    "sell laptop in bangalore",
+    "sell laptop for instant cash bangalore",
+    "sell old laptop for cash bangalore",
+    "instant cash for laptop bangalore",
+    "same day laptop pickup bangalore",
+    "laptop buyers near me bangalore",
+  ],
+  cluster: "guide",
+  clusterLabel: "Instant cash",
+  readMinutes: 11,
+  datePublished: "2026-08-07",
+  dateModified: "2026-08-07",
+  author: AUTHOR,
+  related: [
+    "sell-used-laptop-in-bangalore",
+    "sell-macbook-online-instant-cash",
+    "wipe-data-before-selling-laptop",
+    "used-laptop-resale-value-calculation",
+  ],
+  blocks: [
+    {
+      type: "p",
+      text: "\u201cInstant cash\u201d is the most abused phrase in Bangalore's second-hand electronics market. Some buyers mean money in your account before the rider leaves your gate. Others mean a promise, a device in a backpack, and a payment link that arrives \u2014 or does not \u2014 after \u201cquality check at the warehouse\u201d. This guide is about the first kind, and how to make sure that is the kind you get.",
+    },
+    {
+      type: "p",
+      text: "If you only remember one line: the device and the money should change hands in the same minute, in your doorway, with a written record of both. Everything below is detail around that single rule.",
+    },
+    {
+      type: "callout",
+      tone: "tip",
+      title: "The 30-second version",
+      text: "Get a price online, book a free doorstep pickup slot, keep the laptop charged and the charger ready, let the executive run a 6-minute check, confirm the final figure, then take UPI or cash before handing the device over. Most Bangalore pickups finish in under 20 minutes.",
+    },
+
+    { type: "h2", id: "what-instant-means", text: "What \u201cinstant cash\u201d should mean at your door" },
+    {
+      type: "p",
+      text: "A legitimate same-day buyback follows a fixed sequence. If a buyer skips any of these steps, that is your cue to pause the deal, not to hurry it.",
+    },
+    {
+      type: "ol",
+      items: [
+        "You get an indicative online price for your exact model and configuration before anyone is dispatched.",
+        "You pick a pickup slot; the executive arrives with an ID and the booking reference.",
+        "The physical check happens in front of you \u2014 nothing is taken to a car or another room.",
+        "Any change from the online figure is explained line by line, with the reason (battery health, dent, missing charger).",
+        "You approve the final number. Not before.",
+        "Payment is released to your UPI ID or handed over in cash while the laptop is still on your table.",
+        "You get a pickup receipt or invoice recording the model, serial number, amount and date.",
+      ],
+    },
+    {
+      type: "callout",
+      tone: "warn",
+      title: "Never accept these three",
+      text: "\u201cWe will transfer after warehouse QC.\u201d \u201cThe payment is processing, here is a screenshot.\u201d \u201cSign this and we will fill the amount later.\u201d All three are how sellers in this city lose devices. No receipt, no serial number, no handover.",
+    },
+
+    { type: "h2", id: "price-bands", text: "Instant-cash price bands in Bangalore right now" },
+    {
+      type: "p",
+      text: "Same-day cash usually settles slightly below a patient private sale and well above a shop's walk-in offer, because the buyer is absorbing pickup, refurbishing and resale risk. These are the ranges we see most often for fully working machines with no display damage.",
+    },
+    {
+      type: "table",
+      caption: "Typical same-day payout by device type and age (working condition, charger included)",
+      head: ["Device", "1-2 years old", "3-4 years old", "5+ years old"],
+      rows: [
+        ["MacBook Air / Pro (M-series)", "55-70% of invoice", "40-55%", "25-35%"],
+        ["Premium Windows (XPS, Spectre, ThinkPad X)", "45-55%", "30-40%", "15-22%"],
+        ["Mainstream Windows (Inspiron, Vivobook, IdeaPad)", "35-45%", "22-32%", "10-18%"],
+        ["Gaming laptops (RTX series)", "45-55%", "30-42%", "15-25%"],
+        ["Entry / Celeron / 4GB RAM machines", "25-35%", "12-20%", "Parts value only"],
+      ],
+    },
+    {
+      type: "p",
+      text: "Two things move you up a band more than anything else: RAM/SSD capacity and battery health. Two things move you down a band instantly: a cracked or spotted display and a missing original charger. Nothing else \u2014 not scratches, not a worn keycap \u2014 changes the number as much as those four.",
+    },
+    {
+      type: "cta",
+      title: "See your instant-cash figure first",
+      text: "Pick your brand and model to see what HuluMart pays in Bangalore today, then book a free doorstep pickup slot.",
+      to: "/",
+      label: "Check my laptop price",
+    },
+
+    { type: "h2", id: "six-minute-check", text: "The 6-minute doorstep check, explained" },
+    {
+      type: "p",
+      text: "Nothing about the inspection should be mysterious. Here is exactly what the executive looks at and why each item matters to the final figure.",
+    },
+    {
+      type: "table",
+      head: ["Check", "How it is done", "Why it changes your price"],
+      rows: [
+        ["Power-on and boot", "Cold boot to desktop", "Confirms board, storage and OS health"],
+        ["Display", "White and black full-screen test", "Dead pixels, backlight bleed, spots are the costliest defect"],
+        ["Battery health", "System report / cycle count", "Below 80% health usually moves one condition step"],
+        ["Keyboard and trackpad", "Every key, multi-touch gestures", "Individual dead keys are cheap; a full deck swap is not"],
+        ["Ports and Wi-Fi", "USB, HDMI, audio, network connect", "A dead port limits who will buy it next"],
+        ["Body and hinge", "Lid open/close, dents, screw heads", "Loose hinges signal a drop; opened screws signal past repair"],
+      ],
+    },
+    {
+      type: "p",
+      text: "Prepare for it and you protect your own price: charge the laptop past 60%, remove your screen lock or keep the password ready, keep the charger and the original box if you still have it, and clean the screen and palm rest. A device that boots in ten seconds and looks cared for genuinely lands in a higher condition bucket than the same machine handed over dusty and dead.",
+    },
+
+    { type: "h2", id: "before-handover", text: "Do this before you hand it over" },
+    {
+      type: "ul",
+      items: [
+        "Back up everything you need \u2014 the sale is final and data is not recoverable afterwards.",
+        "Sign out of your Google, Microsoft and Apple accounts, and turn off Find My / device locks.",
+        "Perform a full factory reset with drive encryption enabled, not just a file delete.",
+        "Remove any SD card, SIM, dongle or personal sticker.",
+        "Photograph the laptop and the serial number sticker before pickup.",
+        "Keep the pickup receipt or invoice until the payment reflects in your account.",
+      ],
+    },
+    {
+      type: "callout",
+      tone: "tip",
+      title: "Data safety is your job, not the buyer's",
+      text: "A reputable buyer will wipe the drive again on their side, but you should never rely on that. Our full walkthrough covers Windows, macOS and encrypted-drive cases step by step.",
+    },
+
+    { type: "h2", id: "areas", text: "Same-day pickup across Bangalore" },
+    {
+      type: "p",
+      text: `Doorstep pickup runs across the city \u2014 ${topAreas
+        .slice(0, 10)
+        .map((a) => a.name)
+        .join(", ")} and the surrounding neighbourhoods. Central and north-east areas usually get a same-day slot when the booking lands before 4pm; outer corridors like Whitefield, Sarjapur Road and Electronic City are typically next-morning if you book late in the evening.`,
+    },
+    {
+      type: "ul",
+      items: [
+        "Apartment gate entry: share the executive's name at the security desk to avoid a 15-minute wait.",
+        "Office pickup: reception handover works, but the payment still goes to the registered seller's UPI.",
+        "Bulk pickups (5+ devices from a company): scheduled separately with an itemised invoice.",
+      ],
+    },
+
+    { type: "h2", id: "compare", text: "Instant cash vs the other options" },
+    {
+      type: "table",
+      head: ["Route", "Money in hand", "Effort", "Risk"],
+      rows: [
+        ["Doorstep buyback", "Same day", "One booking", "Low \u2014 paid before handover"],
+        ["Classifieds (OLX / Quikr)", "1-6 weeks", "High \u2014 chats, meetups", "High \u2014 fake payments, no-shows"],
+        ["SP Road walk-in shops", "Same day", "You travel", "Medium \u2014 cash only, no paperwork"],
+        ["Brand exchange offer", "Instant, as discount", "Low", "Locked to a new purchase"],
+      ],
+    },
+    {
+      type: "p",
+      text: "The classifieds route wins on the headline number and loses on almost everything else. If your laptop is a common configuration, the extra 2,000-3,000 rupees is real but takes weeks of your time; if it is an unusual or older machine, the private buyer often never appears at all.",
+    },
+
+    {
+      type: "cta",
+      title: "Book a free doorstep pickup",
+      text: "Get a price online, choose a slot, and get paid at your door across Bangalore.",
+      to: "/pickup",
+      label: "Book my pickup",
+    },
+
+    { type: "h2", id: "faq", text: "Frequently asked questions" },
+    {
+      type: "faq",
+      items: [
+        {
+          question: "How fast can I actually get cash for my laptop in Bangalore?",
+          answer:
+            "Bookings confirmed before roughly 4pm usually get a same-day doorstep slot in most Bangalore areas, and payment is released at the door once you approve the final figure \u2014 typically within 20 minutes of the executive arriving.",
+        },
+        {
+          question: "Do I get cash or a bank transfer?",
+          answer:
+            "Both are available. Most sellers prefer an instant UPI transfer because it is traceable and reflects immediately; cash can be arranged for the agreed amount at pickup.",
+        },
+        {
+          question: "What if the online price and the doorstep price differ?",
+          answer:
+            "The online figure assumes the condition you selected. If the physical check finds something different \u2014 lower battery health, a display spot, a missing charger \u2014 the revised number and its reason are shown to you before anything is finalised, and you are free to decline.",
+        },
+        {
+          question: "Can I sell a laptop without the original bill or box?",
+          answer:
+            "Yes. A bill and box help slightly, but a valid government ID matching the seller is what is actually required. The serial number is recorded on the pickup receipt.",
+        },
+        {
+          question: "Will you buy a laptop that does not switch on?",
+          answer:
+            "Dead or damaged laptops are still bought for parts value. Expect a substantially lower figure, and expect the quote to be confirmed only after the physical check.",
+        },
+        {
+          question: "Is my data safe after the pickup?",
+          answer:
+            "Wipe the device yourself before handover \u2014 a factory reset with encryption enabled. The drive is wiped again during refurbishing, but your own reset is the step that actually protects you.",
+        },
+      ],
+    },
+  ],
+};
+
+const macbookCash: BlogPost = {
+  slug: "sell-macbook-online-instant-cash",
+  title: "Sell MacBook Online for Instant Cash: 2026 Price Chart, Checks and Payout Guide",
+  cardTitle: "Sell MacBook online for instant cash",
+  metaTitle: "Sell MacBook Online for Instant Cash - 2026 Price Chart | HuluMart",
+  description:
+    "Sell your MacBook Air or Pro online and get paid the same day. Model-wise 2026 resale ranges, battery-cycle rules, Find My and Activation Lock steps, and what changes an M-series quote.",
+  excerpt:
+    "MacBooks hold value better than any Windows laptop \u2014 and lose it faster than owners expect after a battery or a new chip launch. Here is the model-wise chart, the checks that matter, and how to get paid instantly.",
+  keywords: [
+    "sell macbook online",
+    "sell macbook for instant cash",
+    "sell macbook air bangalore",
+    "sell macbook pro price india",
+    "macbook resale value 2026",
+    "used macbook buyer bangalore",
+  ],
+  cluster: "brand",
+  clusterLabel: "MacBook",
+  readMinutes: 10,
+  datePublished: "2026-08-07",
+  dateModified: "2026-08-07",
+  author: AUTHOR,
+  related: [
+    "sell-laptop-in-bangalore-instant-cash",
+    "sell-macbook-vs-windows-laptop-bangalore",
+    "wipe-data-before-selling-laptop",
+    "sell-used-laptop-in-bangalore",
+  ],
+  blocks: [
+    {
+      type: "p",
+      text: "A MacBook is the one laptop most people can sell twice: once as a daily machine and once, years later, as a still-desirable second-hand device. Apple's resale curve is genuinely flatter than the rest of the market \u2014 but it has cliffs, and they land on predictable dates. Knowing where you are on that curve is the whole game.",
+    },
+    {
+      type: "callout",
+      tone: "tip",
+      title: "The 30-second version",
+      text: "M-series MacBooks in good condition hold 45-70% of invoice for the first three years. Battery cycle count, Activation Lock status and screen condition decide most of the rest. Sign out of iCloud and turn off Find My before pickup, or the deal cannot be completed.",
+    },
+
+    { type: "h2", id: "why-macbooks-hold", text: "Why MacBooks hold value better" },
+    {
+      type: "ul",
+      items: [
+        "One tightly controlled configuration ladder \u2014 buyers know exactly what an M2 Air 8/256 is worth without inspecting spec sheets.",
+        "Long software support, so a five-year-old MacBook still runs the current macOS and is still a usable purchase.",
+        "Strong second-hand demand from students and designers in Bangalore, especially between June and November.",
+        "Build quality that ages visibly better than plastic-bodied Windows machines.",
+      ],
+    },
+    {
+      type: "p",
+      text: "The flip side: Apple's launch calendar moves the whole market at once. When a new Air or Pro chip ships, the previous two generations step down within weeks. If you are already thinking about selling and a launch is rumoured, sell before it, not after.",
+    },
+
+    { type: "h2", id: "price-chart", text: "MacBook instant-cash ranges (2026)" },
+    {
+      type: "table",
+      caption: "Typical same-day payout for working MacBooks with clean displays and healthy batteries",
+      head: ["Model", "Good condition", "Fair condition", "Notes"],
+      rows: [
+        ["MacBook Air M3 (2024)", "\u20b965,000 - \u20b985,000", "\u20b950,000 - \u20b962,000", "16GB / 512GB variants sit at the top"],
+        ["MacBook Air M2 (2022)", "\u20b948,000 - \u20b962,000", "\u20b936,000 - \u20b946,000", "Most-traded MacBook in Bangalore"],
+        ["MacBook Air M1 (2020)", "\u20b932,000 - \u20b944,000", "\u20b924,000 - \u20b931,000", "Still strong demand; battery decides the band"],
+        ["MacBook Pro 14 M3 Pro", "\u20b985,000 - \u20b91,20,000", "\u20b968,000 - \u20b982,000", "Higher RAM adds a real premium"],
+        ["MacBook Pro 13 M1 / M2", "\u20b940,000 - \u20b958,000", "\u20b930,000 - \u20b939,000", "Touch Bar models price slightly lower"],
+        ["Intel MacBook Pro (2017-2020)", "\u20b918,000 - \u20b932,000", "\u20b910,000 - \u20b917,000", "Butterfly keyboard and battery issues are common"],
+      ],
+    },
+    {
+      type: "p",
+      text: "Ranges are indicative for Bangalore and move with launches and stock. Use them as a sanity check on any offer you receive \u2014 an online quote for your exact configuration will always be tighter than a chart.",
+    },
+    {
+      type: "cta",
+      title: "Get your MacBook's exact quote",
+      text: "Choose your MacBook model and configuration to see today's instant-cash figure, then book a free doorstep pickup in Bangalore.",
+      to: "/",
+      label: "Value my MacBook",
+    },
+
+    { type: "h2", id: "what-moves-quote", text: "What actually moves a MacBook quote" },
+    { type: "h3", text: "1. Battery cycle count" },
+    {
+      type: "p",
+      text: "Open the system report and check cycles. Under 300 cycles with above 85% capacity keeps you in the top band. Above 800 cycles, or a 'Service Recommended' warning, typically costs one full condition step because the next owner will need a replacement.",
+    },
+    { type: "h3", text: "2. Display condition" },
+    {
+      type: "p",
+      text: "Anti-reflective coating wear, pressure marks and stage-light dimming are Apple-specific defects that buyers check for deliberately. A perfect panel is worth more on a MacBook than on any other brand, because replacements are expensive.",
+    },
+    { type: "h3", text: "3. Configuration" },
+    {
+      type: "p",
+      text: "Because storage and memory cannot be upgraded on Apple Silicon, a 16GB/512GB machine commands a genuine premium over the 8GB/256GB base \u2014 often 8,000 to 15,000 rupees on the same model year.",
+    },
+    { type: "h3", text: "4. Body, keyboard and repairs" },
+    {
+      type: "p",
+      text: "Dents on the lid corner, a bent bottom case, or third-party (non-Apple) repairs all reduce the figure. An Apple service record, by contrast, does not hurt and sometimes helps.",
+    },
+
+    { type: "h2", id: "activation-lock", text: "Find My and Activation Lock: do this first" },
+    {
+      type: "callout",
+      tone: "warn",
+      title: "A locked MacBook cannot be sold",
+      text: "If Find My is still on and the device is tied to your Apple ID, the buyer cannot resell it and the pickup will be cancelled at your door. Sign out before the executive arrives.",
+    },
+    {
+      type: "ol",
+      items: [
+        "Back up with Time Machine or iCloud, and confirm the backup is complete.",
+        "Sign out of iCloud: System Settings \u2192 your name \u2192 Sign Out. Turn off Find My Mac.",
+        "Sign out of iMessage, App Store and any Apple TV / Music accounts.",
+        "Unpair Bluetooth accessories and remove the Mac from your Apple ID device list.",
+        "Erase All Content and Settings (Apple Silicon and T2 Macs) rather than a manual disk erase.",
+        "Boot once to the setup screen to confirm the wipe succeeded, then leave it there for the handover.",
+      ],
+    },
+
+    { type: "h2", id: "online-flow", text: "How the online sale works, end to end" },
+    {
+      type: "ol",
+      items: [
+        "Select MacBook, series, model and configuration online to get an indicative price.",
+        "Book a free doorstep pickup slot across Bangalore.",
+        "The executive verifies model, serial, battery cycles, display and Activation Lock status in front of you.",
+        "You approve the final figure \u2014 or decline at no cost.",
+        "Payment goes out by instant UPI or cash before the MacBook leaves your hands.",
+        "You keep a receipt recording the model, serial number and amount paid.",
+      ],
+    },
+    {
+      type: "cta",
+      title: "Book a same-day MacBook pickup",
+      text: "Free doorstep pickup across Bangalore, payment released before handover.",
+      to: "/pickup",
+      label: "Book my pickup",
+    },
+
+    { type: "h2", id: "faq", text: "Frequently asked questions" },
+    {
+      type: "faq",
+      items: [
+        {
+          question: "How much is my MacBook worth in 2026?",
+          answer:
+            "An M2 MacBook Air in good condition typically fetches \u20b948,000-\u20b962,000 in Bangalore, an M1 Air \u20b932,000-\u20b944,000, and a 14-inch M3 Pro \u20b985,000 upwards. Your exact figure depends on configuration, battery cycles and display condition.",
+        },
+        {
+          question: "Can I sell a MacBook online without meeting a buyer?",
+          answer:
+            "You can complete the price discovery and booking entirely online, but the handover is in person at your door so that the device can be verified and payment released to you on the spot.",
+        },
+        {
+          question: "Does a high battery cycle count reduce the price a lot?",
+          answer:
+            "Below 300 cycles has little effect. Between 300 and 800 the figure softens gradually, and above 800 cycles \u2014 or with a Service Recommended warning \u2014 expect a full condition-step reduction.",
+        },
+        {
+          question: "Do I need the original box and charger?",
+          answer:
+            "The charger matters and its absence reduces the payout. The box is a small bonus, not a requirement.",
+        },
+        {
+          question: "What if I forgot to sign out of iCloud?",
+          answer:
+            "The executive can wait while you sign out, provided you have the Apple ID password on hand. Without it the sale cannot proceed, so do it before the slot.",
+        },
+        {
+          question: "Is a MacBook worth repairing before selling?",
+          answer:
+            "Usually not. A third-party repair rarely returns its cost in resale, and non-Apple parts can reduce the quote. Sell it as-is and let the buyer absorb the refurbishing.",
+        },
+      ],
+    },
+  ],
+};
+
+export const blogPosts: BlogPost[] = [
+  pillar,
+  instantCash,
+  macbookCash,
+  pricing,
+  safety,
+  brand,
+  timing,
+];
 
 export function getPostBySlug(slug: string) {
   return blogPosts.find((p) => p.slug === slug);

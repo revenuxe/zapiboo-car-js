@@ -63,6 +63,8 @@ const pillar: BlogPost = {
   dateModified: "2026-08-06",
   author: AUTHOR,
   related: [
+    "sell-laptop-in-bangalore-instant-cash",
+    "sell-macbook-online-instant-cash",
     "used-laptop-resale-value-calculation",
     "wipe-data-before-selling-laptop",
     "sell-macbook-vs-windows-laptop-bangalore",

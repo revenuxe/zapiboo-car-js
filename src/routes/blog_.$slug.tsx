@@ -13,6 +13,7 @@ import {
   blogPostingSchema,
   breadcrumbSchema,
   faqSchema,
+  howToSchema,
   organizationSchema,
 } from "@/lib/seo";
 
@@ -60,6 +61,7 @@ export const Route = createFileRoute("/blog_/$slug")({
               keywords: post.keywords,
             }),
             faqSchema(getFaqItems(post)),
+            ...(post.howTo ? [howToSchema({ path, ...post.howTo })] : []),
           ]),
         },
       ],

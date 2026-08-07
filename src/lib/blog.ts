@@ -1,3 +1,4 @@
+import { areaPosts } from "@/lib/blog-areas";
 import { serviceAreas } from "@/lib/seo";
 
 export type Block =
@@ -12,6 +13,13 @@ export type Block =
   | { type: "cta"; title: string; text: string; to: string; label: string }
   | { type: "faq"; items: Array<{ question: string; answer: string }> };
 
+export type HowTo = {
+  name: string;
+  description: string;
+  totalTime?: string;
+  steps: Array<{ name: string; text: string }>;
+};
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -21,7 +29,7 @@ export type BlogPost = {
   description: string;
   excerpt: string;
   keywords: string[];
-  cluster: "pillar" | "pricing" | "safety" | "brand" | "guide";
+  cluster: "pillar" | "pricing" | "safety" | "brand" | "guide" | "area";
   clusterLabel: string;
   readMinutes: number;
   datePublished: string;
@@ -29,6 +37,10 @@ export type BlogPost = {
   author: { name: string; role: string };
   blocks: Block[];
   related: string[];
+  /** Optional HowTo structured data for process-style posts. */
+  howTo?: HowTo;
+  /** Set on area landing posts so we can cross-link the service-area page. */
+  areaSlug?: string;
 };
 
 const AUTHOR = { name: "Hari Prasad", role: "Buyback lead, HuluMart Bangalore" };
@@ -1101,7 +1113,10 @@ export const blogPosts: BlogPost[] = [
   safety,
   brand,
   timing,
+  ...areaPosts,
 ];
+
+export const areaBlogPosts = areaPosts;
 
 export function getPostBySlug(slug: string) {
   return blogPosts.find((p) => p.slug === slug);

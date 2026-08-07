@@ -446,3 +446,7 @@ export const areaPosts: BlogPost[] = seeds
   .filter((p): p is BlogPost => Boolean(p));
 
 export const areaHowTo = howTo;
+
+export function getAreaPostBySlug(areaSlug: string) {
+  return areaPosts.find((post) => post.areaSlug === areaSlug);
+}

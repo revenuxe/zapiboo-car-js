@@ -430,6 +430,7 @@ function buildAreaPost(seed: AreaSeed): BlogPost | null {
     datePublished: "2026-08-07",
     dateModified: "2026-08-07",
     author: AUTHOR,
+    blocks,
     howTo,
     related: [
       "sell-used-laptop-in-bangalore",

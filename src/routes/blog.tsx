@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowRight, Clock } from "lucide-react";
 import { blogPosts, formatPostDate } from "@/lib/blog";
+import { areaPosts } from "@/lib/blog-areas";
 import {
   absoluteUrl,
   breadcrumbSchema,
@@ -56,7 +57,8 @@ export const Route = createFileRoute("/blog")({
 });
 
 function BlogIndex() {
-  const [featured, ...rest] = blogPosts;
+  const guides = blogPosts.filter((p) => p.cluster !== "area");
+  const [featured, ...rest] = guides;
 
   return (
     <main className="bg-background">
@@ -117,6 +119,28 @@ function BlogIndex() {
                   <Clock className="size-3" /> {post.readMinutes} min
                 </span>
               </p>
+            </Link>
+          ))}
+        </div>
+
+        <h2 className="mt-16 text-xl font-bold sm:text-2xl">Sell your laptop, area by area</h2>
+        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+          Local price bands, pickup coverage and FAQs for the Bangalore neighbourhoods we collect
+          from most.
+        </p>
+        <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {areaPosts.map((post) => (
+            <Link
+              key={post.slug}
+              to="/blog/$slug"
+              params={{ slug: post.slug }}
+              className="rounded-2xl border border-border bg-card p-5 transition-colors hover:border-primary/50"
+            >
+              <h3 className="text-base font-bold">{post.cardTitle}</h3>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground">{post.excerpt}</p>
+              <span className="mt-4 flex items-center gap-1.5 text-sm font-semibold text-primary">
+                Read guide <ArrowRight className="size-3.5" />
+              </span>
             </Link>
           ))}
         </div>

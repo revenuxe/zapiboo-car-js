@@ -13,6 +13,7 @@ import { Reveal } from "@/components/Reveal";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { SellLocationHero } from "@/components/sell/SellLocationHero";
 import { LaptopBrandsSection } from "@/components/sell/LaptopBrandsSection";
+import { getAreaPostBySlug } from "@/lib/blog-areas";
 import { categoryWithBrandsQuery } from "@/lib/device-buyback";
 import {
   absoluteUrl,
@@ -312,6 +313,8 @@ function SellLaptopArea() {
         </div>
       </section>
 
+      <AreaGuideLink areaSlug={area.slug} areaName={area.name} />
+
       {/* CTA */}
       <section className="bg-background py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
@@ -341,5 +344,30 @@ function SellLaptopArea() {
         </div>
       </section>
     </>
+  );
+}
+
+function AreaGuideLink({ areaSlug, areaName }: { areaSlug: string; areaName: string }) {
+  const post = getAreaPostBySlug(areaSlug);
+  if (!post) return null;
+  return (
+    <section className="bg-secondary/40 py-12">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+        <Link
+          to="/blog/$slug"
+          params={{ slug: post.slug }}
+          className="block rounded-2xl border border-border bg-card p-6 shadow-soft transition-colors hover:border-primary/50"
+        >
+          <span className="text-xs font-bold uppercase tracking-wide text-primary">
+            {areaName} guide
+          </span>
+          <h2 className="mt-2 text-xl font-bold sm:text-2xl">{post.title}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">{post.excerpt}</p>
+          <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
+            Read the guide <ArrowRight className="size-4" />
+          </span>
+        </Link>
+      </div>
+    </section>
   );
 }

@@ -235,3 +235,38 @@ export function blogPostingSchema(input: {
     },
   };
 }
+
+export function howToSchema(input: {
+  path: string;
+  name: string;
+  description: string;
+  totalTime?: string;
+  steps: Array<{ name: string; text: string }>;
+}) {
+  const url = absoluteUrl(input.path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": `${url}#howto`,
+    name: input.name,
+    description: input.description,
+    ...(input.totalTime ? { totalTime: input.totalTime } : {}),
+    estimatedCost: {
+      "@type": "MonetaryAmount",
+      currency: "INR",
+      value: "0",
+    },
+    supply: [
+      { "@type": "HowToSupply", name: "Laptop charger" },
+      { "@type": "HowToSupply", name: "Government photo ID" },
+    ],
+    tool: [{ "@type": "HowToTool", name: "HuluMart doorstep pickup" }],
+    step: input.steps.map((step, index) => ({
+      "@type": "HowToStep",
+      position: index + 1,
+      name: step.name,
+      text: step.text,
+      url: `${url}#step-${index + 1}`,
+    })),
+  };
+}

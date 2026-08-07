@@ -1,3 +1,4 @@
+import { areaPosts } from "@/lib/blog-areas";
 import { serviceAreas } from "@/lib/seo";
 
 export type Block =
@@ -12,6 +13,13 @@ export type Block =
   | { type: "cta"; title: string; text: string; to: string; label: string }
   | { type: "faq"; items: Array<{ question: string; answer: string }> };
 
+export type HowTo = {
+  name: string;
+  description: string;
+  totalTime?: string;
+  steps: Array<{ name: string; text: string }>;
+};
+
 export type BlogPost = {
   slug: string;
   title: string;
@@ -21,7 +29,7 @@ export type BlogPost = {
   description: string;
   excerpt: string;
   keywords: string[];
-  cluster: "pillar" | "pricing" | "safety" | "brand" | "guide";
+  cluster: "pillar" | "pricing" | "safety" | "brand" | "guide" | "area";
   clusterLabel: string;
   readMinutes: number;
   datePublished: string;
@@ -29,6 +37,10 @@ export type BlogPost = {
   author: { name: string; role: string };
   blocks: Block[];
   related: string[];
+  /** Optional HowTo structured data for process-style posts. */
+  howTo?: HowTo;
+  /** Set on area landing posts so we can cross-link the service-area page. */
+  areaSlug?: string;
 };
 
 const AUTHOR = { name: "Hari Prasad", role: "Buyback lead, HuluMart Bangalore" };
@@ -715,6 +727,38 @@ const instantCash: BlogPost = {
   datePublished: "2026-08-07",
   dateModified: "2026-08-07",
   author: AUTHOR,
+  howTo: {
+    name: "How to sell a laptop in Bangalore for instant cash",
+    description:
+      "Get an online price for your laptop, book a free doorstep pickup, have it inspected in front of you and receive instant UPI or cash before handing it over.",
+    totalTime: "PT20M",
+    steps: [
+      {
+        name: "Get an online price for your model",
+        text: "Select the brand, series, model and configuration on HuluMart to see an indicative price band for your laptop.",
+      },
+      {
+        name: "Book a free doorstep pickup slot",
+        text: "Enter your Bangalore address and pincode and pick a slot. Pickup is free and there is no charge if you decline the final figure.",
+      },
+      {
+        name: "Back up and factory reset the laptop",
+        text: "Copy out your files, sign out of Google and Microsoft accounts, and run a factory reset so no personal data leaves with the device.",
+      },
+      {
+        name: "Doorstep inspection in front of you",
+        text: "The executive verifies the model and serial number, powers the laptop on, and checks display, keyboard, ports, battery health, RAM and storage while you watch.",
+      },
+      {
+        name: "Approve the final quote",
+        text: "You see the confirmed figure right after the inspection and can accept it or decline at no cost.",
+      },
+      {
+        name: "Receive instant cash or UPI",
+        text: "Payment is released by instant UPI or cash before the laptop leaves your hands, with a receipt recording model, serial number and amount.",
+      },
+    ],
+  },
   related: [
     "sell-used-laptop-in-bangalore",
     "sell-macbook-online-instant-cash",
@@ -934,6 +978,38 @@ const macbookCash: BlogPost = {
   datePublished: "2026-08-07",
   dateModified: "2026-08-07",
   author: AUTHOR,
+  howTo: {
+    name: "How to sell a MacBook online for instant cash in Bangalore",
+    description:
+      "Check your MacBook's price online, sign out of iCloud, book a free doorstep pickup and get paid by instant UPI or cash before handover.",
+    totalTime: "PT20M",
+    steps: [
+      {
+        name: "Identify your MacBook and configuration",
+        text: "Check the model, year, chip, RAM and storage under About This Mac, then select the matching MacBook on HuluMart for an indicative price.",
+      },
+      {
+        name: "Check battery cycles and display condition",
+        text: "Open System Settings, Battery, Battery Health to read the cycle count and status. Under 300 cycles has little price impact.",
+      },
+      {
+        name: "Back up with Time Machine or iCloud",
+        text: "Take a full backup so nothing is lost when the MacBook is erased.",
+      },
+      {
+        name: "Sign out of iCloud and turn off Find My",
+        text: "Turn off Activation Lock and sign out of your Apple ID, then erase all content and settings. A locked MacBook cannot be purchased.",
+      },
+      {
+        name: "Book a free doorstep pickup",
+        text: "Choose a slot anywhere in Bangalore. The executive verifies the serial number, chip, battery cycles, display and Activation Lock status in front of you.",
+      },
+      {
+        name: "Approve the quote and take instant payment",
+        text: "Accept the final figure and receive instant UPI or cash before the MacBook leaves your hands, along with a receipt.",
+      },
+    ],
+  },
   related: [
     "sell-laptop-in-bangalore-instant-cash",
     "sell-macbook-vs-windows-laptop-bangalore",
@@ -1101,7 +1177,10 @@ export const blogPosts: BlogPost[] = [
   safety,
   brand,
   timing,
+  ...areaPosts,
 ];
+
+export const areaBlogPosts = areaPosts;
 
 export function getPostBySlug(slug: string) {
   return blogPosts.find((p) => p.slug === slug);

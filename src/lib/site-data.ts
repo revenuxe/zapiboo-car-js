@@ -83,12 +83,21 @@ export const testimonials = [
 ];
 
 export const navLinks = [
-  { to: "/", label: "Sell Laptop" },
+  { to: "/how-it-works", label: "How it works" },
+  { to: "/materials", label: "Materials & Prices" },
+  { to: "/listings", label: "Listings" },
+  { to: "/areas", label: "Areas" },
+  { to: "/business", label: "For Business" },
+  { to: "/blog", label: "Blog" },
+  { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
 // Trimmed set shown in the site header (the rest live only in the footer).
 export const headerNavLinks = [
-  { to: "/", label: "Sell Laptop" },
+  { to: "/how-it-works", label: "How it works" },
+  { to: "/materials", label: "Materials & Prices" },
+  { to: "/listings", label: "Listings" },
+  { to: "/areas", label: "Areas" },
   { to: "/contact", label: "Contact" },
 ] as const;

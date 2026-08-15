@@ -144,15 +144,20 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+// Laptop buyback keeps the current electric-blue brand; everything else (the
+// scrap side of the business) renders in the original navy + emerald palette.
+const laptopPrefixes = ["/sell", "/blog", "/account", "/admin", "/auth"];
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const chromeless = pathname.startsWith("/admin") || pathname.startsWith("/auth");
   const hideFloatingWhatsApp = chromeless || pathname.startsWith("/sell");
+  const scrapTheme = !laptopPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex min-h-screen flex-col">
+      <div className={`flex min-h-screen flex-col${scrapTheme ? " scrap-theme" : ""}`}>
         {!chromeless && <SiteHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <main className="flex-1">

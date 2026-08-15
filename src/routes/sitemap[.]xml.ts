@@ -28,6 +28,20 @@ export const Route = createFileRoute("/sitemap.xml")({
         const entries: SitemapEntry[] = [
           { path: "/", changefreq: "weekly", priority: "1.0" },
           { path: "/sell/laptops", changefreq: "weekly", priority: "0.8" },
+          { path: "/pickup", changefreq: "weekly", priority: "0.9" },
+          { path: "/materials", changefreq: "weekly", priority: "0.8" },
+          { path: "/how-it-works", changefreq: "monthly", priority: "0.7" },
+          { path: "/listings", changefreq: "daily", priority: "0.7" },
+          { path: "/areas", changefreq: "monthly", priority: "0.7" },
+          { path: "/business", changefreq: "monthly", priority: "0.6" },
+          { path: "/about", changefreq: "yearly", priority: "0.5" },
+          { path: "/scrap-cars", changefreq: "monthly", priority: "0.7" },
+          { path: "/top-scrap-buyers", changefreq: "monthly", priority: "0.7" },
+          ...serviceAreas.map((area) => ({
+            path: `/areas/${area.slug}`,
+            changefreq: "monthly" as const,
+            priority: "0.7",
+          })),
           { path: "/contact", changefreq: "yearly", priority: "0.5" },
           { path: "/blog", changefreq: "weekly", priority: "0.7" },
           ...blogPosts.map((post) => ({

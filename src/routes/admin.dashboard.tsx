@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
-import { LogOut, LayoutDashboard, Smartphone, Inbox, ClipboardList, Users } from "lucide-react";
+import {
+  LogOut,
+  LayoutDashboard,
+  Smartphone,
+  Inbox,
+  ClipboardList,
+  Users,
+  IndianRupee,
+  Boxes,
+  Store,
+  CalendarClock,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +23,10 @@ import { DevicesPanel } from "@/components/admin/DevicesPanel";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { UsersPanel } from "@/components/admin/UsersPanel";
 import { DeviceOrdersManager } from "@/components/admin/devices/DeviceOrdersManager";
+import { RatesPanel } from "@/components/admin/RatesPanel";
+import { CategoriesPanel } from "@/components/admin/CategoriesPanel";
+import { ListingsPanel } from "@/components/admin/ListingsPanel";
+import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";
 
 export const Route = createFileRoute("/admin/dashboard")({
   ssr: false,
@@ -90,11 +105,11 @@ function AdminDashboard() {
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-bold sm:text-3xl">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage laptop buyback bookings, device catalog and customer leads.
+          Manage scrap pickups, rates and listings alongside laptop buyback bookings.
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-5 gap-1 sm:w-auto sm:inline-grid">
+          <TabsList className="grid w-full grid-cols-5 gap-1 sm:w-auto sm:inline-grid lg:grid-cols-9">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
@@ -109,6 +124,18 @@ function AdminDashboard() {
             </TabsTrigger>
             <TabsTrigger value="devices" className="gap-1.5">
               <Smartphone className="size-4" /> <span className="hidden sm:inline">Devices</span>
+            </TabsTrigger>
+            <TabsTrigger value="rates" className="gap-1.5">
+              <IndianRupee className="size-4" /> <span className="hidden sm:inline">Rates</span>
+            </TabsTrigger>
+            <TabsTrigger value="categories" className="gap-1.5">
+              <Boxes className="size-4" /> <span className="hidden sm:inline">Categories</span>
+            </TabsTrigger>
+            <TabsTrigger value="listings" className="gap-1.5">
+              <Store className="size-4" /> <span className="hidden sm:inline">Listings</span>
+            </TabsTrigger>
+            <TabsTrigger value="availability" className="gap-1.5">
+              <CalendarClock className="size-4" /> <span className="hidden sm:inline">Availability</span>
             </TabsTrigger>
           </TabsList>
 
@@ -126,6 +153,18 @@ function AdminDashboard() {
           </TabsContent>
           <TabsContent value="devices" className="mt-5">
             <DevicesPanel />
+          </TabsContent>
+          <TabsContent value="rates" className="mt-5">
+            <RatesPanel />
+          </TabsContent>
+          <TabsContent value="categories" className="mt-5">
+            <CategoriesPanel />
+          </TabsContent>
+          <TabsContent value="listings" className="mt-5">
+            <ListingsPanel />
+          </TabsContent>
+          <TabsContent value="availability" className="mt-5">
+            <AvailabilityPanel />
           </TabsContent>
         </Tabs>
       </main>

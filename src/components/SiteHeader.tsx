@@ -95,9 +95,14 @@ export function SiteHeader() {
               <Link to="/auth">Sign in</Link>
             </Button>
           )}
-          <Button asChild variant="hero" size="sm">
-            <Link to="/">
+          <Button asChild variant="ghost" size="sm">
+            <Link to="/sell/$category" params={{ category: "laptops" }}>
               Sell laptop
+            </Link>
+          </Button>
+          <Button asChild variant="hero" size="sm">
+            <Link to="/pickup">
+              Book pickup
               <ArrowRight />
             </Link>
           </Button>
@@ -151,9 +156,14 @@ export function SiteHeader() {
 
             <div className="mt-6 flex flex-col gap-3">
               <Button asChild variant="hero" size="lg" onClick={() => setOpen(false)}>
-                <Link to="/">
-                  Sell laptop
+                <Link to="/pickup">
+                  Book pickup
                   <ArrowRight />
+                </Link>
+              </Button>
+              <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
+                <Link to="/sell/$category" params={{ category: "laptops" }}>
+                  Sell laptop
                 </Link>
               </Button>
               {user ? (

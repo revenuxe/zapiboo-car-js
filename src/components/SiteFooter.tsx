@@ -20,17 +20,22 @@ export function SiteFooter() {
           >
             <Sparkles className="mx-auto size-9 text-brand-green" />
             <h2 className="mx-auto mt-5 max-w-2xl text-3xl font-bold sm:text-4xl">
-              Ready to sell your used laptop?
+              Ready to clear your scrap?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/80">
-              Get an instant HuluMart quote in minutes. We will verify the device at your doorstep
-              and pay you the same day.
+              Book a doorstep pickup in 60 seconds. Certified weighing, live Bangalore rates and
+              instant payment when we collect.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="xl" variant="hero">
-                <Link to="/">
-                  Sell Laptop Now
+                <Link to="/pickup">
+                  Book a free pickup
                   <ArrowRight />
+                </Link>
+              </Button>
+              <Button asChild size="xl" variant="outlineLight">
+                <Link to="/sell/$category" params={{ category: "laptops" }}>
+                  Sell a laptop
                 </Link>
               </Button>
             </div>
@@ -52,8 +57,8 @@ export function SiteFooter() {
             <div>
               <Logo invert />
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy-foreground/70">
-                HuluMart helps Bangalore customers sell used laptops with transparent pricing,
-                free doorstep pickup and instant payment.
+                HuluMart buys scrap and used laptops across Bangalore with live rates, certified
+                weighing, free doorstep pickup and instant payment.
               </p>
               <div className="mt-6 space-y-2 text-sm text-navy-foreground/70">
                 <p className="flex items-center gap-2">
@@ -88,12 +93,21 @@ export function SiteFooter() {
 
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wider text-navy-foreground/60">
-                Laptop
+                Sell with us
               </h4>
               <ul className="mt-5 space-y-3 text-sm">
                 <li>
                   <Link
-                    to="/"
+                    to="/pickup"
+                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
+                  >
+                    Book a scrap pickup
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/sell/$category"
+                    params={{ category: "laptops" }}
                     className="text-navy-foreground/80 transition-colors hover:text-brand-green"
                   >
                     Sell laptop
@@ -112,7 +126,7 @@ export function SiteFooter() {
           </div>
 
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-navy-foreground/15 pt-8 text-sm text-navy-foreground/60 sm:flex-row">
-            <p>© {new Date().getFullYear()} HuluMart. Used laptop buyback in Bangalore.</p>
+            <p>© {new Date().getFullYear()} HuluMart. Doorstep scrap collection & laptop buyback in Bangalore.</p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <Link to="/privacy" className="transition-colors hover:text-brand-green">
                 Privacy Policy

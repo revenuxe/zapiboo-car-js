@@ -223,3 +223,51 @@
 @utility shadow-soft {
   box-shadow: var(--shadow-soft);
 }
+
+/*
+ * Scrap side of the site keeps the original navy + emerald palette.
+ * Applied on the <div> wrapper in __root for every non-laptop route, so the
+ * laptop buyback pages keep the current electric-blue brand untouched.
+ */
+.scrap-theme {
+  --background: oklch(0.99 0.004 160);
+  --foreground: oklch(0.22 0.035 220);
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.22 0.035 220);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.22 0.035 220);
+
+  --primary: oklch(0.66 0.15 162);
+  --primary-foreground: oklch(0.99 0.01 160);
+
+  --secondary: oklch(0.96 0.012 180);
+  --secondary-foreground: oklch(0.24 0.035 220);
+
+  --muted: oklch(0.96 0.008 180);
+  --muted-foreground: oklch(0.5 0.02 215);
+
+  --accent: oklch(0.94 0.04 165);
+  --accent-foreground: oklch(0.26 0.05 200);
+
+  --border: oklch(0.91 0.01 200);
+  --input: oklch(0.91 0.01 200);
+  --ring: oklch(0.66 0.15 162);
+
+  --navy: oklch(0.21 0.04 222);
+  --navy-foreground: oklch(0.97 0.01 160);
+  --navy-muted: oklch(0.32 0.04 220);
+  --brand-green: oklch(0.7 0.16 164);
+  --brand-green-deep: oklch(0.56 0.13 168);
+
+  --gradient-brand: linear-gradient(100deg, oklch(0.74 0.16 168), oklch(0.6 0.14 172));
+  --gradient-navy: linear-gradient(160deg, oklch(0.24 0.045 222), oklch(0.16 0.035 224));
+  --gradient-hero: linear-gradient(
+    180deg,
+    color-mix(in oklab, oklch(0.21 0.04 222) 0%, transparent),
+    color-mix(in oklab, oklch(0.16 0.035 224) 92%, transparent)
+  );
+
+  background-color: var(--background);
+  color: var(--foreground);
+}

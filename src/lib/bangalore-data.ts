@@ -1,3 +1,15 @@
+import {
+  Newspaper,
+  Package,
+  Recycle,
+  Wine,
+  Cog,
+  Cpu,
+  Refrigerator,
+  Boxes,
+  Car,
+} from "lucide-react";
+
 /* ---------------- Bangalore service area ---------------- */
 
 export type Locality = { name: string; pincode: string };
@@ -54,3 +66,61 @@ export const serviceablePincodes = new Set(serviceLocalities.map((l) => l.pincod
 export function isPincodeServiceable(pincode: string) {
   return serviceablePincodes.has(pincode.trim());
 }
+
+/* ---------------- Size tiers (instead of weight) ---------------- */
+
+export type SizeTier = {
+  id: string;
+  label: string;
+  hint: string;
+};
+
+export const sizeTiers: SizeTier[] = [
+  { id: "small", label: "1–2 bags", hint: "A couple of bags or a small box" },
+  { id: "medium", label: "3–5 bags", hint: "A few bags — typical monthly clear-out" },
+  { id: "large", label: "A lot / room clear-out", hint: "Big haul, shifting house, or renovation" },
+];
+
+/* ---------------- What we take from homes (quick chips) ---------------- */
+
+export type HouseholdType = {
+  id: string;
+  name: string;
+  icon: typeof Newspaper;
+};
+
+export const householdTypes: HouseholdType[] = [
+  { id: "raddi", name: "Newspaper / Raddi", icon: Newspaper },
+  { id: "cardboard", name: "Cardboard & Books", icon: Package },
+  { id: "plastic", name: "Plastic & Bottles", icon: Recycle },
+  { id: "glass", name: "Glass Bottles", icon: Wine },
+  { id: "metal", name: "Iron & Metal", icon: Cog },
+  { id: "ewaste", name: "E-Waste", icon: Cpu },
+  { id: "appliances", name: "Old Appliances", icon: Refrigerator },
+  { id: "car-scrap", name: "Car Scrap", icon: Car },
+  { id: "mixed", name: "Other / Mixed", icon: Boxes },
+];
+
+/* ---------------- Household rates in INR (₹) ---------------- */
+
+export type HouseholdRate = {
+  name: string;
+  price: string;
+  unit: string;
+  note?: string;
+};
+
+export const householdRates: HouseholdRate[] = [
+  { name: "Newspaper / Raddi", price: "₹15", unit: "/ kg" },
+  { name: "Books & Magazines", price: "₹12", unit: "/ kg" },
+  { name: "Cardboard (OCC)", price: "₹8", unit: "/ kg" },
+  { name: "Mixed Plastic", price: "₹10", unit: "/ kg" },
+  { name: "PET Bottles", price: "₹12", unit: "/ kg" },
+  { name: "Glass Bottles", price: "₹2", unit: "/ kg" },
+  { name: "Iron & Steel", price: "₹28", unit: "/ kg" },
+  { name: "Aluminium", price: "₹105", unit: "/ kg" },
+  { name: "Copper", price: "₹520", unit: "/ kg" },
+  { name: "Brass", price: "₹330", unit: "/ kg" },
+  { name: "E-Waste", price: "₹35", unit: "/ kg" },
+  { name: "Old Appliances", price: "Quoted", unit: "/ piece", note: "Fridge, AC, washing machine, etc." },
+];

@@ -503,10 +503,16 @@ function Pickup() {
       setStep(3);
       return;
     }
+    if (!pincodeOk || !addressOk) {
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return toast.error("Please complete your pickup address and a serviceable pincode.");
+    }
     if (!date) return toast.error("Pick a date.");
     if (!slot) return toast.error("Pick a time slot.");
     if (!name.trim() || phone.trim().length < 10)
       return toast.error("Add your name and a valid phone number.");
+
 
     setSaving(true);
 

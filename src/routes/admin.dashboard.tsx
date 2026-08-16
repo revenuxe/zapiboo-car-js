@@ -3,6 +3,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   LogOut,
+  Recycle,
+  Laptop,
+
   LayoutDashboard,
   Smartphone,
   Inbox,

@@ -129,6 +129,9 @@ function Pickup() {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [profileStatus, setProfileStatus] = useState<"idle" | "loading" | "filled" | "missing">(
+    "idle",
+  );
 
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");

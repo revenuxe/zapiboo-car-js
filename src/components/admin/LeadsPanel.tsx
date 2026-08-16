@@ -111,7 +111,9 @@ function LeadTypeChip({ lead }: { lead: Lead }) {
   );
 }
 
-export function LeadsPanel() {
+export type LeadScope = "all" | "bookings" | "queries";
+
+export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
   const qc = useQueryClient();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
@@ -139,6 +141,8 @@ export function LeadsPanel() {
 
   const filtered = useMemo(() => {
     return leads.filter((l) => {
+      if (scope === "bookings" && isQueryLead(l)) return false;
+      if (scope === "queries" && !isQueryLead(l)) return false;
       if (filter === "spam") {
         if (!spamSet.has(l.id)) return false;
       } else if (filter === "all") {
@@ -158,7 +162,7 @@ export function LeadsPanel() {
         (l.pincode ?? "").includes(q)
       );
     });
-  }, [leads, query, filter, spamSet]);
+  }, [leads, query, filter, spamSet, scope]);
 
 
   const openLead = (lead: Lead) => {

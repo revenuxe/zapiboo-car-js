@@ -349,18 +349,25 @@ function Pickup() {
     if (!authPhone && meta?.phone) setAuthPhone(meta.phone);
 
     let ignore = false;
+    setProfileStatus((s) => (s === "idle" ? "loading" : s));
     supabase
       .from("user_profiles")
       .select("full_name, whatsapp, address, pincode, lat, lng")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data, error }) => {
-        if (ignore || error || !data) return;
+        if (ignore) return;
+        if (error || !data) {
+          setProfileStatus((s) => (s === "filled" ? s : "missing"));
+          return;
+        }
         if (!name && data.full_name) setName(data.full_name);
         if (!phone && data.whatsapp) setPhone(data.whatsapp);
         if (!address && data.address) setAddress(data.address);
         if (!pincode && data.pincode) setPincode(data.pincode);
         if (!geo && data.lat != null && data.lng != null) setGeo({ lat: data.lat, lng: data.lng });
+        const hasSaved = Boolean(data.address?.trim()) && Boolean(data.pincode?.trim());
+        setProfileStatus(hasSaved ? "filled" : "missing");
       });
 
     return () => {

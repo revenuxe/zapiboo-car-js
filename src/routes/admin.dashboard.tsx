@@ -109,12 +109,15 @@ function AdminDashboard() {
         </p>
 
         <Tabs defaultValue="overview" className="mt-6">
-          <TabsList className="grid w-full grid-cols-5 gap-1 sm:w-auto sm:inline-grid lg:grid-cols-9">
+          <TabsList className="grid w-full grid-cols-5 gap-1 sm:w-auto sm:inline-grid">
             <TabsTrigger value="overview" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Overview</span>
             </TabsTrigger>
-            <TabsTrigger value="bookings" className="gap-1.5">
-              <ClipboardList className="size-4" /> <span className="hidden sm:inline">Bookings</span>
+            <TabsTrigger value="scrap" className="gap-1.5">
+              <Recycle className="size-4" /> <span className="hidden sm:inline">Scrap</span>
+            </TabsTrigger>
+            <TabsTrigger value="laptop" className="gap-1.5">
+              <Laptop className="size-4" /> <span className="hidden sm:inline">Laptop</span>
             </TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5">
               <Inbox className="size-4" /> <span className="hidden sm:inline">Leads</span>
@@ -122,51 +125,76 @@ function AdminDashboard() {
             <TabsTrigger value="users" className="gap-1.5">
               <Users className="size-4" /> <span className="hidden sm:inline">Users</span>
             </TabsTrigger>
-            <TabsTrigger value="devices" className="gap-1.5">
-              <Smartphone className="size-4" /> <span className="hidden sm:inline">Devices</span>
-            </TabsTrigger>
-            <TabsTrigger value="rates" className="gap-1.5">
-              <IndianRupee className="size-4" /> <span className="hidden sm:inline">Rates</span>
-            </TabsTrigger>
-            <TabsTrigger value="categories" className="gap-1.5">
-              <Boxes className="size-4" /> <span className="hidden sm:inline">Categories</span>
-            </TabsTrigger>
-            <TabsTrigger value="listings" className="gap-1.5">
-              <Store className="size-4" /> <span className="hidden sm:inline">Listings</span>
-            </TabsTrigger>
-            <TabsTrigger value="availability" className="gap-1.5">
-              <CalendarClock className="size-4" /> <span className="hidden sm:inline">Availability</span>
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-5">
             <OverviewPanel />
           </TabsContent>
-          <TabsContent value="bookings" className="mt-5">
-            <DeviceOrdersManager />
+
+          <TabsContent value="scrap" className="mt-5">
+            <Tabs defaultValue="scrap-bookings">
+              <TabsList className="flex w-full flex-wrap gap-1 sm:w-auto sm:inline-flex">
+                <TabsTrigger value="scrap-bookings" className="gap-1.5">
+                  <ClipboardList className="size-4" /> Bookings
+                </TabsTrigger>
+                <TabsTrigger value="rates" className="gap-1.5">
+                  <IndianRupee className="size-4" /> Rates
+                </TabsTrigger>
+                <TabsTrigger value="categories" className="gap-1.5">
+                  <Boxes className="size-4" /> Categories
+                </TabsTrigger>
+                <TabsTrigger value="listings" className="gap-1.5">
+                  <Store className="size-4" /> Listings
+                </TabsTrigger>
+                <TabsTrigger value="availability" className="gap-1.5">
+                  <CalendarClock className="size-4" /> Availability
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="scrap-bookings" className="mt-5">
+                <LeadsPanel scope="bookings" />
+              </TabsContent>
+              <TabsContent value="rates" className="mt-5">
+                <RatesPanel />
+              </TabsContent>
+              <TabsContent value="categories" className="mt-5">
+                <CategoriesPanel />
+              </TabsContent>
+              <TabsContent value="listings" className="mt-5">
+                <ListingsPanel />
+              </TabsContent>
+              <TabsContent value="availability" className="mt-5">
+                <AvailabilityPanel />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
+
+          <TabsContent value="laptop" className="mt-5">
+            <Tabs defaultValue="laptop-bookings">
+              <TabsList className="flex w-full flex-wrap gap-1 sm:w-auto sm:inline-flex">
+                <TabsTrigger value="laptop-bookings" className="gap-1.5">
+                  <ClipboardList className="size-4" /> Bookings
+                </TabsTrigger>
+                <TabsTrigger value="devices" className="gap-1.5">
+                  <Smartphone className="size-4" /> Devices
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="laptop-bookings" className="mt-5">
+                <DeviceOrdersManager />
+              </TabsContent>
+              <TabsContent value="devices" className="mt-5">
+                <DevicesPanel />
+              </TabsContent>
+            </Tabs>
+          </TabsContent>
+
           <TabsContent value="leads" className="mt-5">
-            <LeadsPanel />
+            <LeadsPanel scope="queries" />
           </TabsContent>
           <TabsContent value="users" className="mt-5">
             <UsersPanel />
           </TabsContent>
-          <TabsContent value="devices" className="mt-5">
-            <DevicesPanel />
-          </TabsContent>
-          <TabsContent value="rates" className="mt-5">
-            <RatesPanel />
-          </TabsContent>
-          <TabsContent value="categories" className="mt-5">
-            <CategoriesPanel />
-          </TabsContent>
-          <TabsContent value="listings" className="mt-5">
-            <ListingsPanel />
-          </TabsContent>
-          <TabsContent value="availability" className="mt-5">
-            <AvailabilityPanel />
-          </TabsContent>
         </Tabs>
+
       </main>
     </div>
   );

@@ -129,6 +129,9 @@ function Pickup() {
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [hydrated, setHydrated] = useState(false);
+  const [profileStatus, setProfileStatus] = useState<"idle" | "loading" | "filled" | "missing">(
+    "idle",
+  );
 
   // step 1
   const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
@@ -346,18 +349,25 @@ function Pickup() {
     if (!authPhone && meta?.phone) setAuthPhone(meta.phone);
 
     let ignore = false;
+    setProfileStatus((s) => (s === "idle" ? "loading" : s));
     supabase
       .from("user_profiles")
       .select("full_name, whatsapp, address, pincode, lat, lng")
       .eq("user_id", user.id)
       .maybeSingle()
       .then(({ data, error }) => {
-        if (ignore || error || !data) return;
+        if (ignore) return;
+        if (error || !data) {
+          setProfileStatus((s) => (s === "filled" ? s : "missing"));
+          return;
+        }
         if (!name && data.full_name) setName(data.full_name);
         if (!phone && data.whatsapp) setPhone(data.whatsapp);
         if (!address && data.address) setAddress(data.address);
         if (!pincode && data.pincode) setPincode(data.pincode);
         if (!geo && data.lat != null && data.lng != null) setGeo({ lat: data.lat, lng: data.lng });
+        const hasSaved = Boolean(data.address?.trim()) && Boolean(data.pincode?.trim());
+        setProfileStatus(hasSaved ? "filled" : "missing");
       });
 
     return () => {
@@ -451,6 +461,9 @@ function Pickup() {
 
   const pincodeOk = pincode.length === 6 && isPincodeAvailable(pincode, availability);
   const pincodeBad = pincode.length === 6 && !pincodeOk;
+  const addressOk = address.trim().length >= 10;
+  const addressTooShort = address.trim().length > 0 && !addressOk;
+  const addressStepReady = pincodeOk && addressOk;
 
   const goNext = () => {
     if (step === 1) {
@@ -459,8 +472,12 @@ function Pickup() {
         return toast.error("Pick at least one item, or choose Mixed scrap.");
     }
     if (step === 2) {
-      if (!pincodeOk) return toast.error("Enter a serviceable 6-digit pincode.");
+      if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
+      if (pincode.length !== 6) return toast.error("Pincode must be 6 digits.");
+      if (!pincodeOk) return toast.error("We don't pick up at this pincode yet.");
       if (!address.trim()) return toast.error("Add your flat / house address.");
+      if (!addressOk)
+        return toast.error("Address looks too short — add your flat, street and a landmark.");
     }
     if (step === 1) {
       setStep(user ? 2 : 3);
@@ -486,10 +503,16 @@ function Pickup() {
       setStep(3);
       return;
     }
+    if (!pincodeOk || !addressOk) {
+      setStep(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return toast.error("Please complete your pickup address and a serviceable pincode.");
+    }
     if (!date) return toast.error("Pick a date.");
     if (!slot) return toast.error("Pick a time slot.");
     if (!name.trim() || phone.trim().length < 10)
       return toast.error("Add your name and a valid phone number.");
+
 
     setSaving(true);
 
@@ -821,6 +844,27 @@ function Pickup() {
                     We'll check that we cover your area.
                   </p>
 
+                  {user && profileStatus === "loading" && (
+                    <div className="mt-4 flex items-center gap-2 rounded-xl border border-border bg-secondary/40 px-3 py-2.5 text-sm text-muted-foreground">
+                      <Loader2 className="size-4 animate-spin" /> Loading your saved address…
+                    </div>
+                  )}
+                  {user && profileStatus === "filled" && addressStepReady && (
+                    <div className="mt-4 flex items-start gap-2 rounded-xl border border-primary/30 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary">
+                      <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+                      <span>Auto-filled from your account. Edit anything that changed.</span>
+                    </div>
+                  )}
+                  {user && profileStatus === "missing" && !addressStepReady && (
+                    <div className="mt-4 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm font-medium text-destructive">
+                      <Info className="mt-0.5 size-4 shrink-0" />
+                      <span>
+                        No saved address on your account yet — add it below and we'll remember it
+                        for your next pickup.
+                      </span>
+                    </div>
+                  )}
+
                   <div className="mt-6 space-y-5">
                     <div className="space-y-2">
                       <Label htmlFor="pin">Pincode</Label>
@@ -832,6 +876,7 @@ function Pickup() {
                         placeholder="6-digit pincode"
                         value={pincode}
                         onChange={(e) => setPincode(e.target.value.replace(/\D/g, ""))}
+                        aria-invalid={pincodeBad}
                       />
                       {pincodeOk && (
                         <p className="flex items-center gap-1.5 text-sm font-medium text-primary">
@@ -844,6 +889,11 @@ function Pickup() {
                           we're expanding fast.
                         </p>
                       )}
+                      {pincode.length > 0 && pincode.length < 6 && (
+                        <p className="text-sm text-muted-foreground">
+                          {6 - pincode.length} more digit{6 - pincode.length > 1 ? "s" : ""} to go.
+                        </p>
+                      )}
                     </div>
 
                     <div className="space-y-2">
@@ -854,8 +904,16 @@ function Pickup() {
                         placeholder="e.g. #12, 3rd Cross, near Forum Mall"
                         value={address}
                         onChange={(e) => setAddress(e.target.value)}
+                        aria-invalid={addressTooShort}
                       />
+                      {addressTooShort && (
+                        <p className="flex items-center gap-1.5 text-sm font-medium text-destructive">
+                          <Info className="size-4" /> Add a bit more detail — flat/house number,
+                          street and a landmark.
+                        </p>
+                      )}
                     </div>
+
 
                     <div className="space-y-2">
                       <Label className="flex items-center gap-1.5">

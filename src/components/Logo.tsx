@@ -13,9 +13,9 @@ export function Logo({
     <Link to="/" aria-label="HuluMart home" className={cn("inline-flex items-center", className)}>
       <img
         src={logo}
-        alt="HuluMart - Used laptop buyback in Bangalore"
-        width={1760}
-        height={300}
+        alt="HuluMart — scrap collection and used laptop buyback in Bangalore"
+        width={1569}
+        height={317}
         className={cn("h-9 w-auto md:h-10", invert && "brightness-0 invert")}
       />
     </Link>

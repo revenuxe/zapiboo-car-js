@@ -1130,8 +1130,8 @@ function Pickup() {
               )}
             </AnimatePresence>
 
-            {/* nav buttons (steps 1 & 2) */}
-            {step < 3 && (
+            {/* nav buttons (item + address steps) */}
+            {step !== 3 && step !== 4 && (
               <div className="mt-8 flex items-center justify-between gap-3">
                 {step > 1 ? (
                   <Button type="button" variant="ghost" onClick={goBack}>
@@ -1147,7 +1147,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
-            {step >= 3 && (
+            {(step === 3 || step === 4) && (
               <div className="mt-4">
                 <Button type="button" variant="ghost" onClick={goBack}>
                   <ArrowLeft />
@@ -1155,6 +1155,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
+
           </div>
 
           {/* trust strip */}

@@ -461,6 +461,9 @@ function Pickup() {
 
   const pincodeOk = pincode.length === 6 && isPincodeAvailable(pincode, availability);
   const pincodeBad = pincode.length === 6 && !pincodeOk;
+  const addressOk = address.trim().length >= 10;
+  const addressTooShort = address.trim().length > 0 && !addressOk;
+  const addressStepReady = pincodeOk && addressOk;
 
   const goNext = () => {
     if (step === 1) {
@@ -469,8 +472,12 @@ function Pickup() {
         return toast.error("Pick at least one item, or choose Mixed scrap.");
     }
     if (step === 2) {
-      if (!pincodeOk) return toast.error("Enter a serviceable 6-digit pincode.");
+      if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
+      if (pincode.length !== 6) return toast.error("Pincode must be 6 digits.");
+      if (!pincodeOk) return toast.error("We don't pick up at this pincode yet.");
       if (!address.trim()) return toast.error("Add your flat / house address.");
+      if (!addressOk)
+        return toast.error("Address looks too short — add your flat, street and a landmark.");
     }
     if (step === 1) {
       setStep(user ? 2 : 3);

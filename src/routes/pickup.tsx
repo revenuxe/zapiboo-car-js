@@ -159,8 +159,11 @@ function Pickup() {
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const progressSteps = user ? [1, 2, 4] : [1, 2, 3, 4];
-  const currentProgress = user && step === 4 ? 3 : step;
+  // Flow order: 1 = what you're clearing, 3 = sign in (skipped when logged in),
+  // 2 = address (auto-filled from the saved profile), 4 = schedule + confirm.
+  const progressSteps = user ? [1, 2, 4] : [1, 3, 2, 4];
+  const currentProgress = Math.max(1, progressSteps.indexOf(step) + 1);
+
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
 

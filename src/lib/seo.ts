@@ -115,7 +115,7 @@ export function organizationSchema(path = "/") {
     "@id": `${siteUrl}/#organization`,
     name: businessContact.name,
     url: siteUrl,
-    logo: `${siteUrl}/favicon.ico`,
+    logo: `${siteUrl}/favicon-hm.png`,
     email: businessContact.email,
     telephone: `+91${businessContact.phone}`,
     address: {
@@ -230,7 +230,7 @@ export function blogPostingSchema(input: {
       url: siteUrl,
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/favicon.ico`,
+        url: `${siteUrl}/favicon-hm.png`,
       },
     },
   };

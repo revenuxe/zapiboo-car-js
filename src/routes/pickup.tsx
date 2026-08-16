@@ -159,8 +159,11 @@ function Pickup() {
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const progressSteps = user ? [1, 2, 4] : [1, 2, 3, 4];
-  const currentProgress = user && step === 4 ? 3 : step;
+  // Flow order: 1 = what you're clearing, 3 = sign in (skipped when logged in),
+  // 2 = address (auto-filled from the saved profile), 4 = schedule + confirm.
+  const progressSteps = user ? [1, 2, 4] : [1, 3, 2, 4];
+  const currentProgress = Math.max(1, progressSteps.indexOf(step) + 1);
+
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
 
@@ -333,7 +336,7 @@ function Pickup() {
   useEffect(() => {
     if (!user) return;
 
-    if (step === 3) setStep(4);
+    if (step === 3) setStep(2);
     if (!authEmail && user.email) setAuthEmail(user.email);
     if (!name) setName(displayName(user));
 
@@ -374,8 +377,8 @@ function Pickup() {
     });
     setAuthBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Signed in. Let's finish your booking.");
-    setStep(4);
+    toast.success("Signed in. Your saved address is filled in.");
+    setStep(2);
   };
 
   const signInWithGoogleDuringBooking = async () => {
@@ -414,8 +417,8 @@ function Pickup() {
     setName(authName.trim());
     setPhone(authPhone.trim());
     if (data.session) {
-      toast.success("Account created. Let's finish your booking.");
-      setStep(4);
+      toast.success("Account created. Let's add your pickup address.");
+      setStep(2);
     } else {
       toast.success("Account created. Please verify your email, then sign in here.");
       setAuthTab("signin");
@@ -459,18 +462,19 @@ function Pickup() {
       if (!pincodeOk) return toast.error("Enter a serviceable 6-digit pincode.");
       if (!address.trim()) return toast.error("Add your flat / house address.");
     }
-    if (step === 2) {
-      setStep(user ? 4 : 3);
-    } else {
-      setStep((s) => Math.min(4, s + 1));
+    if (step === 1) {
+      setStep(user ? 2 : 3);
+    } else if (step === 2) {
+      setStep(4);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
     setStep((s) => {
-      if (s === 4) return user ? 2 : 3;
-      return Math.max(1, s - 1);
+      if (s === 4) return 2;
+      if (s === 2) return user ? 1 : 3;
+      return 1;
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -1130,8 +1134,8 @@ function Pickup() {
               )}
             </AnimatePresence>
 
-            {/* nav buttons (steps 1 & 2) */}
-            {step < 3 && (
+            {/* nav buttons (item + address steps) */}
+            {step !== 3 && step !== 4 && (
               <div className="mt-8 flex items-center justify-between gap-3">
                 {step > 1 ? (
                   <Button type="button" variant="ghost" onClick={goBack}>
@@ -1147,7 +1151,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
-            {step >= 3 && (
+            {(step === 3 || step === 4) && (
               <div className="mt-4">
                 <Button type="button" variant="ghost" onClick={goBack}>
                   <ArrowLeft />
@@ -1155,6 +1159,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
+
           </div>
 
           {/* trust strip */}

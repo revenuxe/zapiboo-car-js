@@ -530,6 +530,10 @@ function Pickup() {
     }
 
     const { error } = await supabase.from("leads").insert({
+      // Set this explicitly as well as through the database trigger. This keeps
+      // an authenticated booking tied to the customer's account even if the
+      // trigger is absent in an environment that has not run every migration.
+      user_id: user.id,
       scrap_mode: scrapMode || "mixed",
       items: scrapMode === "specific" ? items : [],
       size_tier: null,

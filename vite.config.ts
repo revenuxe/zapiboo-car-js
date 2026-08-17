@@ -8,7 +8,9 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 export default defineConfig({
   nitro: {
-    preset: "vercel",
+    // Vercel remains the default deployment target. Amplify sets NITRO_PRESET
+    // in amplify.yml, which makes Nitro emit Amplify's SSR deployment bundle.
+    preset: process.env.NITRO_PRESET === "aws_amplify" ? "aws-amplify" : "vercel",
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

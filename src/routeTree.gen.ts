@@ -35,6 +35,7 @@ import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
 import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
 import { Route as ListingsSlugRouteImport } from './routes/listings_.$slug'
+import { Route as ScrapCategoryRouteImport } from './routes/scrap.$category'
 import { Route as SellOldLaptopBrandRouteImport } from './routes/sell-old-laptop.$brand'
 import { Route as SellUsedLaptopAreaRouteImport } from './routes/sell-used-laptop.$area'
 import { Route as SellCategoryRouteImport } from './routes/sell.$category'
@@ -173,6 +174,11 @@ const ListingsSlugRoute = ListingsSlugRouteImport.update({
   path: '/listings/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ScrapCategoryRoute = ScrapCategoryRouteImport.update({
+  id: '/scrap/$category',
+  path: '/scrap/$category',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SellOldLaptopBrandRoute = SellOldLaptopBrandRouteImport.update({
   id: '/sell-old-laptop/$brand',
   path: '/sell-old-laptop/$brand',
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/areas/$area': typeof AreasAreaRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/scrap/$category': typeof ScrapCategoryRoute
   '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
   '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
@@ -272,6 +279,7 @@ export interface FileRoutesByTo {
   '/areas/$area': typeof AreasAreaRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/listings/$slug': typeof ListingsSlugRoute
+  '/scrap/$category': typeof ScrapCategoryRoute
   '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
   '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
@@ -308,6 +316,7 @@ export interface FileRoutesById {
   '/areas_/$area': typeof AreasAreaRoute
   '/blog_/$slug': typeof BlogSlugRoute
   '/listings_/$slug': typeof ListingsSlugRoute
+  '/scrap/$category': typeof ScrapCategoryRoute
   '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
   '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
   '/sell/$category': typeof SellCategoryRoute
@@ -345,6 +354,7 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/blog/$slug'
     | '/listings/$slug'
+    | '/scrap/$category'
     | '/sell-old-laptop/$brand'
     | '/sell-used-laptop/$area'
     | '/sell/$category'
@@ -380,6 +390,7 @@ export interface FileRouteTypes {
     | '/areas/$area'
     | '/blog/$slug'
     | '/listings/$slug'
+    | '/scrap/$category'
     | '/sell-old-laptop/$brand'
     | '/sell-used-laptop/$area'
     | '/sell/$category'
@@ -415,6 +426,7 @@ export interface FileRouteTypes {
     | '/areas_/$area'
     | '/blog_/$slug'
     | '/listings_/$slug'
+    | '/scrap/$category'
     | '/sell-old-laptop/$brand'
     | '/sell-used-laptop/$area'
     | '/sell/$category'
@@ -449,6 +461,7 @@ export interface RootRouteChildren {
   AreasAreaRoute: typeof AreasAreaRoute
   BlogSlugRoute: typeof BlogSlugRoute
   ListingsSlugRoute: typeof ListingsSlugRoute
+  ScrapCategoryRoute: typeof ScrapCategoryRoute
   SellOldLaptopBrandRoute: typeof SellOldLaptopBrandRoute
   SellUsedLaptopAreaRoute: typeof SellUsedLaptopAreaRoute
   SellCategoryRoute: typeof SellCategoryRoute
@@ -642,6 +655,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ListingsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/scrap/$category': {
+      id: '/scrap/$category'
+      path: '/scrap/$category'
+      fullPath: '/scrap/$category'
+      preLoaderRoute: typeof ScrapCategoryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sell-old-laptop/$brand': {
       id: '/sell-old-laptop/$brand'
       path: '/sell-old-laptop/$brand'
@@ -732,6 +752,7 @@ const rootRouteChildren: RootRouteChildren = {
   AreasAreaRoute: AreasAreaRoute,
   BlogSlugRoute: BlogSlugRoute,
   ListingsSlugRoute: ListingsSlugRoute,
+  ScrapCategoryRoute: ScrapCategoryRoute,
   SellOldLaptopBrandRoute: SellOldLaptopBrandRoute,
   SellUsedLaptopAreaRoute: SellUsedLaptopAreaRoute,
   SellCategoryRoute: SellCategoryRoute,

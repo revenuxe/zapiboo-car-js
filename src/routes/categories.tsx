@@ -16,6 +16,15 @@ const title = "Scrap Categories We Buy in Bangalore | HuluMart";
 const description =
   "Explore the scrap categories HuluMart collects in Bangalore. Book doorstep pickup for paper, metal, plastic, e-waste, appliances and more.";
 
+const collectionGuides = [
+  { slug: "mixed-scrap", name: "Mixed scrap", text: "Raddi, plastic, bottles and metal together." },
+  { slug: "paper-raddi", name: "Paper and raddi", text: "Newspapers, books, cartons and cardboard." },
+  { slug: "metal-scrap", name: "Metal scrap", text: "Iron, steel, aluminium, brass and copper." },
+  { slug: "plastic-scrap", name: "Plastic scrap", text: "Bottles, containers and household plastic." },
+  { slug: "e-waste", name: "E-waste", text: "Cables, chargers, devices and electronics." },
+  { slug: "other-scrap", name: "Other household scrap", text: "Appliances, glass and miscellaneous items." },
+];
+
 export const Route = createFileRoute("/categories")({
   loader: ({ context }) => context.queryClient.ensureQueryData(activeScrapCategoriesQuery()),
   head: () => ({
@@ -85,6 +94,24 @@ function CategoriesPage() {
           ) : (
             <div className="mt-10 rounded-3xl border border-dashed border-border bg-card p-10 text-center"><Package className="mx-auto size-10 text-primary" /><h2 className="mt-4 text-xl font-bold">Categories are being updated</h2><p className="mt-2 text-muted-foreground">You can still book a mixed scrap pickup and tell us what you have.</p><Button asChild variant="hero" className="mt-6"><Link to="/pickup">Book mixed scrap pickup <ArrowRight /></Link></Button></div>
           )}
+
+          <div className="mt-16 border-t border-border pt-12">
+            <div className="max-w-2xl">
+              <p className="text-sm font-semibold uppercase tracking-wider text-primary">Collection guides</p>
+              <h2 className="mt-2 text-3xl font-bold">Find the right scrap pickup option</h2>
+              <p className="mt-3 text-muted-foreground">Read what each collection covers, how to prepare it and answers to common booking questions.</p>
+            </div>
+            <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+              {collectionGuides.map((guide) => (
+                <Link key={guide.slug} to="/scrap/$category" params={{ category: guide.slug }} className="group rounded-2xl border border-border bg-card p-5 shadow-soft transition hover:-translate-y-1 hover:border-primary/45 hover:shadow-elevated">
+                  <Recycle className="size-5 text-primary" />
+                  <h3 className="mt-4 text-lg font-bold">{guide.name}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{guide.text}</p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-bold text-primary">Explore collection guide <ArrowRight className="size-4 transition-transform group-hover:translate-x-1" /></span>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 

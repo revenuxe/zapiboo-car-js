@@ -4,9 +4,10 @@ import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 /**
  * Returns a presigned S3 PUT URL so the browser can upload an image directly to
  * Amazon S3 (no image bytes touch Supabase). On Amplify, signing uses the
- * short-lived credentials from the SSR Compute role. Admin-only.
+ * short-lived credentials from the SSR Compute role.
  */
-const allowedFolders = new Set(["brands", "series", "models", "listings"]);
+const adminFolders = new Set(["brands", "series", "models", "listings"]);
+const allowedFolders = new Set([...adminFolders, "pickups"]);
 const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp", "image/svg+xml"]);
 
 export const getUploadUrl = createServerFn({ method: "POST" })
@@ -17,13 +18,16 @@ export const getUploadUrl = createServerFn({ method: "POST" })
     contentType: typeof input?.contentType === "string" ? input.contentType.toLowerCase() : "",
   }))
   .handler(async ({ data, context }) => {
-    // Only admins may upload catalog imagery.
-    const { data: isAdmin, error } = await context.supabase.rpc("has_role", {
-      _user_id: context.userId,
-      _role: "admin",
-    });
-    if (error || !isAdmin) {
-      throw new Error("Forbidden: admin access required.");
+    // Catalogue imagery remains admin-only. Pickup photos are allowed only
+    // after the customer signs in, so anonymous visitors cannot mint S3 URLs.
+    if (adminFolders.has(data.folder)) {
+      const { data: isAdmin, error } = await context.supabase.rpc("has_role", {
+        _user_id: context.userId,
+        _role: "admin",
+      });
+      if (error || !isAdmin) {
+        throw new Error("Forbidden: admin access required.");
+      }
     }
 
     if (!allowedFolders.has(data.folder) || !allowedImageTypes.has(data.contentType)) {

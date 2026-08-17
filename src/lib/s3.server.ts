@@ -2,6 +2,9 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
+declare const __HULUMART_S3_REGION__: string;
+declare const __HULUMART_S3_BUCKET_NAME__: string;
+
 /**
  * Server-only S3 helpers. The AWS SDK uses its default credential provider
  * chain, so Amplify supplies short-lived credentials from the SSR Compute role.
@@ -14,8 +17,13 @@ type S3Config = {
 };
 
 export function getS3Config(): S3Config {
-  const region = process.env.S3_REGION || process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
-  const bucket = process.env.S3_BUCKET_NAME || process.env.AWS_BUCKET_NAME || process.env.AWS_BUCKET;
+  // The build-time values make Amplify Hosting variables available in Nitro's
+  // deployed Compute bundle. On other hosts, normal runtime environment
+  // variables take precedence.
+  const buildRegion = typeof __HULUMART_S3_REGION__ === "string" ? __HULUMART_S3_REGION__ : "";
+  const buildBucket = typeof __HULUMART_S3_BUCKET_NAME__ === "string" ? __HULUMART_S3_BUCKET_NAME__ : "";
+  const region = process.env.S3_REGION || process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || buildRegion;
+  const bucket = process.env.S3_BUCKET_NAME || process.env.AWS_BUCKET_NAME || process.env.AWS_BUCKET || buildBucket;
   const missing = [
     ...(!region ? ["S3_REGION"] : []),
     ...(!bucket ? ["S3_BUCKET_NAME"] : []),

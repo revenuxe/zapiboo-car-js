@@ -465,9 +465,13 @@ function Pickup() {
         uploadedUrl: null,
       };
       setPhoto(nextPhoto);
-      beginPhotoUpload(nextPhoto, true).catch(() => {
-        // The booking submit path retries and blocks if the early upload fails.
-      });
+      // Upload after sign-in during confirmation. This keeps the S3 signing
+      // endpoint authenticated and prevents anonymous URL creation.
+      if (user) {
+        beginPhotoUpload(nextPhoto, true).catch(() => {
+          // The booking submit path retries and blocks if the early upload fails.
+        });
+      }
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't process the photo.");
     }

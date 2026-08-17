@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import type {} from "@tanstack/react-start";
 import { createClient } from "@supabase/supabase-js";
+import { realtimeTransportOptions } from "@/integrations/supabase/realtime-transport";
 import type { Database } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/api/keepalive")({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/api/keepalive")({
         }
 
         const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+          realtime: realtimeTransportOptions(),
           auth: {
             storage: undefined,
             persistSession: false,

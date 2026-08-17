@@ -169,6 +169,37 @@ export function serviceSchema(path: string, area?: ServiceArea) {
   };
 }
 
+/**
+ * Local-business entity used across scrap collection pages. It intentionally
+ * contains only verified business facts; add hours, geo coordinates and
+ * social profiles here once those details are publicly confirmed.
+ */
+export function localBusinessSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${siteUrl}/#localbusiness`,
+    name: businessContact.name,
+    url: siteUrl,
+    image: `${siteUrl}/favicon-hm.png`,
+    telephone: `+91${businessContact.phone}`,
+    email: businessContact.email,
+    priceRange: "₹",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: businessContact.address,
+      addressLocality: businessContact.city,
+      addressRegion: businessContact.region,
+      postalCode: businessContact.postalCode,
+      addressCountry: businessContact.country,
+    },
+    areaServed: serviceAreas.map((area) => ({
+      "@type": "City",
+      name: `${area.name}, Bangalore`,
+    })),
+  };
+}
+
 export function scrapPickupServiceSchema(path: string, area?: ServiceArea) {
   return {
     "@context": "https://schema.org",

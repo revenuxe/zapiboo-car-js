@@ -6,9 +6,10 @@ import { Reveal } from "@/components/Reveal";
 import {
   absoluteUrl,
   breadcrumbSchema,
+  localBusinessSchema,
   organizationSchema,
   serviceAreas,
-  serviceSchema,
+  scrapPickupServiceSchema,
 } from "@/lib/seo";
 
 const areasTitle = "Scrap Pickup Areas in Bangalore | HuluMart";
@@ -30,7 +31,8 @@ export const Route = createFileRoute("/areas")({
         type: "application/ld+json",
         children: JSON.stringify([
           organizationSchema("/areas"),
-          serviceSchema("/areas"),
+          localBusinessSchema(),
+          scrapPickupServiceSchema("/areas"),
           breadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Areas", path: "/areas" },

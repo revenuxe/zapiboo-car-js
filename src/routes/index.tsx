@@ -22,13 +22,20 @@ import {
   breadcrumbSchema,
   featuredServiceAreas,
   businessContact,
+  localBusinessSchema,
   organizationSchema,
+  scrapPickupServiceSchema,
   serviceAreas,
-  serviceSchema,
   websiteSchema,
 } from "@/lib/seo";
 import heroImg from "@/assets/hero-scrap.webp";
 import pickupImg from "@/assets/doorstep-pickup.webp";
+import paperRaddiImg from "@/assets/scrap-cards/scrap-metal.webp";
+import mixedScrapImg from "@/assets/scrap-cards/scrap-paper-raddi.webp";
+import ewasteImg from "@/assets/scrap-cards/scrap-plastic.webp";
+import metalImg from "@/assets/scrap-cards/scrap-mixed.webp";
+import plasticImg from "@/assets/scrap-cards/scrap-ewaste.webp";
+import householdImg from "@/assets/scrap-cards/scrap-household.webp";
 
 const homepageTitle = "Best Scrap Buyers in Bangalore | Doorstep Scrap Collection";
 const homepageDescription =
@@ -39,36 +46,48 @@ const scrapSelectionCards = [
     title: "Mixed scrap",
     text: "Raddi, plastic, bottles and metal together.",
     icon: Boxes,
+    image: mixedScrapImg,
+    imageAlt: "Mixed household scrap including paper, plastic, cardboard and metal",
     search: { mode: "mixed" as const },
   },
   {
     title: "Metal",
     text: "Iron, steel, aluminium, brass and copper.",
     icon: Wrench,
+    image: metalImg,
+    imageAlt: "Metal scrap including steel, copper, aluminium and brass",
     search: { mode: "specific" as const, item: "Iron & Metal" },
   },
   {
     title: "Plastic",
     text: "PET bottles, mixed plastic and containers.",
     icon: Recycle,
+    image: plasticImg,
+    imageAlt: "Plastic scrap bottles and containers",
     search: { mode: "specific" as const, item: "Plastic & Bottles" },
   },
   {
     title: "Paper / raddi",
     text: "Newspapers, books, cartons and cardboard.",
     icon: Package,
+    image: paperRaddiImg,
+    imageAlt: "Paper raddi, newspapers, books and cardboard scrap",
     search: { mode: "specific" as const, item: "Newspaper / Raddi" },
   },
   {
     title: "E-waste",
     text: "Small devices, wires, chargers and boards.",
     icon: Cpu,
+    image: ewasteImg,
+    imageAlt: "Electronic waste including devices, cables and circuit boards",
     search: { mode: "specific" as const, item: "E-Waste" },
   },
   {
     title: "Other items",
     text: "Appliances, glass bottles and shop scrap.",
     icon: CheckCircle2,
+    image: householdImg,
+    imageAlt: "Household scrap including appliances, glass and kitchen items",
     search: { mode: "specific" as const, item: "Old Appliances" },
   },
 ];
@@ -91,8 +110,9 @@ export const Route = createFileRoute("/")({
         type: "application/ld+json",
         children: JSON.stringify([
           organizationSchema("/"),
+          localBusinessSchema(),
           websiteSchema(),
-          serviceSchema("/"),
+          scrapPickupServiceSchema("/"),
           breadcrumbSchema([{ name: "Home", path: "/" }]),
         ]),
       },
@@ -247,9 +267,14 @@ function Home() {
               </p>
               <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Start with what you have</h2>
             </div>
-            <p className="max-w-md text-sm text-muted-foreground">
-              Choose a category and the booking flow opens with your scrap type already selected.
-            </p>
+            <div className="flex flex-col items-start gap-3 sm:items-end">
+              <p className="max-w-md text-sm text-muted-foreground">
+                Choose a category and the booking flow opens with your scrap type already selected.
+              </p>
+              <Link to="/categories" className="inline-flex items-center gap-2 text-sm font-bold text-primary transition-colors hover:text-primary/80 hover:underline">
+                View all categories <ArrowRight className="size-4" />
+              </Link>
+            </div>
           </Reveal>
 
           <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
@@ -258,17 +283,27 @@ function Home() {
                 <Link
                   to="/pickup"
                   search={card.search}
-                  className="group relative flex h-full min-h-36 flex-col overflow-hidden rounded-2xl border border-primary/20 bg-gradient-brand p-4 text-primary-foreground shadow-green transition-all hover:-translate-y-1 hover:brightness-105 hover:shadow-elevated sm:p-5"
+                  className="group relative flex h-full min-h-52 flex-col overflow-hidden rounded-2xl border border-border bg-card p-3 shadow-soft transition-all hover:-translate-y-1 hover:border-primary/45 hover:shadow-elevated sm:min-h-64 sm:p-4"
                 >
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full bg-white/15 blur-2xl transition-transform group-hover:scale-125"
+                    className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full bg-primary/10 blur-2xl transition-transform group-hover:scale-125"
                   />
-                  <span className="relative flex size-11 items-center justify-center rounded-2xl bg-white/95 text-primary shadow-soft transition-transform group-hover:scale-105">
-                    <card.icon className="size-5" />
-                  </span>
-                  <span className="relative mt-4 font-bold leading-tight">{card.title}</span>
-                  <span className="relative mt-2 text-xs leading-relaxed text-primary-foreground/80">
+                  <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-xl bg-gradient-to-br from-primary/10 via-accent to-secondary px-2">
+                    <img
+                      src={card.image}
+                      alt={card.imageAlt}
+                      loading="lazy"
+                      width={512}
+                      height={512}
+                      className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                    <span className="absolute left-2 top-2 flex size-8 items-center justify-center rounded-xl bg-card/95 text-primary shadow-soft backdrop-blur-sm sm:size-9">
+                      <card.icon className="size-4 sm:size-[18px]" />
+                    </span>
+                  </div>
+                  <span className="relative mt-3 font-bold leading-tight text-foreground">{card.title}</span>
+                  <span className="relative mt-1.5 text-xs leading-relaxed text-muted-foreground">
                     {card.text}
                   </span>
                 </Link>

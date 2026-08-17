@@ -9,6 +9,7 @@ import {
   businessContact,
   faqSchema,
   getAreaBySlug,
+  localBusinessSchema,
   organizationSchema,
   scrapPickupServiceSchema,
 } from "@/lib/seo";
@@ -59,6 +60,7 @@ export const Route = createFileRoute("/areas_/$area")({
           type: "application/ld+json",
           children: JSON.stringify([
             organizationSchema(path),
+            localBusinessSchema(),
             scrapPickupServiceSchema(path, area),
             breadcrumbSchema([
               { name: "Home", path: "/" },

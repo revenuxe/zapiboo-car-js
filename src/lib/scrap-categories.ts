@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { fetchActiveCategories, type ScrapCategory } from "@/lib/scrap-rates";
 import { householdTypes } from "@/lib/bangalore-data";
@@ -17,7 +17,12 @@ const fallbackCategories = householdTypes
 
 /** Live scrap categories for public pages (booking wizard), with a static fallback. */
 export function useScrapCategories() {
-  return useQuery({
+  return useQuery(activeScrapCategoriesQuery());
+}
+
+/** Shared SSR/client query for categories managed in the admin dashboard. */
+export function activeScrapCategoriesQuery() {
+  return queryOptions({
     queryKey: ["scrap-categories", "active"],
     queryFn: fetchActiveCategories,
     placeholderData: fallbackCategories,

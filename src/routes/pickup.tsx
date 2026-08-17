@@ -141,6 +141,7 @@ function Pickup() {
   const fileRef = useRef<HTMLInputElement>(null);
   const photoUploadPromiseRef = useRef<Promise<string> | null>(null);
   const photoUploadIdRef = useRef<string | null>(null);
+  const appliedCategorySearchRef = useRef<string | null>(null);
 
   // step 2
   const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
@@ -317,6 +318,19 @@ function Pickup() {
 
   useEffect(() => {
     if (!pickupSearch.mode) return;
+
+    const categorySearchKey = `${pickupSearch.mode}:${pickupSearch.item ?? ""}`;
+    if (appliedCategorySearchRef.current !== categorySearchKey) {
+      // A homepage category card starts a new pickup. Do not resume the
+      // address, schedule or progress from a previous category's draft.
+      appliedCategorySearchRef.current = categorySearchKey;
+      window.sessionStorage.removeItem(pickupDraftKey);
+      setStep(1);
+      setSubmitted(false);
+      setPhoto(null);
+      setDate("");
+      setSlot("");
+    }
 
     if (pickupSearch.mode === "mixed") {
       setScrapMode("mixed");

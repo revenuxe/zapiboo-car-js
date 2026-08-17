@@ -136,23 +136,25 @@ function AdminDashboard() {
 
           <TabsContent value="scrap" className="mt-5">
             <Tabs defaultValue="scrap-bookings">
-              <TabsList className="flex w-full flex-wrap gap-1 sm:w-auto sm:inline-flex">
-                <TabsTrigger value="scrap-bookings" className="gap-1.5">
-                  <ClipboardList className="size-4" /> Bookings
-                </TabsTrigger>
-                <TabsTrigger value="rates" className="gap-1.5">
-                  <IndianRupee className="size-4" /> Rates
-                </TabsTrigger>
-                <TabsTrigger value="categories" className="gap-1.5">
-                  <Boxes className="size-4" /> Categories
-                </TabsTrigger>
-                <TabsTrigger value="listings" className="gap-1.5">
-                  <Store className="size-4" /> Listings
-                </TabsTrigger>
-                <TabsTrigger value="availability" className="gap-1.5">
-                  <CalendarClock className="size-4" /> Availability
-                </TabsTrigger>
-              </TabsList>
+              <div className="-mx-4 overflow-x-auto px-4 pb-2 [scrollbar-width:thin] sm:mx-0 sm:px-0">
+                <TabsList className="inline-flex w-max min-w-full gap-1 sm:min-w-0">
+                  <TabsTrigger value="scrap-bookings" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <ClipboardList className="size-4" /> Bookings
+                  </TabsTrigger>
+                  <TabsTrigger value="rates" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <IndianRupee className="size-4" /> Rates
+                  </TabsTrigger>
+                  <TabsTrigger value="categories" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <Boxes className="size-4" /> Categories
+                  </TabsTrigger>
+                  <TabsTrigger value="listings" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <Store className="size-4" /> Listings
+                  </TabsTrigger>
+                  <TabsTrigger value="availability" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <CalendarClock className="size-4" /> Availability
+                  </TabsTrigger>
+                </TabsList>
+              </div>
               <TabsContent value="scrap-bookings" className="mt-5">
                 <LeadsPanel scope="bookings" />
               </TabsContent>
@@ -173,14 +175,16 @@ function AdminDashboard() {
 
           <TabsContent value="laptop" className="mt-5">
             <Tabs defaultValue="laptop-bookings">
-              <TabsList className="flex w-full flex-wrap gap-1 sm:w-auto sm:inline-flex">
-                <TabsTrigger value="laptop-bookings" className="gap-1.5">
-                  <ClipboardList className="size-4" /> Bookings
-                </TabsTrigger>
-                <TabsTrigger value="devices" className="gap-1.5">
-                  <Smartphone className="size-4" /> Devices
-                </TabsTrigger>
-              </TabsList>
+              <div className="-mx-4 overflow-x-auto px-4 pb-2 [scrollbar-width:thin] sm:mx-0 sm:px-0">
+                <TabsList className="inline-flex w-max min-w-full gap-1 sm:min-w-0">
+                  <TabsTrigger value="laptop-bookings" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <ClipboardList className="size-4" /> Bookings
+                  </TabsTrigger>
+                  <TabsTrigger value="devices" className="shrink-0 gap-1.5 whitespace-nowrap">
+                    <Smartphone className="size-4" /> Devices
+                  </TabsTrigger>
+                </TabsList>
+              </div>
               <TabsContent value="laptop-bookings" className="mt-5">
                 <DeviceOrdersManager />
               </TabsContent>

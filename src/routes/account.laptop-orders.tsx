@@ -1,0 +1,15 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { CalendarDays, Clock, Laptop, Loader2, MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import { Button } from "@/components/ui/button";
+
+export const Route = createFileRoute("/account/laptop-orders")({ ssr: false, head: () => ({ meta: [{ title: "My laptop quotes | HuluMart" }, { name: "robots", content: "noindex, nofollow" }] }), component: LaptopOrders });
+function LaptopOrders() {
+  const { user, loading } = useAuth();
+  const { data: orders = [], isLoading } = useQuery({ queryKey: ["my-device-orders", user?.id], enabled: !!user, queryFn: async () => { const { data, error } = await supabase.from("device_orders").select("id, model_name, brand_name, series_name, final_price, status, pincode, preferred_date, slot").eq("user_id", user!.id).order("created_at", { ascending: false }); if (error) throw error; return data; } });
+  if (loading) return <div className="flex justify-center py-20"><Loader2 className="size-6 animate-spin text-primary" /></div>;
+  return <main className="bg-secondary/30"><div className="mx-auto max-w-3xl px-4 py-10 sm:px-6"><h1 className="text-2xl font-bold">My laptop quotes</h1><p className="mt-1 text-sm text-muted-foreground">Your laptop valuation and pickup requests.</p>{isLoading ? <div className="flex justify-center py-12"><Loader2 className="size-6 animate-spin text-primary" /></div> : orders.length === 0 ? <Empty icon={Laptop} text="No laptop quotes yet" to="/sell/laptops" label="Get a laptop quote" /> : <div className="mt-6 space-y-3">{orders.map((o) => <div key={o.id} className="rounded-2xl border border-border bg-card p-5 shadow-soft"><div className="flex justify-between gap-3"><div><p className="font-semibold">{o.model_name || "Laptop"}</p><p className="mt-1 text-sm text-muted-foreground">{[o.brand_name, o.series_name].filter(Boolean).join(" · ")}</p></div><span className="rounded-full bg-primary/10 px-2.5 py-1 text-xs font-bold capitalize text-primary">{o.status}</span></div><div className="mt-3 flex flex-wrap gap-x-5 gap-y-1.5 text-sm text-muted-foreground">{o.preferred_date && <span className="flex items-center gap-1"><CalendarDays className="size-3.5 text-primary" /> {o.preferred_date}</span>}{o.slot && <span className="flex items-center gap-1"><Clock className="size-3.5 text-primary" /> {o.slot}</span>}{o.pincode && <span className="flex items-center gap-1"><MapPin className="size-3.5 text-primary" /> {o.pincode}</span>}</div></div>)}</div>}</div></main>;
+}
+function Empty({ icon: Icon, text, to, label }: { icon: typeof Laptop; text: string; to: "/sell/laptops"; label: string }) { return <div className="mt-6 rounded-3xl border border-dashed border-border bg-card p-10 text-center"><Icon className="mx-auto size-9 text-muted-foreground" /><p className="mt-3 font-semibold">{text}</p><Button asChild variant="hero" className="mt-5"><Link to={to}>{label}</Link></Button></div>; }

@@ -855,7 +855,7 @@ function Pickup() {
                       <span>Your saved address is filled below. You can edit it here; the updated address is saved after you book.</span>
                     </div>
                   )}
-                  {user && profileStatus === "missing" && !addressStepReady && (
+                  {false && user && profileStatus === "missing" && !addressStepReady && (
                     <div className="mt-4 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm font-medium text-destructive">
                       <Info className="mt-0.5 size-4 shrink-0" />
                       <span>

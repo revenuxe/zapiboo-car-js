@@ -180,14 +180,10 @@ function Pickup() {
         return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
       }
       return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
-    } catch (primaryError) {
-      try {
-        return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
-      } catch {
-        throw primaryError instanceof Error
-          ? primaryError
-          : new Error("Couldn't upload the photo. Please try again.");
-      }
+    } catch (error) {
+      throw error instanceof Error
+        ? error
+        : new Error("Couldn't upload the photo. Please try again.");
     }
   };
 

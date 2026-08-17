@@ -14,7 +14,6 @@ export default defineConfig({
   // Amplify Compute role at request time.
   vite: {
     define: {
-      __HULUMART_S3_REGION__: JSON.stringify(process.env.S3_REGION ?? ""),
       __HULUMART_S3_BUCKET_NAME__: JSON.stringify(process.env.S3_BUCKET_NAME ?? ""),
       __HULUMART_SUPABASE_URL__: JSON.stringify(
         process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL ?? "",

@@ -2,8 +2,11 @@ import { randomUUID } from "crypto";
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-declare const __HULUMART_S3_REGION__: string;
 declare const __HULUMART_S3_BUCKET_NAME__: string;
+
+// This is the bucket's region, not the Amplify Compute runtime region.
+// Keep it independent of AWS_REGION, which describes where Compute runs.
+const S3_REGION = "ap-south-2";
 
 /**
  * Server-only S3 helpers. The AWS SDK uses its default credential provider
@@ -20,22 +23,20 @@ export function getS3Config(): S3Config {
   // The build-time values make Amplify Hosting variables available in Nitro's
   // deployed Compute bundle. On other hosts, normal runtime environment
   // variables take precedence.
-  const buildRegion = typeof __HULUMART_S3_REGION__ === "string" ? __HULUMART_S3_REGION__ : "";
   const buildBucket = typeof __HULUMART_S3_BUCKET_NAME__ === "string" ? __HULUMART_S3_BUCKET_NAME__ : "";
-  // Amplify sets AWS_REGION for the Compute runtime itself. It can differ from
-  // the bucket's region, so an explicit S3_REGION (including its build-time
-  // fallback) must always take precedence.
-  const region = process.env.S3_REGION || buildRegion || process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
-  const bucket = process.env.S3_BUCKET_NAME || process.env.AWS_BUCKET_NAME || process.env.AWS_BUCKET || buildBucket;
+  const configuredRegion = process.env.S3_REGION;
+  if (configuredRegion && configuredRegion !== S3_REGION) {
+    throw new Error(`S3_REGION must be ${S3_REGION}.`);
+  }
+  const bucket = process.env.S3_BUCKET_NAME || buildBucket;
   const missing = [
-    ...(!region ? ["S3_REGION"] : []),
     ...(!bucket ? ["S3_BUCKET_NAME"] : []),
   ];
   if (missing.length) {
-    throw new Error(`Missing AWS S3 env var(s): ${missing.join(", ")}`);
+    throw new Error(`Missing S3 configuration: ${missing.join(", ")}`);
   }
   return {
-    region: region!,
+    region: S3_REGION,
     bucket: bucket!,
   };
 }
@@ -80,10 +81,23 @@ export function publicUrlForKey(key: string): string {
  */
 export async function presignPutUrl(key: string, contentType: string, expiresIn = 300): Promise<string> {
   const { region, bucket } = getS3Config();
-  const client = new S3Client({ region });
-  return getSignedUrl(
-    client,
-    new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
-    { expiresIn },
-  );
+  let lastError: unknown;
+
+  // On a cold Compute start, role credentials can take a moment to become
+  // available. Retry once using the same Compute role, never static keys.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const client = new S3Client({ region });
+      return await getSignedUrl(
+        client,
+        new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
+        { expiresIn },
+      );
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 150));
+    }
+  }
+
+  throw lastError;
 }

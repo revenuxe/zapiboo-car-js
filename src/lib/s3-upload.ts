@@ -89,16 +89,30 @@ function parseImageDataUrl(input: string): { contentType: string; ext: string } 
 }
 
 async function uploadBlobToS3(blob: Blob, folder: string, ext: string, contentType: string): Promise<string> {
-  const { uploadUrl, publicUrl } = await getUploadUrl({ data: { folder, ext, contentType } });
-  const response = await fetch(uploadUrl, {
-    method: "PUT",
-    headers: { "Content-Type": contentType },
-    body: blob,
-  });
-  if (!response.ok) {
-    throw new Error(`S3 upload failed (${response.status}).`);
+  let lastError: unknown;
+
+  // Both attempts use the same Amplify SSR presign endpoint and direct S3 PUT
+  // architecture. A fresh URL covers a transient Compute credential or network
+  // failure without ever sending image bytes through Supabase.
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const { uploadUrl, publicUrl } = await getUploadUrl({ data: { folder, ext, contentType } });
+      const response = await fetch(uploadUrl, {
+        method: "PUT",
+        headers: { "Content-Type": contentType },
+        body: blob,
+      });
+      if (!response.ok) {
+        throw new Error(`S3 upload failed (${response.status}).`);
+      }
+      return publicUrl;
+    } catch (error) {
+      lastError = error;
+      if (attempt === 0) await new Promise((resolve) => window.setTimeout(resolve, 250));
+    }
   }
-  return publicUrl;
+
+  throw lastError instanceof Error ? lastError : new Error("S3 upload failed. Please try again.");
 }
 
 /**

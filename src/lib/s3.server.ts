@@ -22,7 +22,10 @@ export function getS3Config(): S3Config {
   // variables take precedence.
   const buildRegion = typeof __HULUMART_S3_REGION__ === "string" ? __HULUMART_S3_REGION__ : "";
   const buildBucket = typeof __HULUMART_S3_BUCKET_NAME__ === "string" ? __HULUMART_S3_BUCKET_NAME__ : "";
-  const region = process.env.S3_REGION || process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION || buildRegion;
+  // Amplify sets AWS_REGION for the Compute runtime itself. It can differ from
+  // the bucket's region, so an explicit S3_REGION (including its build-time
+  // fallback) must always take precedence.
+  const region = process.env.S3_REGION || buildRegion || process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
   const bucket = process.env.S3_BUCKET_NAME || process.env.AWS_BUCKET_NAME || process.env.AWS_BUCKET || buildBucket;
   const missing = [
     ...(!region ? ["S3_REGION"] : []),

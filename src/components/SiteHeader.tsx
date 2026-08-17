@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Menu, ArrowRight, User as UserIcon, LogOut, Laptop, LayoutDashboard } from "lucide-react";
+import { Menu, ArrowRight, User as UserIcon, LogOut, Truck, LayoutDashboard } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -81,7 +81,7 @@ export function SiteHeader() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/account">
-                    <Laptop className="size-4" /> My laptop quotes
+                    <Truck className="size-4" /> My scrap pickups
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

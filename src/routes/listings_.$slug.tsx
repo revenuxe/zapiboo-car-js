@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useParams } from "@tanstack/react-router";
 import {
   ArrowLeft,
   BadgeCheck,
@@ -18,6 +18,7 @@ import { useScrapCategories } from "@/lib/scrap-categories";
 import {
   conditionLabel,
   formatListingPrice,
+  listingQuery,
   useListing,
 } from "@/lib/scrap-listings";
 import { businessContact } from "@/lib/seo";
@@ -29,6 +30,11 @@ export const Route = createFileRoute("/listings_/$slug")({
       { name: "description", content: "View this scrap listing and talk to HuluMart for transparent scrap selling support in Bengaluru." },
     ],
   }),
+  loader: async ({ context, params }) => {
+    const listing = await context.queryClient.ensureQueryData(listingQuery(params.slug));
+    if (!listing) throw notFound();
+    return listing;
+  },
   component: ListingDetailPage,
 });
 

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 export type ScrapListing = {
@@ -72,20 +72,28 @@ export async function fetchListingBySlug(slug: string): Promise<ScrapListing | n
   return (data as ScrapListing) ?? null;
 }
 
-export function useActiveListings() {
-  return useQuery({
+export function activeListingsQuery() {
+  return queryOptions({
     queryKey: ["listings", "active"],
     queryFn: fetchActiveListings,
     staleTime: 30_000,
   });
 }
 
-export function useListing(slug: string) {
-  return useQuery({
+export function listingQuery(slug: string) {
+  return queryOptions({
     queryKey: ["listings", "detail", slug],
     queryFn: () => fetchListingBySlug(slug),
     staleTime: 30_000,
   });
+}
+
+export function useActiveListings() {
+  return useQuery(activeListingsQuery());
+}
+
+export function useListing(slug: string) {
+  return useQuery(listingQuery(slug));
 }
 
 /**

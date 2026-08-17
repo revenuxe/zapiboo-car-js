@@ -849,12 +849,6 @@ function Pickup() {
                       <Loader2 className="size-4 animate-spin" /> Loading your saved address…
                     </div>
                   )}
-                  {user && profileStatus === "filled" && addressStepReady && (
-                    <div className="mt-4 flex items-start gap-2 rounded-xl border border-primary/30 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary">
-                      <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
-                      <span>Your saved address is filled below. You can edit it here; the updated address is saved after you book.</span>
-                    </div>
-                  )}
                   {false && user && profileStatus === "missing" && !addressStepReady && (
                     <div className="mt-4 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm font-medium text-destructive">
                       <Info className="mt-0.5 size-4 shrink-0" />

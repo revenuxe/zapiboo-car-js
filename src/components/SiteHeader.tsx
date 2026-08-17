@@ -119,15 +119,15 @@ export function SiteHeader() {
               <Menu />
             </Button>
           </SheetTrigger>
-          <SheetContent side="right" className="w-[300px]">
+          <SheetContent side="right" className="w-[min(86vw,320px)] overflow-y-auto p-4 sm:p-5">
             <SheetTitle className="sr-only">Menu</SheetTitle>
-            <div className="mt-2 mb-8">
+            <div className="mb-5 mt-1">
               <Logo />
             </div>
 
             {user && (
-              <div className="mb-5 flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
-                <span className="flex size-10 items-center justify-center rounded-full bg-gradient-brand text-sm font-bold text-primary-foreground">
+              <div className="mb-4 flex items-center gap-2.5 rounded-2xl border border-border bg-card p-2.5">
+                <span className="flex size-9 items-center justify-center rounded-full bg-gradient-brand text-sm font-bold text-primary-foreground">
                   {initials(user)}
                 </span>
                 <div className="min-w-0">
@@ -137,36 +137,52 @@ export function SiteHeader() {
               </div>
             )}
 
-            <nav className="flex flex-col gap-1">
+            <nav className="flex flex-col gap-0.5">
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
                   to={link.to}
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-3 text-base font-medium text-foreground hover:bg-secondary"
+                  className="rounded-lg px-3 py-2.5 text-[15px] font-medium text-foreground hover:bg-secondary"
                 >
                   {link.label}
                 </Link>
               ))}
               {user && (
+                <>
                 <Link
                   to="/account"
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-foreground hover:bg-secondary"
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-[15px] font-medium text-foreground hover:bg-secondary"
                 >
                   <LayoutDashboard className="size-4" /> My account
                 </Link>
+                <Link
+                  to="/account/laptop-orders"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-[15px] font-medium text-foreground hover:bg-secondary"
+                >
+                  <Laptop className="size-4" /> My laptop quotes
+                </Link>
+                <Link
+                  to="/account/scrap-pickups"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-[15px] font-medium text-foreground hover:bg-secondary"
+                >
+                  <Truck className="size-4" /> My scrap pickups
+                </Link>
+                </>
               )}
             </nav>
 
-            <div className="mt-6 flex flex-col gap-3">
-              <Button asChild variant="hero" size="lg" onClick={() => setOpen(false)}>
+            <div className="mt-4 flex flex-col gap-2">
+              <Button asChild variant="hero" size="default" onClick={() => setOpen(false)}>
                 <Link to="/pickup">
                   Book pickup
                   <ArrowRight />
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
+              <Button asChild variant="outline" size="default" onClick={() => setOpen(false)}>
                 <Link to="/sell/$category" params={{ category: "laptops" }}>
                   Sell laptop
                 </Link>
@@ -174,7 +190,7 @@ export function SiteHeader() {
               {user ? (
                 <Button
                   variant="outline"
-                  size="lg"
+                  size="default"
                   onClick={() => {
                     setOpen(false);
                     signOut();
@@ -183,7 +199,7 @@ export function SiteHeader() {
                   <LogOut className="size-4" /> Sign out
                 </Button>
               ) : (
-                <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
+                <Button asChild variant="outline" size="default" onClick={() => setOpen(false)}>
                   <Link to="/auth">Sign in</Link>
                 </Button>
               )}

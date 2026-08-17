@@ -168,6 +168,24 @@ export function serviceSchema(path: string, area?: ServiceArea) {
     url: absoluteUrl(path),
   };
 }
+
+export function scrapPickupServiceSchema(path: string, area?: ServiceArea) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${absoluteUrl(path)}#service`,
+    name: area
+      ? `Doorstep scrap pickup in ${area.name}, Bangalore`
+      : "Doorstep scrap pickup in Bangalore",
+    serviceType: "Household scrap collection and recycling",
+    provider: { "@id": `${siteUrl}/#organization` },
+    areaServed: {
+      "@type": "Place",
+      name: area ? `${area.name}, Bangalore` : "Bangalore",
+    },
+    url: absoluteUrl(path),
+  };
+}
 export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
   return {
     "@context": "https://schema.org",

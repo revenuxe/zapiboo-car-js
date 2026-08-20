@@ -12,6 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
+import doorifixLogo from "@/assets/doorifix-logo.webp";
+import numunixLogo from "@/assets/numunix-logo.webp";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -148,6 +150,81 @@ function About() {
                 </div>
               </Reveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-secondary/35 py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <Reveal className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.2em] text-primary">
+              More from our network
+            </p>
+            <h2 className="mt-3 text-3xl font-bold sm:text-4xl">Explore our platforms</h2>
+            <p className="mt-4 text-muted-foreground">
+              Discover trusted doorstep services from the Revenuxe family, built to make everyday
+              technology and appliance care simpler.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid gap-6 lg:grid-cols-2">
+            <Reveal>
+              <article className="flex h-full flex-col rounded-3xl border border-border bg-card p-7 shadow-soft sm:p-8">
+                <div className="flex min-h-24 items-center rounded-2xl border border-border bg-white p-4">
+                  <img
+                    src={numunixLogo}
+                    alt="Numunix"
+                    className="max-h-20 w-auto max-w-full object-contain"
+                  />
+                </div>
+                <div className="mt-7 flex flex-1 flex-col">
+                  <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">
+                    Technology services
+                  </p>
+                  <h3 className="mt-3 text-2xl font-bold">Numunix</h3>
+                  <p className="mt-3 text-muted-foreground">
+                    Doorstep IT repair and hardware services for homes and businesses. From laptop
+                    and desktop support to CCTV installation and electrician services, Numunix
+                    helps keep your essential systems running smoothly.
+                  </p>
+                  <Button asChild variant="outline" className="mt-7 w-full sm:w-fit">
+                    <a href="https://www.numunix.com" target="_blank" rel="noreferrer">
+                      Visit Numunix
+                      <ExternalLink />
+                    </a>
+                  </Button>
+                </div>
+              </article>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <article className="flex h-full flex-col rounded-3xl border border-border bg-card p-7 shadow-soft sm:p-8">
+                <div className="flex min-h-24 items-center rounded-2xl border border-border bg-white p-4">
+                  <img
+                    src={doorifixLogo}
+                    alt="Doorifix"
+                    className="max-h-20 w-auto max-w-full object-contain"
+                  />
+                </div>
+                <div className="mt-7 flex flex-1 flex-col">
+                  <p className="text-sm font-bold uppercase tracking-[0.16em] text-primary">
+                    Appliance repair
+                  </p>
+                  <h3 className="mt-3 text-2xl font-bold">Doorifix</h3>
+                  <p className="mt-3 text-muted-foreground">
+                    Reliable doorstep appliance repair when your daily essentials need attention.
+                    Book skilled support for washing machines and other household appliances, with
+                    convenient service brought right to your door.
+                  </p>
+                  <Button asChild variant="outline" className="mt-7 w-full sm:w-fit">
+                    <a href="https://www.doorifix.com" target="_blank" rel="noreferrer">
+                      Visit Doorifix
+                      <ExternalLink />
+                    </a>
+                  </Button>
+                </div>
+              </article>
+            </Reveal>
           </div>
         </div>
       </section>

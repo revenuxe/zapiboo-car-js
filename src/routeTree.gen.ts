@@ -16,6 +16,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as MaterialsRouteImport } from './routes/materials'
 import { Route as PickupRouteImport } from './routes/pickup'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SellUsedCarRouteImport } from './routes/sell-used-car'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
@@ -57,6 +58,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SellUsedCarRoute = SellUsedCarRouteImport.update({
+  id: '/sell-used-car',
+  path: '/sell-used-car',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
+  '/sell-used-car': typeof SellUsedCarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
+  '/sell-used-car': typeof SellUsedCarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
+  '/sell-used-car': typeof SellUsedCarRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
   '/admin/dashboard': typeof AdminDashboardRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
+    | '/sell-used-car'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/dashboard'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
+    | '/sell-used-car'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/dashboard'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
+    | '/sell-used-car'
     | '/sitemap.xml'
     | '/terms'
     | '/admin/dashboard'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   MaterialsRoute: typeof MaterialsRoute
   PickupRoute: typeof PickupRoute
   PrivacyRoute: typeof PrivacyRoute
+  SellUsedCarRoute: typeof SellUsedCarRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
@@ -237,6 +250,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sell-used-car': {
+      id: '/sell-used-car'
+      path: '/sell-used-car'
+      fullPath: '/sell-used-car'
+      preLoaderRoute: typeof SellUsedCarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   MaterialsRoute: MaterialsRoute,
   PickupRoute: PickupRoute,
   PrivacyRoute: PrivacyRoute,
+  SellUsedCarRoute: SellUsedCarRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
   AdminDashboardRoute: AdminDashboardRoute,

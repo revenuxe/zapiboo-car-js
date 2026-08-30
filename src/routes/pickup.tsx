@@ -32,6 +32,17 @@ import { vehicleCategories, vehicleCategoryById } from "@/lib/bangalore-data";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import carImg from "@/assets/vehicle-car.webp";
+import bikeImg from "@/assets/vehicle-bike.webp";
+import scooterImg from "@/assets/vehicle-scooter.webp";
+import commercialImg from "@/assets/vehicle-commercial.webp";
+
+const pickupVehicleCards = [
+  { id: "car", vehicleType: "car", name: "Car", tagline: "Hatchback, sedan, SUV — petrol, diesel, CNG or electric.", badge: "Most sold", image: carImg },
+  { id: "bike", vehicleType: "bike", name: "Bike", tagline: "Commuter, sports and cruiser bikes.", image: bikeImg },
+  { id: "scooter", vehicleType: "scooter", name: "Scooter", tagline: "Petrol and electric scooters.", image: scooterImg },
+  { id: "commercial", vehicleType: "commercial", name: "Commercial", tagline: "Autos, pickups, tempos and trucks.", image: commercialImg },
+];
 
 type PickupSearch = {
   pincode?: string;
@@ -627,23 +638,23 @@ function Pickup() {
 
   return (
     <>
-      <section className="bg-background py-8 md:py-12">
+      <section className="bg-background py-5 md:py-8">
         <div className="mx-auto max-w-2xl px-4 sm:px-6">
-          <div className="mb-6">
+          <div className="mb-4">
             <h1 className="text-left text-2xl font-bold tracking-normal text-foreground sm:text-3xl">
               Booking
             </h1>
           </div>
 
           {/* progress */}
-          <div className="mb-8 flex items-center gap-2">
+          <div className="mb-5 flex items-center gap-1.5">
             {progressSteps.map((stepNumber, index) => {
               const visualStep = index + 1;
               return (
-                <div key={stepNumber} className="flex flex-1 items-center gap-2">
+                <div key={stepNumber} className="flex flex-1 items-center gap-1.5">
                   <div
                     className={cn(
-                      "flex size-8 shrink-0 items-center justify-center rounded-full text-sm font-bold transition-colors",
+                      "flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold transition-colors",
                       currentProgress > visualStep
                         ? "bg-gradient-brand text-primary-foreground"
                         : currentProgress === visualStep
@@ -666,7 +677,7 @@ function Pickup() {
             })}
           </div>
 
-          <div className="rounded-3xl border border-border bg-card p-5 shadow-soft sm:p-8">
+            <div className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-8">
             <AnimatePresence mode="wait">
               {/* STEP 1 */}
               {step === 1 && (
@@ -682,36 +693,43 @@ function Pickup() {
                     Pick your vehicle type — then choose the body style that matches it.
                   </p>
 
-                  <div className="mt-5 grid grid-cols-2 gap-3">
-                    {vehicleCategories.map((category) => {
-                      const Icon = category.icon;
-                      const active = vehicleType === category.id;
+                  <div className="mt-3 grid grid-cols-2 gap-2.5">
+                    {pickupVehicleCards.map((category) => {
+                      const active = vehicleType === category.vehicleType;
                       return (
                         <button
                           type="button"
                           key={category.id}
                           onClick={() => {
-                            setVehicleType(category.id);
+                            setVehicleType(category.vehicleType);
                             setVehicleDetails([]);
                           }}
                           className={cn(
-                            "rounded-2xl border-2 p-5 text-left transition-all",
+                            "relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 text-left transition-all sm:p-5",
                             active
                               ? "border-primary bg-accent shadow-soft"
                               : "border-border hover:border-primary/40",
                           )}
                         >
-                          <div className="flex items-center justify-between">
-                            <Icon className="size-7 text-primary" />
+                          <div className="relative flex h-20 items-center justify-center sm:h-28">
+                            <img
+                              src={category.image}
+                              alt=""
+                              className="h-full w-full object-contain pt-3"
+                            />
                             {category.badge && (
-                              <span className="rounded-full bg-gradient-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                              <span className="absolute -top-1 right-0 whitespace-nowrap rounded-full bg-gradient-brand px-2 py-1 text-[9px] font-bold uppercase tracking-tight text-primary-foreground">
                                 {category.badge}
                               </span>
                             )}
                           </div>
-                          <div className="mt-3 font-bold">{category.name}</div>
-                          <div className="mt-1 text-sm text-muted-foreground">
-                            {category.tagline}
+                          <div
+                            className={cn(
+                              "mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg",
+                              category.id === "commercial" && "whitespace-nowrap tracking-tight",
+                            )}
+                          >
+                            {category.name}
                           </div>
                         </button>
                       );
@@ -1184,7 +1202,7 @@ function Pickup() {
 
             {/* nav buttons (vehicle + address steps) */}
             {step !== 3 && step !== 5 && (
-              <div className="mt-8 flex items-center justify-between gap-3">
+              <div className="mt-4 flex items-center justify-between gap-3">
                 {step > 1 ? (
                   <Button type="button" variant="ghost" onClick={goBack}>
                     <ArrowLeft />

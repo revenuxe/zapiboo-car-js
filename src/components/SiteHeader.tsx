@@ -96,12 +96,12 @@ export function SiteHeader() {
             </Button>
           )}
           <Button asChild variant="ghost" size="sm">
-            <Link to="/pickup">
-              Sell a vehicle
+            <Link to="/sell-used-car">
+              Sell car
             </Link>
           </Button>
           <Button asChild variant="hero" size="sm">
-            <Link to="/pickup">
+                  <Link to="/sell-used-car">
               Book pickup
               <ArrowRight />
             </Link>
@@ -163,7 +163,7 @@ export function SiteHeader() {
               </Button>
               <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
                 <Link to="/pickup">
-                  Sell a vehicle
+                  Sell car
                 </Link>
               </Button>
               {user ? (

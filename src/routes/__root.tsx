@@ -147,7 +147,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const chromeless = pathname.startsWith("/admin") || pathname.startsWith("/auth");
-  const hideFloatingWhatsApp = chromeless;
+  const hideFloatingWhatsApp = chromeless || pathname === "/pickup";
 
   return (
     <QueryClientProvider client={queryClient}>

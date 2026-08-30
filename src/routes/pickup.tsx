@@ -28,7 +28,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
 import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
-import { householdTypes } from "@/lib/bangalore-data";
+import { householdTypes, vehicleCategories, vehicleCategoryById } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
@@ -134,7 +134,7 @@ function Pickup() {
   );
 
   // step 1
-  const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
+  const [scrapMode, setScrapMode] = useState<string>("");
   const [items, setItems] = useState<string[]>([]);
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
@@ -169,6 +169,8 @@ function Pickup() {
 
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
+
+  const selectedVehicleCategory = vehicleCategoryById(scrapMode);
 
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
@@ -255,7 +257,7 @@ function Pickup() {
       try {
         const draft = JSON.parse(rawDraft) as {
           step?: number;
-          scrapMode?: "mixed" | "specific" | "";
+          scrapMode?: string;
           items?: string[];
           pincode?: string;
           address?: string;
@@ -470,8 +472,8 @@ function Pickup() {
 
   const goNext = () => {
     if (step === 1) {
-      if (!scrapMode) return toast.error("Tell us what you're clearing.");
-      if (scrapMode === "specific" && items.length === 0)
+      if (!scrapMode) return toast.error("Tell us what you're selling.");
+      if (items.length === 0)
         return toast.error("Pick at least one item, or choose Mixed scrap.");
     }
     if (step === 2) {
@@ -532,8 +534,8 @@ function Pickup() {
     }
 
     const { error } = await supabase.from("leads").insert({
-      scrap_mode: scrapMode || "mixed",
-      items: scrapMode === "specific" ? items : [],
+      scrap_mode: scrapMode || "car",
+      items,
       size_tier: null,
       has_photo: !!photoUrl,
       photo_url: photoUrl,

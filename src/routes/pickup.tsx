@@ -27,7 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
-import { uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
+import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
 import { householdTypes } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
@@ -192,6 +192,8 @@ function Pickup() {
 
   const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> => {
     if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
+    // Cloud image storage is temporarily disabled — keep the photo local only.
+    if (!s3UploadsEnabled) return Promise.resolve("");
     if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
       return photoUploadPromiseRef.current;
     }
@@ -451,6 +453,7 @@ function Pickup() {
         uploadedUrl: null,
       };
       setPhoto(nextPhoto);
+      if (!s3UploadsEnabled) return;
       beginPhotoUpload(nextPhoto, true).catch(() => {
         // The booking submit path retries and blocks if the early upload fails.
       });
@@ -521,11 +524,10 @@ function Pickup() {
     let photoUrl: string | null = null;
     if (photo) {
       try {
-        photoUrl = photo.uploadedUrl ?? (await beginPhotoUpload(photo));
-      } catch (err) {
-        setSaving(false);
-        toast.error(err instanceof Error ? err.message : "Couldn't upload the photo. Please try again.");
-        return;
+        photoUrl = (photo.uploadedUrl ?? (await beginPhotoUpload(photo))) || null;
+      } catch {
+        // Photo storage is optional — never block the booking on it.
+        photoUrl = null;
       }
     }
 

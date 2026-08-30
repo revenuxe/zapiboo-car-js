@@ -19,7 +19,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
-import { absoluteUrl, breadcrumbSchema, localBusinessSchema, organizationSchema, scrapPickupServiceSchema } from "@/lib/seo";
+import { absoluteUrl, breadcrumbSchema, organizationSchema, serviceSchema } from "@/lib/seo";
 
 const pageTitle = "Top Scrap Buyers in Bangalore | HuluMart Scrap Dealers";
 const pageDescription =
@@ -40,8 +40,7 @@ export const Route = createFileRoute("/top-scrap-buyers")({
         type: "application/ld+json",
         children: JSON.stringify([
           organizationSchema("/top-scrap-buyers"),
-          localBusinessSchema(),
-          scrapPickupServiceSchema("/top-scrap-buyers"),
+          serviceSchema("/top-scrap-buyers"),
           breadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Top Scrap Buyers", path: "/top-scrap-buyers" },

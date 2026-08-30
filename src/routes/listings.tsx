@@ -23,7 +23,6 @@ import { useScrapCategories } from "@/lib/scrap-categories";
 import {
   CONDITIONS,
   formatListingPrice,
-  activeListingsQuery,
   useActiveListings,
 } from "@/lib/scrap-listings";
 
@@ -44,7 +43,6 @@ export const Route = createFileRoute("/listings")({
     ],
     links: [{ rel: "canonical", href: "/listings" }],
   }),
-  loader: ({ context }) => context.queryClient.ensureQueryData(activeListingsQuery()),
   component: ListingsPage,
 });
 

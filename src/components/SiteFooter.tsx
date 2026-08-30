@@ -53,7 +53,7 @@ export function SiteFooter() {
 
       <footer className="bg-gradient-navy text-navy-foreground">
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-          <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-12 md:grid-cols-3">
             <div>
               <Logo invert />
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy-foreground/70">
@@ -121,32 +121,6 @@ export function SiteFooter() {
                     Talk to us
                   </Link>
                 </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-semibold uppercase tracking-wider text-navy-foreground/60">
-                Scrap pickup types
-              </h4>
-              <ul className="mt-5 space-y-3 text-sm">
-                {[
-                  ["mixed-scrap", "Mixed scrap"],
-                  ["paper-raddi", "Paper & raddi"],
-                  ["metal-scrap", "Metal scrap"],
-                  ["plastic-scrap", "Plastic scrap"],
-                  ["e-waste", "E-waste"],
-                  ["other-scrap", "Other household scrap"],
-                ].map(([category, label]) => (
-                  <li key={category}>
-                    <Link
-                      to="/scrap/$category"
-                      params={{ category }}
-                      className="text-navy-foreground/80 transition-colors hover:text-brand-green"
-                    >
-                      {label}
-                    </Link>
-                  </li>
-                ))}
               </ul>
             </div>
           </div>

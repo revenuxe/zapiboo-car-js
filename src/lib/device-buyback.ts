@@ -263,11 +263,7 @@ export function calculateQuote(input: QuoteInput | number, legacy?: SelectedOpti
 
 // ---------------- Public read hooks ----------------
 export function useDeviceCategory(slug: string) {
-  return useQuery(deviceCategoryQuery(slug));
-}
-
-export function deviceCategoryQuery(slug: string) {
-  return queryOptions({
+  return useQuery({
     queryKey: ["device", "category", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -302,11 +298,7 @@ export function useDeviceBrands(categoryId?: string) {
 }
 
 export function useDeviceSeries(brandId?: string) {
-  return useQuery(deviceSeriesQuery(brandId));
-}
-
-export function deviceSeriesQuery(brandId?: string) {
-  return queryOptions({
+  return useQuery({
     queryKey: ["device", "series", brandId],
     enabled: !!brandId,
     queryFn: async () => {
@@ -324,11 +316,7 @@ export function deviceSeriesQuery(brandId?: string) {
 }
 
 export function useDeviceModels(seriesId?: string) {
-  return useQuery(deviceModelsQuery(seriesId));
-}
-
-export function deviceModelsQuery(seriesId?: string) {
-  return queryOptions({
+  return useQuery({
     queryKey: ["device", "models", seriesId],
     enabled: !!seriesId,
     queryFn: async () => {
@@ -383,11 +371,7 @@ export function useCategoryCatalog(categoryId?: string) {
 
 // ---------------- Slug lookups (for multi-page funnel) ----------------
 export function useDeviceBrandBySlug(categoryId?: string, slug?: string) {
-  return useQuery(deviceBrandBySlugQuery(categoryId, slug));
-}
-
-export function deviceBrandBySlugQuery(categoryId?: string, slug?: string) {
-  return queryOptions({
+  return useQuery({
     queryKey: ["device", "brand-by-slug", categoryId, slug],
     enabled: !!categoryId && !!slug,
     queryFn: async () => {
@@ -406,11 +390,7 @@ export function deviceBrandBySlugQuery(categoryId?: string, slug?: string) {
 }
 
 export function useDeviceSeriesBySlug(brandId?: string, slug?: string) {
-  return useQuery(deviceSeriesBySlugQuery(brandId, slug));
-}
-
-export function deviceSeriesBySlugQuery(brandId?: string, slug?: string) {
-  return queryOptions({
+  return useQuery({
     queryKey: ["device", "series-by-slug", brandId, slug],
     enabled: !!brandId && !!slug,
     queryFn: async () => {

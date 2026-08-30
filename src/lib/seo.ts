@@ -168,55 +168,6 @@ export function serviceSchema(path: string, area?: ServiceArea) {
     url: absoluteUrl(path),
   };
 }
-
-/**
- * Local-business entity used across scrap collection pages. It intentionally
- * contains only verified business facts; add hours, geo coordinates and
- * social profiles here once those details are publicly confirmed.
- */
-export function localBusinessSchema() {
-  return {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `${siteUrl}/#localbusiness`,
-    name: businessContact.name,
-    url: siteUrl,
-    image: `${siteUrl}/favicon-hm.png`,
-    telephone: `+91${businessContact.phone}`,
-    email: businessContact.email,
-    priceRange: "₹",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: businessContact.address,
-      addressLocality: businessContact.city,
-      addressRegion: businessContact.region,
-      postalCode: businessContact.postalCode,
-      addressCountry: businessContact.country,
-    },
-    areaServed: serviceAreas.map((area) => ({
-      "@type": "City",
-      name: `${area.name}, Bangalore`,
-    })),
-  };
-}
-
-export function scrapPickupServiceSchema(path: string, area?: ServiceArea) {
-  return {
-    "@context": "https://schema.org",
-    "@type": "Service",
-    "@id": `${absoluteUrl(path)}#service`,
-    name: area
-      ? `Doorstep scrap pickup in ${area.name}, Bangalore`
-      : "Doorstep scrap pickup in Bangalore",
-    serviceType: "Household scrap collection and recycling",
-    provider: { "@id": `${siteUrl}/#organization` },
-    areaServed: {
-      "@type": "Place",
-      name: area ? `${area.name}, Bangalore` : "Bangalore",
-    },
-    url: absoluteUrl(path),
-  };
-}
 export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
   return {
     "@context": "https://schema.org",

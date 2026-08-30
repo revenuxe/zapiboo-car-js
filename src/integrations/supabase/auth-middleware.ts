@@ -3,21 +3,14 @@ import { createMiddleware } from '@tanstack/react-start'
 import { getRequest } from '@tanstack/react-start/server'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './types'
-import { realtimeTransportOptions } from './realtime-transport'
-
-declare const __HULUMART_SUPABASE_URL__: string;
-declare const __HULUMART_SUPABASE_PUBLISHABLE_KEY__: string;
 
 
 
 export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server(
   async ({ next }) => {
     
-    // Amplify provides Hosting variables while building, whereas this Nitro
-    // compute bundle needs these public Supabase values at request time too.
-    const SUPABASE_URL = process.env.SUPABASE_URL || __HULUMART_SUPABASE_URL__;
-    const SUPABASE_PUBLISHABLE_KEY =
-      process.env.SUPABASE_PUBLISHABLE_KEY || __HULUMART_SUPABASE_PUBLISHABLE_KEY__;
+    const SUPABASE_URL = process.env.SUPABASE_URL;
+    const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 
     if (!SUPABASE_URL || !SUPABASE_PUBLISHABLE_KEY) {
       const missing = [
@@ -54,7 +47,6 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
       SUPABASE_URL!,
       SUPABASE_PUBLISHABLE_KEY!,
       {
-        realtime: realtimeTransportOptions(),
         global: {
           headers: {
             Authorization: `Bearer ${token}`,

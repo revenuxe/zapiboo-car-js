@@ -9,10 +9,6 @@ import {
   useDeviceCategory,
   useDeviceModels,
   useDeviceSeriesBySlug,
-  deviceBrandBySlugQuery,
-  deviceCategoryQuery,
-  deviceModelsQuery,
-  deviceSeriesBySlugQuery,
 } from "@/lib/device-buyback";
 
 export const Route = createFileRoute("/sell/$category_/$brand_/$series")({
@@ -32,19 +28,6 @@ export const Route = createFileRoute("/sell/$category_/$brand_/$series")({
       ],
       links: [{ rel: "canonical", href: path }],
     };
-  },
-  loader: async ({ context, params }) => {
-    const category = await context.queryClient.ensureQueryData(deviceCategoryQuery(params.category));
-    if (!category) return null;
-    const brand = await context.queryClient.ensureQueryData(
-      deviceBrandBySlugQuery(category.id, params.brand),
-    );
-    if (!brand) return null;
-    const series = await context.queryClient.ensureQueryData(
-      deviceSeriesBySlugQuery(brand.id, params.series),
-    );
-    if (series) await context.queryClient.ensureQueryData(deviceModelsQuery(series.id));
-    return null;
   },
   component: ModelsPage,
 });

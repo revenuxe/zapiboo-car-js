@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/hulumart-logo.webp";
+import logo from "@/assets/zapiboo-logo.webp";
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -10,13 +10,13 @@ export function Logo({
   invert?: boolean;
 }) {
   return (
-    <Link to="/" aria-label="HuluMart home" className={cn("inline-flex items-center", className)}>
+    <Link to="/" aria-label="ZAPIBOO home" className={cn("inline-flex items-center", className)}>
       <img
         src={logo}
-        alt="HuluMart — scrap collection and used laptop buyback in Bangalore"
-        width={1569}
-        height={317}
-        className={cn("h-9 w-auto md:h-10", invert && "brightness-0 invert")}
+        alt="ZAPIBOO — buy and sell used cars, bikes and scooters in Bangalore"
+        width={1774}
+        height={887}
+        className={cn("h-10 w-auto md:h-12", invert && "brightness-0 invert")}
       />
     </Link>
   );

@@ -1,4 +1,7 @@
 import {
+  Bike,
+  Truck,
+  Caravan,
   Newspaper,
   Package,
   Recycle,
@@ -124,3 +127,80 @@ export const householdRates: HouseholdRate[] = [
   { name: "E-Waste", price: "₹35", unit: "/ kg" },
   { name: "Old Appliances", price: "Quoted", unit: "/ piece", note: "Fridge, AC, washing machine, etc." },
 ];
+
+
+/* ---------------- Vehicle categories for the booking flow ---------------- */
+
+export type VehicleCategory = {
+  id: string;
+  name: string;
+  tagline: string;
+  badge?: string;
+  icon: typeof Car;
+  subcategories: string[];
+};
+
+export const vehicleCategories: VehicleCategory[] = [
+  {
+    id: "car",
+    name: "Car",
+    tagline: "Hatchback, sedan, SUV — petrol, diesel, CNG or electric.",
+    badge: "Most sold",
+    icon: Car,
+    subcategories: [
+      "Hatchback",
+      "Sedan",
+      "Compact SUV",
+      "SUV / MUV",
+      "Luxury car",
+      "Electric car",
+      "CNG car",
+      "Vintage / classic",
+    ],
+  },
+  {
+    id: "bike",
+    name: "Bike",
+    tagline: "Commuter, sports and cruiser motorcycles of every engine size.",
+    icon: Bike,
+    subcategories: [
+      "Commuter (100–125cc)",
+      "150–250cc",
+      "Sports bike",
+      "Cruiser",
+      "Adventure / tourer",
+      "Electric bike",
+      "Classic / retro",
+    ],
+  },
+  {
+    id: "scooter",
+    name: "Scooter",
+    tagline: "Petrol and electric scooters, mopeds and city runabouts.",
+    icon: Caravan,
+    subcategories: [
+      "110cc scooter",
+      "125cc scooter",
+      "Maxi scooter",
+      "Electric scooter",
+      "Moped",
+    ],
+  },
+  {
+    id: "commercial",
+    name: "Commercial vehicle",
+    tagline: "Auto rickshaws, pickups, tempos and small trucks.",
+    icon: Truck,
+    subcategories: [
+      "Auto rickshaw",
+      "Mini truck / pickup",
+      "Tempo traveller",
+      "Goods carrier",
+      "Taxi / fleet car",
+    ],
+  },
+];
+
+export function vehicleCategoryById(id: string) {
+  return vehicleCategories.find((c) => c.id === id);
+}

@@ -35,11 +35,11 @@ const laptopBrands = [
 ];
 
 export const Route = createFileRoute("/sell-used-laptop/$area")({
-  loader: async ({ params, context }) => {
+  loader: ({ params, context }) => {
     const area = getAreaBySlug(params.area);
     if (!area) throw notFound();
     // Prefetch laptop brands so the brand grid renders instantly.
-    await context.queryClient.ensureQueryData(categoryWithBrandsQuery("laptops"));
+    context.queryClient.prefetchQuery(categoryWithBrandsQuery("laptops"));
     return { area };
   },
   head: ({ params }) => {

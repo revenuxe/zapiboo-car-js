@@ -27,8 +27,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
-import { uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
-import { householdTypes } from "@/lib/bangalore-data";
+import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
+import { householdTypes, vehicleCategories, vehicleCategoryById } from "@/lib/bangalore-data";
 import { useScrapCategories } from "@/lib/scrap-categories";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
@@ -134,14 +134,13 @@ function Pickup() {
   );
 
   // step 1
-  const [scrapMode, setScrapMode] = useState<"mixed" | "specific" | "">("");
+  const [scrapMode, setScrapMode] = useState<string>("");
   const [items, setItems] = useState<string[]>([]);
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const photoUploadPromiseRef = useRef<Promise<string> | null>(null);
   const photoUploadIdRef = useRef<string | null>(null);
-  const appliedCategorySearchRef = useRef<string | null>(null);
 
   // step 2
   const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
@@ -171,6 +170,8 @@ function Pickup() {
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
 
+  const selectedVehicleCategory = vehicleCategoryById(scrapMode);
+
   const toggleItem = (id: string) =>
     setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
 
@@ -180,15 +181,21 @@ function Pickup() {
         return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
       }
       return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
-    } catch (error) {
-      throw error instanceof Error
-        ? error
-        : new Error("Couldn't upload the photo. Please try again.");
+    } catch (primaryError) {
+      try {
+        return await uploadDataUrlToS3(snapshot.previewUrl, "pickups");
+      } catch {
+        throw primaryError instanceof Error
+          ? primaryError
+          : new Error("Couldn't upload the photo. Please try again.");
+      }
     }
   };
 
   const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> => {
     if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
+    // Cloud image storage is temporarily disabled — keep the photo local only.
+    if (!s3UploadsEnabled) return Promise.resolve("");
     if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
       return photoUploadPromiseRef.current;
     }
@@ -250,7 +257,7 @@ function Pickup() {
       try {
         const draft = JSON.parse(rawDraft) as {
           step?: number;
-          scrapMode?: "mixed" | "specific" | "";
+          scrapMode?: string;
           items?: string[];
           pincode?: string;
           address?: string;
@@ -314,19 +321,6 @@ function Pickup() {
 
   useEffect(() => {
     if (!pickupSearch.mode) return;
-
-    const categorySearchKey = `${pickupSearch.mode}:${pickupSearch.item ?? ""}`;
-    if (appliedCategorySearchRef.current !== categorySearchKey) {
-      // A homepage category card starts a new pickup. Do not resume the
-      // address, schedule or progress from a previous category's draft.
-      appliedCategorySearchRef.current = categorySearchKey;
-      window.sessionStorage.removeItem(pickupDraftKey);
-      setStep(1);
-      setSubmitted(false);
-      setPhoto(null);
-      setDate("");
-      setSlot("");
-    }
 
     if (pickupSearch.mode === "mixed") {
       setScrapMode("mixed");
@@ -461,13 +455,10 @@ function Pickup() {
         uploadedUrl: null,
       };
       setPhoto(nextPhoto);
-      // Upload after sign-in during confirmation. This keeps the S3 signing
-      // endpoint authenticated and prevents anonymous URL creation.
-      if (user) {
-        beginPhotoUpload(nextPhoto, true).catch(() => {
-          // The booking submit path retries and blocks if the early upload fails.
-        });
-      }
+      if (!s3UploadsEnabled) return;
+      beginPhotoUpload(nextPhoto, true).catch(() => {
+        // The booking submit path retries and blocks if the early upload fails.
+      });
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Couldn't process the photo.");
     }
@@ -481,9 +472,9 @@ function Pickup() {
 
   const goNext = () => {
     if (step === 1) {
-      if (!scrapMode) return toast.error("Tell us what you're clearing.");
-      if (scrapMode === "specific" && items.length === 0)
-        return toast.error("Pick at least one item, or choose Mixed scrap.");
+      if (!scrapMode) return toast.error("Tell us what you're selling.");
+      if (items.length === 0)
+        return toast.error("Pick the body style that matches your vehicle.");
     }
     if (step === 2) {
       if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
@@ -535,21 +526,16 @@ function Pickup() {
     let photoUrl: string | null = null;
     if (photo) {
       try {
-        photoUrl = photo.uploadedUrl ?? (await beginPhotoUpload(photo));
-      } catch (err) {
-        setSaving(false);
-        toast.error(err instanceof Error ? err.message : "Couldn't upload the photo. Please try again.");
-        return;
+        photoUrl = (photo.uploadedUrl ?? (await beginPhotoUpload(photo))) || null;
+      } catch {
+        // Photo storage is optional — never block the booking on it.
+        photoUrl = null;
       }
     }
 
     const { error } = await supabase.from("leads").insert({
-      // Set this explicitly as well as through the database trigger. This keeps
-      // an authenticated booking tied to the customer's account even if the
-      // trigger is absent in an environment that has not run every migration.
-      user_id: user.id,
-      scrap_mode: scrapMode || "mixed",
-      items: scrapMode === "specific" ? items : [],
+      scrap_mode: scrapMode || "car",
+      items,
       size_tier: null,
       has_photo: !!photoUrl,
       photo_url: photoUrl,
@@ -716,54 +702,49 @@ function Pickup() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <h2 className="text-xl font-bold">What are you clearing?</h2>
+                  <h2 className="text-xl font-bold">What are you selling?</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Not sure what's in there? Pick mixed — we'll sort and price it for you.
+                    Pick your vehicle type — then choose the body style that matches it.
                   </p>
 
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      onClick={() => setScrapMode("mixed")}
-                      className={cn(
-                        "rounded-2xl border-2 p-5 text-left transition-all",
-                        scrapMode === "mixed"
-                          ? "border-primary bg-accent shadow-soft"
-                          : "border-border hover:border-primary/40",
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <Boxes className="size-7 text-primary" />
-                        <span className="rounded-full bg-gradient-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-                          Easiest
-                        </span>
-                      </div>
-                      <div className="mt-3 font-bold">Mixed household scrap</div>
-                      <div className="mt-1 text-sm text-muted-foreground">
-                        Newspaper, plastic, metal, bottles — all together.
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setScrapMode("specific")}
-                      className={cn(
-                        "rounded-2xl border-2 p-5 text-left transition-all",
-                        scrapMode === "specific"
-                          ? "border-primary bg-accent shadow-soft"
-                          : "border-border hover:border-primary/40",
-                      )}
-                    >
-                      <CheckCircle2 className="size-7 text-primary" />
-                      <div className="mt-3 font-bold">Pick specific items</div>
-                      <div className="mt-1 text-sm text-muted-foreground">
-                        Know what you have? Choose the categories.
-                      </div>
-                    </button>
+                    {vehicleCategories.map((category) => {
+                      const Icon = category.icon;
+                      const active = scrapMode === category.id;
+                      return (
+                        <button
+                          type="button"
+                          key={category.id}
+                          onClick={() => {
+                            setScrapMode(category.id);
+                            setItems([]);
+                          }}
+                          className={cn(
+                            "rounded-2xl border-2 p-5 text-left transition-all",
+                            active
+                              ? "border-primary bg-accent shadow-soft"
+                              : "border-border hover:border-primary/40",
+                          )}
+                        >
+                          <div className="flex items-center justify-between">
+                            <Icon className="size-7 text-primary" />
+                            {category.badge && (
+                              <span className="rounded-full bg-gradient-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                                {category.badge}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-3 font-bold">{category.name}</div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            {category.tagline}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <AnimatePresence>
-                    {scrapMode === "specific" && (
+                    {selectedVehicleCategory && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
@@ -771,14 +752,14 @@ function Pickup() {
                         className="overflow-hidden"
                       >
                         <div className="mt-5 flex flex-wrap gap-2">
-                          {categories.map((c) => {
-                            const active = items.includes(c.name);
-                            const Icon = iconForCategory(c.name);
+                          {selectedVehicleCategory.subcategories.map((sub) => {
+                            const active = items.includes(sub);
+                            const Icon = selectedVehicleCategory.icon;
                             return (
                               <button
                                 type="button"
-                                key={c.id}
-                                onClick={() => toggleItem(c.name)}
+                                key={sub}
+                                onClick={() => toggleItem(sub)}
                                 className={cn(
                                   "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-all",
                                   active
@@ -787,7 +768,7 @@ function Pickup() {
                                 )}
                               >
                                 <Icon className="size-4" />
-                                {c.name}
+                                {sub}
                               </button>
                             );
                           })}
@@ -795,6 +776,7 @@ function Pickup() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+
 
                   <div className="mt-8">
                     <h3 className="font-bold">Add a photo (optional)</h3>
@@ -812,7 +794,7 @@ function Pickup() {
                       <div className="mt-3 relative w-fit">
                         <img
                           src={photo.previewUrl}
-                          alt="Your scrap"
+                          alt="Your vehicle"
                           className="size-28 rounded-xl object-cover"
                         />
                         <button
@@ -867,7 +849,13 @@ function Pickup() {
                       <Loader2 className="size-4 animate-spin" /> Loading your saved address…
                     </div>
                   )}
-                  {false && user && profileStatus === "missing" && !addressStepReady && (
+                  {user && profileStatus === "filled" && addressStepReady && (
+                    <div className="mt-4 flex items-start gap-2 rounded-xl border border-primary/30 bg-primary/5 px-3 py-2.5 text-sm font-medium text-primary">
+                      <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+                      <span>Auto-filled from your account. Edit anything that changed.</span>
+                    </div>
+                  )}
+                  {user && profileStatus === "missing" && !addressStepReady && (
                     <div className="mt-4 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-sm font-medium text-destructive">
                       <Info className="mt-0.5 size-4 shrink-0" />
                       <span>

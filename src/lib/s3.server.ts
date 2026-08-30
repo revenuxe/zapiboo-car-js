@@ -1,42 +1,35 @@
-import { randomUUID } from "crypto";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-
-declare const __HULUMART_S3_BUCKET_NAME__: string;
-
-// This is the bucket's region, not the Amplify Compute runtime region.
-// Keep it independent of AWS_REGION, which describes where Compute runs.
-const S3_REGION = "ap-south-2";
+import { createHash, createHmac, randomUUID } from "crypto";
 
 /**
- * Server-only S3 helpers. The AWS SDK uses its default credential provider
- * chain, so Amplify supplies short-lived credentials from the SSR Compute role.
- * No long-lived AWS access key is read from the application environment.
+ * Minimal AWS Signature V4 presigner for S3 PUT/GET — pure Node crypto, no SDK,
+ * so it runs in the TanStack/Cloudflare worker runtime. Server-only.
  */
 
 type S3Config = {
   region: string;
+  accessKeyId: string;
+  secretAccessKey: string;
   bucket: string;
 };
 
 export function getS3Config(): S3Config {
-  // The build-time values make Amplify Hosting variables available in Nitro's
-  // deployed Compute bundle. On other hosts, normal runtime environment
-  // variables take precedence.
-  const buildBucket = typeof __HULUMART_S3_BUCKET_NAME__ === "string" ? __HULUMART_S3_BUCKET_NAME__ : "";
-  const configuredRegion = process.env.S3_REGION;
-  if (configuredRegion && configuredRegion !== S3_REGION) {
-    throw new Error(`S3_REGION must be ${S3_REGION}.`);
-  }
-  const bucket = process.env.S3_BUCKET_NAME || buildBucket;
+  const region = process.env.AWS_REGION || process.env.AWS_DEFAULT_REGION;
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+  const bucket = process.env.AWS_BUCKET_NAME || process.env.AWS_BUCKET;
   const missing = [
-    ...(!bucket ? ["S3_BUCKET_NAME"] : []),
+    ...(!region ? ["AWS_REGION"] : []),
+    ...(!accessKeyId ? ["AWS_ACCESS_KEY_ID"] : []),
+    ...(!secretAccessKey ? ["AWS_SECRET_ACCESS_KEY"] : []),
+    ...(!bucket ? ["AWS_BUCKET_NAME"] : []),
   ];
   if (missing.length) {
-    throw new Error(`Missing S3 configuration: ${missing.join(", ")}`);
+    throw new Error(`Missing AWS S3 env var(s): ${missing.join(", ")}`);
   }
   return {
-    region: S3_REGION,
+    region: region!,
+    accessKeyId: accessKeyId!,
+    secretAccessKey: secretAccessKey!,
     bucket: bucket!,
   };
 }
@@ -63,6 +56,28 @@ function encodeChar(c: string): string {
     .join("");
 }
 
+function hmac(key: Buffer | string, data: string): Buffer {
+  return createHmac("sha256", key).update(data, "utf8").digest();
+}
+
+function sha256Hex(data: string): string {
+  return createHash("sha256").update(data, "utf8").digest("hex");
+}
+
+function amzDates(now = new Date()) {
+  const iso = now.toISOString().replace(/[:-]|\.\d{3}/g, "");
+  const amzDate = iso.slice(0, 15) + "Z"; // YYYYMMDDTHHMMSSZ
+  const dateStamp = amzDate.slice(0, 8); // YYYYMMDD
+  return { amzDate, dateStamp };
+}
+
+function signingKey(secret: string, dateStamp: string, region: string, service: string) {
+  const kDate = hmac(`AWS4${secret}`, dateStamp);
+  const kRegion = hmac(kDate, region);
+  const kService = hmac(kRegion, service);
+  return hmac(kService, "aws4_request");
+}
+
 export function buildObjectKey(folder: string, ext: string): string {
   const clean = folder.replace(/[^a-z0-9/_-]/gi, "").replace(/^\/+|\/+$/g, "") || "uploads";
   const safeExt = (ext || "bin").replace(/[^a-z0-9]/gi, "").toLowerCase() || "bin";
@@ -75,29 +90,52 @@ export function publicUrlForKey(key: string): string {
 }
 
 /**
- * Create a short-lived PUT URL for a browser upload. The content type is part
- * of the signed request, preventing a caller from changing the intended type.
- * Credentials come from Amplify's SSR Compute role at runtime.
+ * Create a presigned PUT URL the browser can upload to directly.
+ * Only `host` is signed, so the client may send any Content-Type header.
  */
-export async function presignPutUrl(key: string, contentType: string, expiresIn = 300): Promise<string> {
-  const { region, bucket } = getS3Config();
-  let lastError: unknown;
+export function presignPutUrl(key: string, expiresIn = 900): string {
+  const { region, accessKeyId, secretAccessKey, bucket } = getS3Config();
+  const service = "s3";
+  const host = `${bucket}.s3.${region}.amazonaws.com`;
+  const { amzDate, dateStamp } = amzDates();
+  const credentialScope = `${dateStamp}/${region}/${service}/aws4_request`;
+  const canonicalUri = "/" + encodeRfc3986(key, true);
 
-  // On a cold Compute start, role credentials can take a moment to become
-  // available. Retry once using the same Compute role, never static keys.
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      const client = new S3Client({ region });
-      return await getSignedUrl(
-        client,
-        new PutObjectCommand({ Bucket: bucket, Key: key, ContentType: contentType }),
-        { expiresIn },
-      );
-    } catch (error) {
-      lastError = error;
-      if (attempt === 0) await new Promise((resolve) => setTimeout(resolve, 150));
-    }
-  }
+  const params: Record<string, string> = {
+    "X-Amz-Algorithm": "AWS4-HMAC-SHA256",
+    "X-Amz-Credential": `${accessKeyId}/${credentialScope}`,
+    "X-Amz-Date": amzDate,
+    "X-Amz-Expires": String(expiresIn),
+    "X-Amz-SignedHeaders": "host",
+  };
 
-  throw lastError;
+  const canonicalQuerystring = Object.keys(params)
+    .sort()
+    .map((k) => `${encodeRfc3986(k)}=${encodeRfc3986(params[k])}`)
+    .join("&");
+
+  const canonicalHeaders = `host:${host}\n`;
+  const signedHeaders = "host";
+  const payloadHash = "UNSIGNED-PAYLOAD";
+
+  const canonicalRequest = [
+    "PUT",
+    canonicalUri,
+    canonicalQuerystring,
+    canonicalHeaders,
+    signedHeaders,
+    payloadHash,
+  ].join("\n");
+
+  const stringToSign = [
+    "AWS4-HMAC-SHA256",
+    amzDate,
+    credentialScope,
+    sha256Hex(canonicalRequest),
+  ].join("\n");
+
+  const key2 = signingKey(secretAccessKey, dateStamp, region, service);
+  const signature = createHmac("sha256", key2).update(stringToSign, "utf8").digest("hex");
+
+  return `https://${host}${canonicalUri}?${canonicalQuerystring}&X-Amz-Signature=${signature}`;
 }

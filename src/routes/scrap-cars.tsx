@@ -25,10 +25,9 @@ import {
   absoluteUrl,
   breadcrumbSchema,
   businessContact,
-  localBusinessSchema,
   organizationSchema,
   serviceAreas,
-  scrapPickupServiceSchema,
+  serviceSchema,
 } from "@/lib/seo";
 import heroImg from "@/assets/hero-scrap.webp";
 
@@ -145,8 +144,7 @@ export const Route = createFileRoute("/scrap-cars")({
         type: "application/ld+json",
         children: JSON.stringify([
           organizationSchema("/scrap-cars"),
-          localBusinessSchema(),
-          scrapPickupServiceSchema("/scrap-cars"),
+          serviceSchema("/scrap-cars"),
           breadcrumbSchema([
             { name: "Home", path: "/" },
             { name: "Scrap Cars", path: "/scrap-cars" },

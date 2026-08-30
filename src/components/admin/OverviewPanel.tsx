@@ -1,47 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
-import { CheckCircle2, Clock3, Layers, Laptop, Loader2, Recycle } from "lucide-react";
+import { CheckCircle2, Clock3, Layers, Laptop, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 type Stats = {
-  laptopTotalOrders: number;
-  laptopNewOrders: number;
-  laptopPaidOrders: number;
-  laptopActiveCategories: number;
-  scrapTotalOrders: number;
-  scrapNewOrders: number;
-  scrapCompletedOrders: number;
-  scrapActiveCategories: number;
+  totalOrders: number;
+  newOrders: number;
+  paidOrders: number;
+  activeCategories: number;
 };
 
 export function OverviewPanel() {
   const { data, isLoading } = useQuery({
-    queryKey: ["admin", "overview"],
+    queryKey: ["admin", "device-overview"],
     queryFn: async (): Promise<Stats> => {
-      const [deviceOrdersRes, laptopCatsRes, scrapOrdersRes, scrapCatsRes] = await Promise.all([
+      const [ordersRes, catsRes] = await Promise.all([
         supabase.from("device_orders").select("status"),
         supabase.from("device_categories").select("id", { count: "exact", head: true }).eq("active", true),
-        supabase.from("leads").select("status, lead_type, scrap_mode"),
-        supabase.from("scrap_categories").select("id", { count: "exact", head: true }).eq("active", true),
       ]);
 
-      if (deviceOrdersRes.error) throw deviceOrdersRes.error;
-      if (laptopCatsRes.error) throw laptopCatsRes.error;
-      if (scrapOrdersRes.error) throw scrapOrdersRes.error;
-      if (scrapCatsRes.error) throw scrapCatsRes.error;
+      if (ordersRes.error) throw ordersRes.error;
+      if (catsRes.error) throw catsRes.error;
 
-      const laptopOrders = (deviceOrdersRes.data ?? []) as { status: string }[];
-      const scrapOrders = (scrapOrdersRes.data ?? []) as { status: string; lead_type: string | null; scrap_mode: string | null }[];
-      const scrapBookings = scrapOrders.filter((o) => !(o.lead_type === "query" || o.scrap_mode === "query"));
-
+      const orders = (ordersRes.data ?? []) as { status: string }[];
       return {
-        laptopTotalOrders: laptopOrders.length,
-        laptopNewOrders: laptopOrders.filter((o) => o.status === "new" || o.status === "contacted").length,
-        laptopPaidOrders: laptopOrders.filter((o) => o.status === "paid").length,
-        laptopActiveCategories: laptopCatsRes.count ?? 0,
-        scrapTotalOrders: scrapBookings.length,
-        scrapNewOrders: scrapBookings.filter((o) => o.status === "new" || o.status === "contacted").length,
-        scrapCompletedOrders: scrapBookings.filter((o) => o.status === "done").length,
-        scrapActiveCategories: scrapCatsRes.count ?? 0,
+        totalOrders: orders.length,
+        newOrders: orders.filter((o) => o.status === "new" || o.status === "contacted").length,
+        paidOrders: orders.filter((o) => o.status === "paid").length,
+        activeCategories: catsRes.count ?? 0,
       };
     },
   });
@@ -54,24 +39,17 @@ export function OverviewPanel() {
     );
   }
 
-  const laptopCards = [
-    { label: "Total laptop orders", value: data.laptopTotalOrders, icon: Laptop },
-    { label: "New / contacted", value: data.laptopNewOrders, icon: Clock3 },
-    { label: "Paid orders", value: data.laptopPaidOrders, icon: CheckCircle2 },
-    { label: "Active device categories", value: data.laptopActiveCategories, icon: Layers },
-  ];
-
-  const scrapCards = [
-    { label: "Total scrap orders", value: data.scrapTotalOrders, icon: Recycle },
-    { label: "New / contacted", value: data.scrapNewOrders, icon: Clock3 },
-    { label: "Completed orders", value: data.scrapCompletedOrders, icon: CheckCircle2 },
-    { label: "Active scrap categories", value: data.scrapActiveCategories, icon: Layers },
+  const cards = [
+    { label: "Total laptop orders", value: data.totalOrders, icon: Laptop },
+    { label: "New / contacted", value: data.newOrders, icon: Clock3 },
+    { label: "Paid orders", value: data.paidOrders, icon: CheckCircle2 },
+    { label: "Active device categories", value: data.activeCategories, icon: Layers },
   ];
 
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {laptopCards.map((c) => (
+        {cards.map((c) => (
           <div key={c.label} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
             <div className="flex size-9 items-center justify-center rounded-lg bg-accent text-primary">
               <c.icon className="size-5" />
@@ -82,17 +60,6 @@ export function OverviewPanel() {
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {scrapCards.map((c) => (
-          <div key={c.label} className="rounded-2xl border border-border bg-card p-4 shadow-soft">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-accent text-primary">
-              <c.icon className="size-5" />
-            </div>
-            <div className="mt-3 text-2xl font-extrabold text-gradient">{c.value}</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">{c.label}</div>
-          </div>
-        ))}
-      </div>
     </div>
   );
 }

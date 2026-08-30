@@ -1,4 +1,4 @@
-import { getUploadUrl } from "@/lib/s3.functions";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Prepare an image for upload. Raster images are resized + recompressed on a
@@ -64,7 +64,39 @@ async function prepareImage(
   return { blob, contentType: outType, ext };
 }
 
-function parseImageDataUrl(input: string): { contentType: string; ext: string } {
+async function blobToBase64(blob: Blob): Promise<string> {
+  const dataUrl = await new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read the prepared image."));
+    reader.onload = () => resolve(reader.result as string);
+    reader.readAsDataURL(blob);
+  });
+  return dataUrl.slice(dataUrl.indexOf(",") + 1);
+}
+
+async function getEdgeFunctionErrorMessage(error: unknown): Promise<string> {
+  const fallback = error instanceof Error ? error.message : "Upload failed.";
+  const response = (error as { context?: Response | null })?.context;
+  if (!response) return fallback;
+
+  try {
+    const payload = await response.clone().json();
+    if (payload && typeof payload.error === "string") {
+      return payload.error;
+    }
+  } catch {
+    try {
+      const text = await response.clone().text();
+      if (text) return text.slice(0, 500);
+    } catch {
+      // Keep the original Supabase error when the response body is unavailable.
+    }
+  }
+
+  return fallback;
+}
+
+function parseImageDataUrl(input: string): { contentType: string; base64: string; ext: string } {
   const trimmed = input.trim();
   const match = /^data:([^;,]+)(?:;[^,]*)?;base64,(.*)$/is.exec(trimmed);
   if (!match) throw new Error("Invalid image data.");
@@ -85,57 +117,66 @@ function parseImageDataUrl(input: string): { contentType: string; ext: string } 
           ? "svg"
           : "jpg";
 
-  return { contentType, ext };
-}
-
-async function uploadBlobToS3(blob: Blob, folder: string, ext: string, contentType: string): Promise<string> {
-  let lastError: unknown;
-
-  // Both attempts use the same Amplify SSR presign endpoint and direct S3 PUT
-  // architecture. A fresh URL covers a transient Compute credential or network
-  // failure without ever sending image bytes through Supabase.
-  for (let attempt = 0; attempt < 2; attempt += 1) {
-    try {
-      const { uploadUrl, publicUrl } = await getUploadUrl({ data: { folder, ext, contentType } });
-      const response = await fetch(uploadUrl, {
-        method: "PUT",
-        headers: { "Content-Type": contentType },
-        body: blob,
-      });
-      if (!response.ok) {
-        throw new Error(`S3 upload failed (${response.status}).`);
-      }
-      return publicUrl;
-    } catch (error) {
-      lastError = error;
-      if (attempt === 0) await new Promise((resolve) => window.setTimeout(resolve, 250));
-    }
-  }
-
-  throw lastError instanceof Error ? lastError : new Error("S3 upload failed. Please try again.");
+  return { contentType, base64, ext };
 }
 
 /**
- * Compress + upload directly to Amazon S3 with a short-lived URL issued by
- * the application server. Image bytes never pass through Supabase.
+ * Compress + upload an image to Amazon S3 through a Supabase Edge Function and
+ * return its public URL. Used by every admin image field (brands, series,
+ * models, listings).
  */
+/**
+ * AWS/S3 uploads are temporarily disabled for this project. Set this back to
+ * `true` (and restore the AWS_* secrets) to re-enable the S3 image pipeline.
+ */
+export const s3UploadsEnabled = false;
+
+const S3_DISABLED_MESSAGE =
+  "Image uploads are temporarily disabled. Paste an image URL instead.";
+
 export async function uploadImageToS3(
   file: File,
   folder: string,
   opts: { maxDim?: number; quality?: number } = {},
 ): Promise<string> {
+  if (!s3UploadsEnabled) throw new Error(S3_DISABLED_MESSAGE);
   const { maxDim = 1280, quality = 0.82 } = opts;
   const { blob, contentType, ext } = await prepareImage(file, maxDim, quality);
-  return uploadBlobToS3(blob, folder, ext, contentType);
+
+  const { data, error } = await supabase.functions.invoke<{ publicUrl: string; key: string }>("s3-upload", {
+    body: {
+      folder,
+      ext,
+      contentType,
+      base64: await blobToBase64(blob),
+    },
+  });
+  if (error) {
+    throw new Error(await getEdgeFunctionErrorMessage(error));
+  }
+  if (!data?.publicUrl) {
+    throw new Error("Upload failed: Supabase did not return an S3 URL.");
+  }
+  return data.publicUrl;
 }
 
 /**
  * Upload an already-prepared JPEG/PNG data URL (e.g. a canvas-compressed photo)
- * directly to Amazon S3 and return its public URL. Used by customer flows
- * like the pickup booking photo, where the image is compressed before upload.
+ * to Amazon S3 and return its public URL. Used by customer flows like the
+ * pickup booking photo, where the image is compressed before upload.
  */
 export async function uploadDataUrlToS3(dataUrl: string, folder: string): Promise<string> {
-  const { contentType, ext } = parseImageDataUrl(dataUrl);
-  const blob = await (await fetch(dataUrl)).blob();
-  return uploadBlobToS3(blob, folder, ext, contentType);
+  if (!s3UploadsEnabled) throw new Error(S3_DISABLED_MESSAGE);
+  const { contentType, base64, ext } = parseImageDataUrl(dataUrl);
+
+  const { data, error } = await supabase.functions.invoke<{ publicUrl: string; key: string }>("s3-upload", {
+    body: { folder, ext, contentType, base64 },
+  });
+  if (error) {
+    throw new Error(await getEdgeFunctionErrorMessage(error));
+  }
+  if (!data?.publicUrl) {
+    throw new Error("Upload failed: Supabase did not return an S3 URL.");
+  }
+  return data.publicUrl;
 }

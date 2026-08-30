@@ -7,21 +7,7 @@ import { supabase } from './client'
 export const attachSupabaseAuth = createMiddleware({ type: 'function' }).client(
   async ({ next }) => {
     const { data } = await supabase.auth.getSession()
-    let session = data.session
-
-    // A server function started with an almost-expired JWT can be rejected
-    // before the browser's background refresh completes. Refresh it here so
-    // an upload/presign request always carries a usable bearer token.
-    const expiresSoon = session?.expires_at && session.expires_at * 1000 <= Date.now() + 60_000
-    if (expiresSoon) {
-      const { data: refreshed, error } = await supabase.auth.refreshSession()
-      if (error || !refreshed.session) {
-        throw new Error("Your session has expired. Please sign in again.")
-      }
-      session = refreshed.session
-    }
-
-    const token = session?.access_token
+    const token = data.session?.access_token
     return next({
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     })

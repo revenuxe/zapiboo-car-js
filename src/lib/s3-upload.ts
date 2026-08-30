@@ -125,11 +125,21 @@ function parseImageDataUrl(input: string): { contentType: string; base64: string
  * return its public URL. Used by every admin image field (brands, series,
  * models, listings).
  */
+/**
+ * AWS/S3 uploads are temporarily disabled for this project. Set this back to
+ * `true` (and restore the AWS_* secrets) to re-enable the S3 image pipeline.
+ */
+export const s3UploadsEnabled = false;
+
+const S3_DISABLED_MESSAGE =
+  "Image uploads are temporarily disabled. Paste an image URL instead.";
+
 export async function uploadImageToS3(
   file: File,
   folder: string,
   opts: { maxDim?: number; quality?: number } = {},
 ): Promise<string> {
+  if (!s3UploadsEnabled) throw new Error(S3_DISABLED_MESSAGE);
   const { maxDim = 1280, quality = 0.82 } = opts;
   const { blob, contentType, ext } = await prepareImage(file, maxDim, quality);
 
@@ -156,6 +166,7 @@ export async function uploadImageToS3(
  * pickup booking photo, where the image is compressed before upload.
  */
 export async function uploadDataUrlToS3(dataUrl: string, folder: string): Promise<string> {
+  if (!s3UploadsEnabled) throw new Error(S3_DISABLED_MESSAGE);
   const { contentType, base64, ext } = parseImageDataUrl(dataUrl);
 
   const { data, error } = await supabase.functions.invoke<{ publicUrl: string; key: string }>("s3-upload", {

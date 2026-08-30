@@ -9,10 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TopScrapBuyersRouteImport } from './routes/top-scrap-buyers'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as ScrapCarsRouteImport } from './routes/scrap-cars'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as PickupRouteImport } from './routes/pickup'
 import { Route as MaterialsRouteImport } from './routes/materials'
@@ -40,11 +38,6 @@ import { Route as SellOldLaptopBrandModelRouteImport } from './routes/sell-old-l
 import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category_.$brand_.$series'
 import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category_.$brand_.$series_.$model'
 
-const TopScrapBuyersRoute = TopScrapBuyersRouteImport.update({
-  id: '/top-scrap-buyers',
-  path: '/top-scrap-buyers',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
@@ -53,11 +46,6 @@ const TermsRoute = TermsRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ScrapCarsRoute = ScrapCarsRouteImport.update({
-  id: '/scrap-cars',
-  path: '/scrap-cars',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -206,10 +194,8 @@ export interface FileRoutesByFullPath {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
-  '/scrap-cars': typeof ScrapCarsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/top-scrap-buyers': typeof TopScrapBuyersRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
@@ -238,10 +224,8 @@ export interface FileRoutesByTo {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
-  '/scrap-cars': typeof ScrapCarsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/top-scrap-buyers': typeof TopScrapBuyersRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
@@ -271,10 +255,8 @@ export interface FileRoutesById {
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
-  '/scrap-cars': typeof ScrapCarsRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terms': typeof TermsRoute
-  '/top-scrap-buyers': typeof TopScrapBuyersRoute
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
@@ -305,10 +287,8 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
-    | '/scrap-cars'
     | '/sitemap.xml'
     | '/terms'
-    | '/top-scrap-buyers'
     | '/admin/dashboard'
     | '/admin/login'
     | '/api/keepalive'
@@ -337,10 +317,8 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
-    | '/scrap-cars'
     | '/sitemap.xml'
     | '/terms'
-    | '/top-scrap-buyers'
     | '/admin/dashboard'
     | '/admin/login'
     | '/api/keepalive'
@@ -369,10 +347,8 @@ export interface FileRouteTypes {
     | '/materials'
     | '/pickup'
     | '/privacy'
-    | '/scrap-cars'
     | '/sitemap.xml'
     | '/terms'
-    | '/top-scrap-buyers'
     | '/admin/dashboard'
     | '/admin/login'
     | '/api/keepalive'
@@ -402,10 +378,8 @@ export interface RootRouteChildren {
   MaterialsRoute: typeof MaterialsRoute
   PickupRoute: typeof PickupRoute
   PrivacyRoute: typeof PrivacyRoute
-  ScrapCarsRoute: typeof ScrapCarsRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TermsRoute: typeof TermsRoute
-  TopScrapBuyersRoute: typeof TopScrapBuyersRoute
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ApiKeepaliveRoute: typeof ApiKeepaliveRoute
@@ -423,13 +397,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/top-scrap-buyers': {
-      id: '/top-scrap-buyers'
-      path: '/top-scrap-buyers'
-      fullPath: '/top-scrap-buyers'
-      preLoaderRoute: typeof TopScrapBuyersRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/terms': {
       id: '/terms'
       path: '/terms'
@@ -442,13 +409,6 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/scrap-cars': {
-      id: '/scrap-cars'
-      path: '/scrap-cars'
-      fullPath: '/scrap-cars'
-      preLoaderRoute: typeof ScrapCarsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -650,10 +610,8 @@ const rootRouteChildren: RootRouteChildren = {
   MaterialsRoute: MaterialsRoute,
   PickupRoute: PickupRoute,
   PrivacyRoute: PrivacyRoute,
-  ScrapCarsRoute: ScrapCarsRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TermsRoute: TermsRoute,
-  TopScrapBuyersRoute: TopScrapBuyersRoute,
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
   ApiKeepaliveRoute: ApiKeepaliveRoute,

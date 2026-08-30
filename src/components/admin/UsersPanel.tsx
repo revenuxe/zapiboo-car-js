@@ -22,15 +22,10 @@ export function UsersPanel() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "customers"],
     queryFn: async (): Promise<Customer[]> => {
-      const [profilesRes, ordersRes, leadsRes] = await Promise.all([
+      const [profilesRes, leadsRes] = await Promise.all([
         supabase
           .from("user_profiles")
           .select("user_id, full_name, whatsapp, address, pincode, created_at"),
-        supabase
-          .from("device_orders")
-          .select("user_id, name, phone, email, address, pincode, created_at")
-          .not("user_id", "is", null)
-          .order("created_at", { ascending: false }),
         supabase
           .from("leads")
           .select("user_id, name, phone, email, address, pincode, created_at")
@@ -39,7 +34,6 @@ export function UsersPanel() {
       ]);
 
       if (profilesRes.error) throw profilesRes.error;
-      if (ordersRes.error) throw ordersRes.error;
       if (leadsRes.error) throw leadsRes.error;
 
       const map = new Map<string, Customer>();
@@ -73,16 +67,6 @@ export function UsersPanel() {
         c.pincode ||= p.pincode ?? "";
         touch(c, p.created_at);
       }
-      for (const o of ordersRes.data ?? []) {
-        const c = ensure(o.user_id as string);
-        c.name ||= o.name ?? "";
-        c.phone ||= o.phone ?? "";
-        c.email ||= o.email ?? "";
-        c.address ||= o.address ?? "";
-        c.pincode ||= o.pincode ?? "";
-        c.bookings += 1;
-        touch(c, o.created_at);
-      }
       for (const l of leadsRes.data ?? []) {
         const c = ensure(l.user_id as string);
         c.name ||= l.name ?? "";
@@ -90,7 +74,7 @@ export function UsersPanel() {
         c.email ||= l.email ?? "";
         c.address ||= l.address ?? "";
         c.pincode ||= l.pincode ?? "";
-        c.pickups += 1;
+        c.bookings += 1;
         touch(c, l.created_at);
       }
 

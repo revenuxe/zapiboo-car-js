@@ -388,8 +388,7 @@ export type Database = {
           photo_url: string | null
           pincode: string | null
           preferred_date: string | null
-          scrap_mode: string
-          size_tier: string | null
+          vehicle_type: string
           slot: string | null
           status: string
           subject: string | null
@@ -414,8 +413,7 @@ export type Database = {
           photo_url?: string | null
           pincode?: string | null
           preferred_date?: string | null
-          scrap_mode?: string
-          size_tier?: string | null
+          vehicle_type?: string
           slot?: string | null
           status?: string
           subject?: string | null
@@ -440,8 +438,7 @@ export type Database = {
           photo_url?: string | null
           pincode?: string | null
           preferred_date?: string | null
-          scrap_mode?: string
-          size_tier?: string | null
+          vehicle_type?: string
           slot?: string | null
           status?: string
           subject?: string | null

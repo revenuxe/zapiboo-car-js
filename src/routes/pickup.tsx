@@ -28,33 +28,19 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
 import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
-import { householdTypes, vehicleCategories, vehicleCategoryById } from "@/lib/bangalore-data";
-import { useScrapCategories } from "@/lib/scrap-categories";
+import { vehicleCategories, vehicleCategoryById } from "@/lib/bangalore-data";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 
 type PickupSearch = {
-  mode?: "mixed" | "specific";
-  item?: string;
   pincode?: string;
   bookingAuth?: "1";
 };
 
-// Best-effort icon match for a live category by keyword; falls back to a generic box.
-function iconForCategory(name: string) {
-  const key = name.toLowerCase();
-  const match = householdTypes.find(
-    (t) => key.includes(t.name.toLowerCase().split(" ")[0]) || t.name.toLowerCase().includes(key),
-  );
-  return match?.icon ?? Boxes;
-}
-
 export const Route = createFileRoute("/pickup")({
   validateSearch: (search: Record<string, unknown>): PickupSearch => {
     const parsed: PickupSearch = {};
-    if (search.mode === "mixed" || search.mode === "specific") parsed.mode = search.mode;
-    if (typeof search.item === "string") parsed.item = search.item;
     if (typeof search.pincode === "string" && /^\d{6}$/.test(search.pincode)) {
       parsed.pincode = search.pincode;
     }
@@ -63,17 +49,17 @@ export const Route = createFileRoute("/pickup")({
   },
   head: () => ({
     meta: [
-      { title: "Book a Doorstep Scrap Pickup in Bengaluru | ZAPIBOO" },
+      { title: "Book a Free Vehicle Inspection in Bengaluru | ZAPIBOO" },
       {
         name: "description",
         content:
-          "Book a free doorstep scrap pickup across Bengaluru in a few taps. Transparent live ₹ rates, certified weighing at your door and instant payment.",
+          "Book a free doorstep vehicle inspection across Bengaluru in a few taps. Get a fair market-linked offer and same-day payment.",
       },
-      { property: "og:title", content: "Book a Doorstep Scrap Pickup in Bengaluru | ZAPIBOO" },
+      { property: "og:title", content: "Book a Free Vehicle Inspection in Bengaluru | ZAPIBOO" },
       {
         property: "og:description",
         content:
-          "Free doorstep pickup for household scrap in Bengaluru. Fair rates, instant payment.",
+          "Free doorstep vehicle inspection in Bengaluru. Fair market-linked offers and same-day payment.",
       },
     ],
     links: [{ rel: "canonical", href: "/pickup" }],
@@ -123,7 +109,6 @@ type PickupPhoto = {
 
 function Pickup() {
   const pickupSearch = Route.useSearch();
-  const { data: categories = [] } = useScrapCategories();
   const { data: availability } = useServiceAvailability();
   const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
@@ -134,8 +119,8 @@ function Pickup() {
   );
 
   // steps 1–2: vehicle type, then body style and photo
-  const [scrapMode, setScrapMode] = useState<string>("");
-  const [items, setItems] = useState<string[]>([]);
+  const [vehicleType, setVehicleType] = useState<string>("");
+  const [vehicleDetails, setVehicleDetails] = useState<string[]>([]);
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -169,10 +154,10 @@ function Pickup() {
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
 
-  const selectedVehicleCategory = vehicleCategoryById(scrapMode);
+  const selectedVehicleCategory = vehicleCategoryById(vehicleType);
 
   const toggleItem = (id: string) =>
-    setItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+    setVehicleDetails((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
 
   const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
     try {
@@ -229,8 +214,8 @@ function Pickup() {
       JSON.stringify({
         step,
         flowVersion: 2,
-        scrapMode,
-        items,
+        vehicleType,
+        vehicleDetails,
         pincode,
         address,
         geo,
@@ -258,8 +243,8 @@ function Pickup() {
         const draft = JSON.parse(rawDraft) as {
           step?: number;
           flowVersion?: number;
-          scrapMode?: string;
-          items?: string[];
+          vehicleType?: string;
+          vehicleDetails?: string[];
           pincode?: string;
           address?: string;
           geo?: { lat: number; lng: number } | null;
@@ -269,8 +254,8 @@ function Pickup() {
           phone?: string;
           photo?: { id?: string; previewUrl?: string; uploadedUrl?: string | null } | null;
         };
-        if (draft.scrapMode) setScrapMode(draft.scrapMode);
-        if (Array.isArray(draft.items)) setItems(draft.items);
+        if (draft.vehicleType) setVehicleType(draft.vehicleType);
+        if (Array.isArray(draft.vehicleDetails)) setVehicleDetails(draft.vehicleDetails);
         if (draft.pincode) setPincode(draft.pincode);
         if (draft.address) setAddress(draft.address);
         if (draft.geo) setGeo(draft.geo);
@@ -309,7 +294,7 @@ function Pickup() {
     if (!hydrated || submitted) return;
     savePickupDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, submitted, step, scrapMode, items, pincode, address, geo, date, slot, name, phone, photo]);
+  }, [hydrated, submitted, step, vehicleType, vehicleDetails, pincode, address, geo, date, slot, name, phone, photo]);
 
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {
@@ -324,27 +309,6 @@ function Pickup() {
       `${window.location.pathname}${query ? `?${query}` : ""}`,
     );
   }, [pickupSearch.bookingAuth]);
-
-  useEffect(() => {
-    if (!pickupSearch.mode) return;
-
-    if (pickupSearch.mode === "mixed") {
-      setScrapMode("mixed");
-      setItems([]);
-      return;
-    }
-
-    setScrapMode("specific");
-    if (!pickupSearch.item) return;
-
-    const requested = pickupSearch.item.toLowerCase();
-    const matchedCategory =
-      categories.find((category) => category.name.toLowerCase() === requested) ??
-      categories.find((category) => category.name.toLowerCase().includes(requested)) ??
-      categories.find((category) => requested.includes(category.name.toLowerCase()));
-
-    setItems([matchedCategory?.name ?? pickupSearch.item]);
-  }, [categories, pickupSearch.item, pickupSearch.mode]);
 
   useEffect(() => {
     if (!user) return;
@@ -478,10 +442,10 @@ function Pickup() {
 
   const goNext = () => {
     if (step === 1) {
-      if (!scrapMode) return toast.error("Tell us what you're selling.");
+      if (!vehicleType) return toast.error("Tell us what vehicle you're selling.");
     }
     if (step === 2) {
-      if (items.length === 0)
+      if (vehicleDetails.length === 0)
         return toast.error("Pick the body style that matches your vehicle.");
     }
     if (step === 4) {
@@ -546,9 +510,8 @@ function Pickup() {
     }
 
     const { error } = await supabase.from("leads").insert({
-      scrap_mode: scrapMode || "car",
-      items,
-      size_tier: null,
+      vehicle_type: vehicleType || "car",
+      items: vehicleDetails,
       has_photo: !!photoUrl,
       photo_url: photoUrl,
       locality: null,
@@ -722,14 +685,14 @@ function Pickup() {
                   <div className="mt-5 grid grid-cols-2 gap-3">
                     {vehicleCategories.map((category) => {
                       const Icon = category.icon;
-                      const active = scrapMode === category.id;
+                      const active = vehicleType === category.id;
                       return (
                         <button
                           type="button"
                           key={category.id}
                           onClick={() => {
-                            setScrapMode(category.id);
-                            setItems([]);
+                            setVehicleType(category.id);
+                            setVehicleDetails([]);
                           }}
                           className={cn(
                             "rounded-2xl border-2 p-5 text-left transition-all",
@@ -780,7 +743,7 @@ function Pickup() {
                       >
                         <div className="mt-5 flex flex-wrap gap-2">
                           {selectedVehicleCategory.subcategories.map((sub) => {
-                            const active = items.includes(sub);
+                            const active = vehicleDetails.includes(sub);
                             const Icon = selectedVehicleCategory.icon;
                             return (
                               <button

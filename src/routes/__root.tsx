@@ -151,7 +151,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="scrap-theme flex min-h-screen flex-col">
+      <div className="flex min-h-screen flex-col">
         {!chromeless && <SiteHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <main className="flex-1">

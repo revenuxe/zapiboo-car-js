@@ -227,11 +227,3 @@
   box-shadow: var(--shadow-soft);
 }
 
-/*
- * Vehicle (marketplace) side of the site. Kept as a class hook so page-level
- * overrides stay possible, but it now matches the single ZAPIBOO red/black brand.
- */
-.scrap-theme {
-  background-color: var(--background);
-  color: var(--foreground);
-}

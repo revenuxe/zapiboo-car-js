@@ -66,7 +66,7 @@ function Contact() {
     setSending(true);
     const { error } = await supabase.from("leads").insert({
       lead_type: "query",
-      scrap_mode: "query",
+      vehicle_type: "query",
       items: ["Contact query"],
       has_photo: false,
       name,

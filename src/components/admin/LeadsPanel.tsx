@@ -53,9 +53,8 @@ import { isSpamLead } from "@/lib/spam-filter";
 type Lead = {
   id: string;
   lead_type: string | null;
-  scrap_mode: string;
+  vehicle_type: string;
   items: string[];
-  size_tier: string | null;
   has_photo: boolean;
   photo_url: string | null;
   locality: string | null;
@@ -97,9 +96,7 @@ function StatusChip({ status }: { status: string }) {
   );
 }
 
-function isQueryLead(lead: Lead) {
-  return lead.lead_type === "query" || lead.scrap_mode === "query";
-}
+function isQueryLead(lead: Lead) { return lead.lead_type === "query" || lead.vehicle_type === "query"; }
 
 function LeadTypeChip({ lead }: { lead: Lead }) {
   if (!isQueryLead(lead)) return null;
@@ -129,7 +126,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
-      return data as Lead[];
+      return data as unknown as Lead[];
     },
   });
 
@@ -350,7 +347,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                       </>
                     ) : (
                       <>
-                        <Row icon={Boxes} label={selected.scrap_mode === "specific" && selected.items.length ? selected.items.join(", ") : "Mixed scrap"} sub={selected.size_tier ?? undefined} />
+                        <Row icon={Boxes} label={selected.items.length ? selected.items.join(", ") : selected.vehicle_type} />
                         <Row icon={MapPin} label={`${selected.locality ?? "-"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
                         <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />
                         <Row icon={Phone} label={selected.phone} />
@@ -364,7 +361,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                         <a href={selected.photo_url} target="_blank" rel="noreferrer" className="block">
                           <img
                             src={selected.photo_url}
-                            alt="Uploaded scrap"
+                            alt="Uploaded vehicle"
                             className="max-h-44 w-full rounded-2xl border border-border object-cover sm:max-h-64"
                           />
                         </a>

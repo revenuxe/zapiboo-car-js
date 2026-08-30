@@ -119,23 +119,25 @@ function Home() {
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
-          <div className="max-w-3xl">
+          <div className="max-w-5xl">
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl"
+              className="text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-5xl"
             >
-              Sell your used vehicle in <span className="text-gradient">Bangalore</span>
+              Sell your used <span className="text-[#b63b35]">car</span> or{" "}
+              <span className="text-[#b63b35]">bike</span> in{" "}
+              <span className="text-[#b63b35]">Bangalore</span>
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.12 }}
-              className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
+              className="mt-5 max-w-3xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Free doorstep inspection, a fair offer and instant payment for cars, bikes and scooters.
+              Get a fair, market-linked offer with free doorstep inspection, same-day payment and RC transfer for cars, bikes and scooters.
             </motion.p>
 
             <motion.div
@@ -159,7 +161,7 @@ function Home() {
                 href={`https://wa.me/91${businessContact.phone}?text=${encodeURIComponent("Hi ZAPIBOO, I want a free valuation for my used vehicle in Bangalore.")}`}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-4 flex w-full max-w-md items-center justify-center gap-2 rounded-2xl bg-[#00C875] px-5 py-4 text-base font-bold text-white transition-transform hover:-translate-y-0.5 hover:bg-[#00b36a]"
+                className="mt-4 flex w-full max-w-md items-center justify-center gap-2 rounded-2xl bg-[#00C875] px-5 py-4 text-base font-bold text-white transition-transform hover:-translate-y-0.5 hover:bg-[#00b36a] md:w-fit"
               >
                 <WhatsAppIcon className="size-5" />
                 Sell instantly on WhatsApp
@@ -188,7 +190,6 @@ function Home() {
               <Reveal key={card.title} delay={(index % 3) * 0.05}>
                 <Link
                   to="/pickup"
-                  search={card.search}
                   className="group relative flex h-full min-h-40 flex-col justify-end overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 p-4 text-foreground shadow-soft transition-all hover:-translate-y-1 hover:bg-primary/10 hover:shadow-elevated sm:p-5"
                 >
                   <span
@@ -366,8 +367,7 @@ function Home() {
             {featuredAreas.map((area) => (
               <Link
                 key={area.slug}
-                to="/areas/$area"
-                params={{ area: area.slug }}
+                to="/pickup"
                 className="group flex min-h-24 min-w-0 flex-col items-start gap-3 rounded-2xl border border-border bg-card px-3 py-4 text-left font-medium shadow-soft transition-all hover:-translate-y-0.5 hover:border-primary/50 hover:text-primary sm:min-h-20 sm:flex-row sm:items-center sm:px-5"
               >
                 <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
@@ -384,8 +384,8 @@ function Home() {
               From HBR Layout and Nagawara to Whitefield, HSR Layout, JP Nagar and beyond.
             </p>
             <Button asChild variant="outline" size="lg">
-              <Link to="/areas">
-                View all Bangalore areas
+              <Link to="/pickup">
+                Check pickup availability
                 <ArrowRight />
               </Link>
             </Button>

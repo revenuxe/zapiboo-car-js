@@ -27,7 +27,7 @@ export const Route = createFileRoute("/api/keepalive")({
         });
 
         const { error, count } = await supabase
-          .from("scrap_rates")
+          .from("leads")
           .select("id", { count: "exact", head: true });
 
         if (error) {
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/api/keepalive")({
         }
 
         return Response.json(
-          { ok: true, checkedAt: new Date().toISOString(), ratesCount: count ?? 0 },
+          { ok: true, checkedAt: new Date().toISOString(), leadsCount: count ?? 0 },
           { headers: { "Cache-Control": "no-store" } },
         );
       },

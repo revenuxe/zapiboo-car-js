@@ -6,7 +6,7 @@ export function PageHeader({
   subtitle,
   children,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   title: ReactNode;
   subtitle?: string;
   children?: ReactNode;
@@ -18,10 +18,8 @@ export function PageHeader({
         className="pointer-events-none absolute -right-24 -top-24 size-96 rounded-full bg-brand-green/20 blur-3xl"
       />
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 md:py-24 lg:px-8">
-        <p className="text-sm font-semibold uppercase tracking-wider text-brand-green">
-          {eyebrow}
-        </p>
-        <h1 className="mt-3 max-w-3xl text-4xl font-extrabold leading-tight text-gradient drop-shadow-sm sm:text-5xl md:text-6xl">
+        {eyebrow && <p className="text-sm font-semibold uppercase tracking-wider text-brand-green">{eyebrow}</p>}
+        <h1 className={`${eyebrow ? "mt-3" : ""} max-w-3xl text-4xl font-extrabold leading-tight text-gradient drop-shadow-sm sm:text-5xl md:text-6xl`}>
           {title}
         </h1>
         {subtitle && (

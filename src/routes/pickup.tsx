@@ -474,7 +474,7 @@ function Pickup() {
     if (step === 1) {
       if (!scrapMode) return toast.error("Tell us what you're selling.");
       if (items.length === 0)
-        return toast.error("Pick at least one item, or choose Mixed scrap.");
+        return toast.error("Pick the body style that matches your vehicle.");
     }
     if (step === 2) {
       if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
@@ -794,7 +794,7 @@ function Pickup() {
                       <div className="mt-3 relative w-fit">
                         <img
                           src={photo.previewUrl}
-                          alt="Your scrap"
+                          alt="Your vehicle"
                           className="size-28 rounded-xl object-cover"
                         />
                         <button

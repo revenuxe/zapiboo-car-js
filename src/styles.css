@@ -71,71 +71,71 @@
 :root {
   --radius: 0.85rem;
 
-  --background: oklch(0.99 0.002 20);
-  --foreground: oklch(0.16 0.01 20);
+  --background: oklch(0.985 0.003 60);
+  --foreground: oklch(0.18 0.008 40);
 
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.16 0.01 20);
+  --card-foreground: oklch(0.18 0.008 40);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0.01 20);
+  --popover-foreground: oklch(0.18 0.008 40);
 
-  /* Brand: signal red from the ZAPIBOO logo */
-  --primary: oklch(0.56 0.22 27);
-  --primary-foreground: oklch(0.99 0.005 20);
+  /* Brand: deep automotive crimson — restrained, not neon */
+  --primary: oklch(0.47 0.14 25);
+  --primary-foreground: oklch(0.99 0.004 60);
 
-  --secondary: oklch(0.96 0.006 20);
-  --secondary-foreground: oklch(0.18 0.012 20);
+  --secondary: oklch(0.955 0.004 60);
+  --secondary-foreground: oklch(0.2 0.01 40);
 
-  --muted: oklch(0.96 0.005 20);
-  --muted-foreground: oklch(0.5 0.015 20);
+  --muted: oklch(0.955 0.004 60);
+  --muted-foreground: oklch(0.5 0.01 40);
 
-  --accent: oklch(0.95 0.035 25);
-  --accent-foreground: oklch(0.3 0.14 27);
+  --accent: oklch(0.955 0.012 30);
+  --accent-foreground: oklch(0.36 0.1 25);
 
-  --destructive: oklch(0.5 0.2 20);
-  --destructive-foreground: oklch(0.99 0.01 20);
+  --destructive: oklch(0.52 0.17 25);
+  --destructive-foreground: oklch(0.99 0.005 60);
 
-  --border: oklch(0.91 0.006 20);
-  --input: oklch(0.91 0.006 20);
-  --ring: oklch(0.56 0.22 27);
+  --border: oklch(0.91 0.004 60);
+  --input: oklch(0.91 0.004 60);
+  --ring: oklch(0.47 0.14 25);
 
-  /* Brand tokens — jet black + signal red */
-  --navy: oklch(0.14 0.008 20);
-  --navy-foreground: oklch(0.98 0.004 20);
-  --navy-muted: oklch(0.26 0.012 20);
-  --brand-green: oklch(0.58 0.22 27);
-  --brand-green-deep: oklch(0.46 0.19 26);
+  /* Brand tokens — graphite black + deep crimson */
+  --navy: oklch(0.17 0.008 40);
+  --navy-foreground: oklch(0.97 0.004 60);
+  --navy-muted: oklch(0.3 0.01 40);
+  --brand-green: oklch(0.5 0.14 25);
+  --brand-green-deep: oklch(0.4 0.12 25);
 
   --gradient-brand: linear-gradient(
     100deg,
-    oklch(0.62 0.22 30),
-    oklch(0.48 0.2 24)
+    oklch(0.52 0.15 28),
+    oklch(0.38 0.11 22)
   );
   --gradient-navy: linear-gradient(
     160deg,
-    oklch(0.19 0.012 20),
-    oklch(0.1 0.008 20)
+    oklch(0.22 0.012 40),
+    oklch(0.12 0.008 40)
   );
   --gradient-hero: linear-gradient(
     180deg,
-    color-mix(in oklab, oklch(0.14 0.008 20) 0%, transparent),
-    color-mix(in oklab, oklch(0.1 0.008 20) 92%, transparent)
+    color-mix(in oklab, oklch(0.17 0.008 40) 0%, transparent),
+    color-mix(in oklab, oklch(0.12 0.008 40) 92%, transparent)
   );
 
-  --chart-1: oklch(0.58 0.22 27);
-  --chart-2: oklch(0.68 0.16 40);
-  --chart-3: oklch(0.45 0.02 20);
-  --chart-4: oklch(0.75 0.12 60);
-  --chart-5: oklch(0.35 0.15 25);
+  --chart-1: oklch(0.5 0.14 25);
+  --chart-2: oklch(0.62 0.1 45);
+  --chart-3: oklch(0.45 0.02 40);
+  --chart-4: oklch(0.72 0.08 70);
+  --chart-5: oklch(0.33 0.1 25);
 
-  --sidebar: oklch(0.99 0.002 20);
-  --sidebar-foreground: oklch(0.16 0.01 20);
-  --sidebar-primary: oklch(0.56 0.22 27);
-  --sidebar-primary-foreground: oklch(0.99 0.005 20);
-  --sidebar-accent: oklch(0.95 0.035 25);
-  --sidebar-accent-foreground: oklch(0.3 0.14 27);
-  --sidebar-border: oklch(0.91 0.006 20);
-  --sidebar-ring: oklch(0.56 0.22 27);
+  --sidebar: oklch(0.985 0.003 60);
+  --sidebar-foreground: oklch(0.18 0.008 40);
+  --sidebar-primary: oklch(0.47 0.14 25);
+  --sidebar-primary-foreground: oklch(0.99 0.004 60);
+  --sidebar-accent: oklch(0.955 0.012 30);
+  --sidebar-accent-foreground: oklch(0.36 0.1 25);
+  --sidebar-border: oklch(0.91 0.004 60);
+  --sidebar-ring: oklch(0.47 0.14 25);
 }
 
 

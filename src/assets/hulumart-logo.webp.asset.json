@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "5fd46728-a385-42b9-b873-b830c517dab6",
-  "project_id": "1a445bfa-afc7-48dd-9d79-305e0889deaf",
-  "url": "/__l5e/assets-v1/5fd46728-a385-42b9-b873-b830c517dab6/hulumart-logo.webp",
-  "r2_key": "a/v1/1a445bfa-afc7-48dd-9d79-305e0889deaf/5fd46728-a385-42b9-b873-b830c517dab6/hulumart-logo.webp",
-  "original_filename": "hulumart-logo.webp",
-  "size": 31802,
   "content_type": "image/webp",
-  "created_at": "2026-07-25T12:23:12Z"
+  "created_at": "2026-07-25T12:23:12Z",
+  "original_filename": "hulumart-logo.webp",
+  "project_id": "73e476fe-df7e-4d1f-9892-b7ea759f76e1",
+  "r2_key": "a/v1/73e476fe-df7e-4d1f-9892-b7ea759f76e1/5fd46728-a385-42b9-b873-b830c517dab6/hulumart-logo.webp",
+  "size": 31802,
+  "url": "/__l5e/assets-v1/5fd46728-a385-42b9-b873-b830c517dab6/hulumart-logo.webp",
+  "version": 1
 }

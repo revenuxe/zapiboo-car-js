@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
-import { Menu, ArrowRight, User as UserIcon, LogOut, Laptop, LayoutDashboard } from "lucide-react";
+import { Menu, ArrowRight, User as UserIcon, LogOut, Car, LayoutDashboard } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -35,7 +35,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Logo />
+        <Logo imageClassName="h-12 md:h-14" />
 
         <nav className="hidden items-center gap-1 lg:flex">
           {navLinks.map((link) => {
@@ -81,7 +81,7 @@ export function SiteHeader() {
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
                   <Link to="/account">
-                    <Laptop className="size-4" /> My laptop quotes
+                    <Car className="size-4" /> My vehicle bookings
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -96,8 +96,8 @@ export function SiteHeader() {
             </Button>
           )}
           <Button asChild variant="ghost" size="sm">
-            <Link to="/sell/$category" params={{ category: "laptops" }}>
-              Sell laptop
+            <Link to="/pickup">
+              Sell a vehicle
             </Link>
           </Button>
           <Button asChild variant="hero" size="sm">
@@ -117,7 +117,7 @@ export function SiteHeader() {
           <SheetContent side="right" className="w-[300px]">
             <SheetTitle className="sr-only">Menu</SheetTitle>
             <div className="mt-2 mb-8">
-              <Logo />
+              <Logo imageClassName="h-12" />
             </div>
 
             {user && (
@@ -162,8 +162,8 @@ export function SiteHeader() {
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
-                <Link to="/sell/$category" params={{ category: "laptops" }}>
-                  Sell laptop
+                <Link to="/pickup">
+                  Sell a vehicle
                 </Link>
               </Button>
               {user ? (

@@ -9,93 +9,22 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as PrivacyRouteImport } from './routes/privacy'
-import { Route as PickupRouteImport } from './routes/pickup'
-import { Route as MaterialsRouteImport } from './routes/materials'
-import { Route as ListingsRouteImport } from './routes/listings'
-import { Route as HowItWorksRouteImport } from './routes/how-it-works'
-import { Route as ContactRouteImport } from './routes/contact'
-import { Route as BusinessRouteImport } from './routes/business'
-import { Route as BlogRouteImport } from './routes/blog'
-import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AreasRouteImport } from './routes/areas'
-import { Route as AccountRouteImport } from './routes/account'
-import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as SellCategoryRouteImport } from './routes/sell.$category'
-import { Route as SellUsedLaptopAreaRouteImport } from './routes/sell-used-laptop.$area'
-import { Route as SellOldLaptopBrandRouteImport } from './routes/sell-old-laptop.$brand'
-import { Route as ListingsSlugRouteImport } from './routes/listings_.$slug'
-import { Route as BlogSlugRouteImport } from './routes/blog_.$slug'
-import { Route as AreasAreaRouteImport } from './routes/areas_.$area'
-import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
-import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AccountRouteImport } from './routes/account'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ContactRouteImport } from './routes/contact'
+import { Route as MaterialsRouteImport } from './routes/materials'
+import { Route as PickupRouteImport } from './routes/pickup'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AdminDashboardRouteImport } from './routes/admin.dashboard'
-import { Route as SellCategoryBrandRouteImport } from './routes/sell.$category_.$brand'
-import { Route as SellOldLaptopBrandModelRouteImport } from './routes/sell-old-laptop.$brand_.$model'
-import { Route as SellCategoryBrandSeriesRouteImport } from './routes/sell.$category_.$brand_.$series'
-import { Route as SellCategoryBrandSeriesModelRouteImport } from './routes/sell.$category_.$brand_.$series_.$model'
+import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ApiKeepaliveRouteImport } from './routes/api.keepalive'
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PickupRoute = PickupRouteImport.update({
-  id: '/pickup',
-  path: '/pickup',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MaterialsRoute = MaterialsRouteImport.update({
-  id: '/materials',
-  path: '/materials',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ListingsRoute = ListingsRouteImport.update({
-  id: '/listings',
-  path: '/listings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HowItWorksRoute = HowItWorksRouteImport.update({
-  id: '/how-it-works',
-  path: '/how-it-works',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BusinessRoute = BusinessRouteImport.update({
-  id: '/business',
-  path: '/business',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BlogRoute = BlogRouteImport.update({
-  id: '/blog',
-  path: '/blog',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AuthRoute = AuthRouteImport.update({
-  id: '/auth',
-  path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AreasRoute = AreasRouteImport.update({
-  id: '/areas',
-  path: '/areas',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AccountRoute = AccountRouteImport.update({
@@ -103,54 +32,39 @@ const AccountRoute = AccountRouteImport.update({
   path: '/account',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellCategoryRoute = SellCategoryRouteImport.update({
-  id: '/sell/$category',
-  path: '/sell/$category',
+const MaterialsRoute = MaterialsRouteImport.update({
+  id: '/materials',
+  path: '/materials',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellUsedLaptopAreaRoute = SellUsedLaptopAreaRouteImport.update({
-  id: '/sell-used-laptop/$area',
-  path: '/sell-used-laptop/$area',
+const PickupRoute = PickupRouteImport.update({
+  id: '/pickup',
+  path: '/pickup',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellOldLaptopBrandRoute = SellOldLaptopBrandRouteImport.update({
-  id: '/sell-old-laptop/$brand',
-  path: '/sell-old-laptop/$brand',
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ListingsSlugRoute = ListingsSlugRouteImport.update({
-  id: '/listings_/$slug',
-  path: '/listings/$slug',
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/blog_/$slug',
-  path: '/blog/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AreasAreaRoute = AreasAreaRouteImport.update({
-  id: '/areas_/$area',
-  path: '/areas/$area',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiKeepaliveRoute = ApiKeepaliveRouteImport.update({
-  id: '/api/keepalive',
-  path: '/api/keepalive',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AdminLoginRoute = AdminLoginRouteImport.update({
-  id: '/admin/login',
-  path: '/admin/login',
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminDashboardRoute = AdminDashboardRouteImport.update({
@@ -158,39 +72,22 @@ const AdminDashboardRoute = AdminDashboardRouteImport.update({
   path: '/admin/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellCategoryBrandRoute = SellCategoryBrandRouteImport.update({
-  id: '/sell/$category_/$brand',
-  path: '/sell/$category/$brand',
+const AdminLoginRoute = AdminLoginRouteImport.update({
+  id: '/admin/login',
+  path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellOldLaptopBrandModelRoute = SellOldLaptopBrandModelRouteImport.update({
-  id: '/sell-old-laptop/$brand_/$model',
-  path: '/sell-old-laptop/$brand/$model',
+const ApiKeepaliveRoute = ApiKeepaliveRouteImport.update({
+  id: '/api/keepalive',
+  path: '/api/keepalive',
   getParentRoute: () => rootRouteImport,
 } as any)
-const SellCategoryBrandSeriesRoute = SellCategoryBrandSeriesRouteImport.update({
-  id: '/sell/$category_/$brand_/$series',
-  path: '/sell/$category/$brand/$series',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SellCategoryBrandSeriesModelRoute =
-  SellCategoryBrandSeriesModelRouteImport.update({
-    id: '/sell/$category_/$brand_/$series_/$model',
-    path: '/sell/$category/$brand/$series/$model',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/account': typeof AccountRoute
-  '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRoute
-  '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
-  '/how-it-works': typeof HowItWorksRoute
-  '/listings': typeof ListingsRoute
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -199,28 +96,12 @@ export interface FileRoutesByFullPath {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
-  '/areas/$area': typeof AreasAreaRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/listings/$slug': typeof ListingsSlugRoute
-  '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
-  '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
-  '/sell/$category': typeof SellCategoryRoute
-  '/sell-old-laptop/$brand/$model': typeof SellOldLaptopBrandModelRoute
-  '/sell/$category/$brand': typeof SellCategoryBrandRoute
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
-  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/account': typeof AccountRoute
-  '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRoute
-  '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
-  '/how-it-works': typeof HowItWorksRoute
-  '/listings': typeof ListingsRoute
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -229,29 +110,13 @@ export interface FileRoutesByTo {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
-  '/areas/$area': typeof AreasAreaRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/listings/$slug': typeof ListingsSlugRoute
-  '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
-  '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
-  '/sell/$category': typeof SellCategoryRoute
-  '/sell-old-laptop/$brand/$model': typeof SellOldLaptopBrandModelRoute
-  '/sell/$category/$brand': typeof SellCategoryBrandRoute
-  '/sell/$category/$brand/$series': typeof SellCategoryBrandSeriesRoute
-  '/sell/$category/$brand/$series/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/about': typeof AboutRoute
   '/account': typeof AccountRoute
-  '/areas': typeof AreasRoute
   '/auth': typeof AuthRoute
-  '/blog': typeof BlogRoute
-  '/business': typeof BusinessRoute
   '/contact': typeof ContactRoute
-  '/how-it-works': typeof HowItWorksRoute
-  '/listings': typeof ListingsRoute
   '/materials': typeof MaterialsRoute
   '/pickup': typeof PickupRoute
   '/privacy': typeof PrivacyRoute
@@ -260,30 +125,14 @@ export interface FileRoutesById {
   '/admin/dashboard': typeof AdminDashboardRoute
   '/admin/login': typeof AdminLoginRoute
   '/api/keepalive': typeof ApiKeepaliveRoute
-  '/areas_/$area': typeof AreasAreaRoute
-  '/blog_/$slug': typeof BlogSlugRoute
-  '/listings_/$slug': typeof ListingsSlugRoute
-  '/sell-old-laptop/$brand': typeof SellOldLaptopBrandRoute
-  '/sell-used-laptop/$area': typeof SellUsedLaptopAreaRoute
-  '/sell/$category': typeof SellCategoryRoute
-  '/sell-old-laptop/$brand_/$model': typeof SellOldLaptopBrandModelRoute
-  '/sell/$category_/$brand': typeof SellCategoryBrandRoute
-  '/sell/$category_/$brand_/$series': typeof SellCategoryBrandSeriesRoute
-  '/sell/$category_/$brand_/$series_/$model': typeof SellCategoryBrandSeriesModelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/about'
     | '/account'
-    | '/areas'
     | '/auth'
-    | '/blog'
-    | '/business'
     | '/contact'
-    | '/how-it-works'
-    | '/listings'
     | '/materials'
     | '/pickup'
     | '/privacy'
@@ -292,28 +141,12 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/login'
     | '/api/keepalive'
-    | '/areas/$area'
-    | '/blog/$slug'
-    | '/listings/$slug'
-    | '/sell-old-laptop/$brand'
-    | '/sell-used-laptop/$area'
-    | '/sell/$category'
-    | '/sell-old-laptop/$brand/$model'
-    | '/sell/$category/$brand'
-    | '/sell/$category/$brand/$series'
-    | '/sell/$category/$brand/$series/$model'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/about'
     | '/account'
-    | '/areas'
     | '/auth'
-    | '/blog'
-    | '/business'
     | '/contact'
-    | '/how-it-works'
-    | '/listings'
     | '/materials'
     | '/pickup'
     | '/privacy'
@@ -322,28 +155,12 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/login'
     | '/api/keepalive'
-    | '/areas/$area'
-    | '/blog/$slug'
-    | '/listings/$slug'
-    | '/sell-old-laptop/$brand'
-    | '/sell-used-laptop/$area'
-    | '/sell/$category'
-    | '/sell-old-laptop/$brand/$model'
-    | '/sell/$category/$brand'
-    | '/sell/$category/$brand/$series'
-    | '/sell/$category/$brand/$series/$model'
   id:
     | '__root__'
     | '/'
-    | '/about'
     | '/account'
-    | '/areas'
     | '/auth'
-    | '/blog'
-    | '/business'
     | '/contact'
-    | '/how-it-works'
-    | '/listings'
     | '/materials'
     | '/pickup'
     | '/privacy'
@@ -352,29 +169,13 @@ export interface FileRouteTypes {
     | '/admin/dashboard'
     | '/admin/login'
     | '/api/keepalive'
-    | '/areas_/$area'
-    | '/blog_/$slug'
-    | '/listings_/$slug'
-    | '/sell-old-laptop/$brand'
-    | '/sell-used-laptop/$area'
-    | '/sell/$category'
-    | '/sell-old-laptop/$brand_/$model'
-    | '/sell/$category_/$brand'
-    | '/sell/$category_/$brand_/$series'
-    | '/sell/$category_/$brand_/$series_/$model'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AboutRoute: typeof AboutRoute
   AccountRoute: typeof AccountRoute
-  AreasRoute: typeof AreasRoute
   AuthRoute: typeof AuthRoute
-  BlogRoute: typeof BlogRoute
-  BusinessRoute: typeof BusinessRoute
   ContactRoute: typeof ContactRoute
-  HowItWorksRoute: typeof HowItWorksRoute
-  ListingsRoute: typeof ListingsRoute
   MaterialsRoute: typeof MaterialsRoute
   PickupRoute: typeof PickupRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -383,102 +184,15 @@ export interface RootRouteChildren {
   AdminDashboardRoute: typeof AdminDashboardRoute
   AdminLoginRoute: typeof AdminLoginRoute
   ApiKeepaliveRoute: typeof ApiKeepaliveRoute
-  AreasAreaRoute: typeof AreasAreaRoute
-  BlogSlugRoute: typeof BlogSlugRoute
-  ListingsSlugRoute: typeof ListingsSlugRoute
-  SellOldLaptopBrandRoute: typeof SellOldLaptopBrandRoute
-  SellUsedLaptopAreaRoute: typeof SellUsedLaptopAreaRoute
-  SellCategoryRoute: typeof SellCategoryRoute
-  SellOldLaptopBrandModelRoute: typeof SellOldLaptopBrandModelRoute
-  SellCategoryBrandRoute: typeof SellCategoryBrandRoute
-  SellCategoryBrandSeriesRoute: typeof SellCategoryBrandSeriesRoute
-  SellCategoryBrandSeriesModelRoute: typeof SellCategoryBrandSeriesModelRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/pickup': {
-      id: '/pickup'
-      path: '/pickup'
-      fullPath: '/pickup'
-      preLoaderRoute: typeof PickupRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/materials': {
-      id: '/materials'
-      path: '/materials'
-      fullPath: '/materials'
-      preLoaderRoute: typeof MaterialsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/listings': {
-      id: '/listings'
-      path: '/listings'
-      fullPath: '/listings'
-      preLoaderRoute: typeof ListingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/how-it-works': {
-      id: '/how-it-works'
-      path: '/how-it-works'
-      fullPath: '/how-it-works'
-      preLoaderRoute: typeof HowItWorksRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/business': {
-      id: '/business'
-      path: '/business'
-      fullPath: '/business'
-      preLoaderRoute: typeof BusinessRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/blog': {
-      id: '/blog'
-      path: '/blog'
-      fullPath: '/blog'
-      preLoaderRoute: typeof BlogRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/auth': {
-      id: '/auth'
-      path: '/auth'
-      fullPath: '/auth'
-      preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/areas': {
-      id: '/areas'
-      path: '/areas'
-      fullPath: '/areas'
-      preLoaderRoute: typeof AreasRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/account': {
@@ -488,74 +202,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AccountRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sell/$category': {
-      id: '/sell/$category'
-      path: '/sell/$category'
-      fullPath: '/sell/$category'
-      preLoaderRoute: typeof SellCategoryRouteImport
+    '/materials': {
+      id: '/materials'
+      path: '/materials'
+      fullPath: '/materials'
+      preLoaderRoute: typeof MaterialsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sell-used-laptop/$area': {
-      id: '/sell-used-laptop/$area'
-      path: '/sell-used-laptop/$area'
-      fullPath: '/sell-used-laptop/$area'
-      preLoaderRoute: typeof SellUsedLaptopAreaRouteImport
+    '/pickup': {
+      id: '/pickup'
+      path: '/pickup'
+      fullPath: '/pickup'
+      preLoaderRoute: typeof PickupRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sell-old-laptop/$brand': {
-      id: '/sell-old-laptop/$brand'
-      path: '/sell-old-laptop/$brand'
-      fullPath: '/sell-old-laptop/$brand'
-      preLoaderRoute: typeof SellOldLaptopBrandRouteImport
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/listings_/$slug': {
-      id: '/listings_/$slug'
-      path: '/listings/$slug'
-      fullPath: '/listings/$slug'
-      preLoaderRoute: typeof ListingsSlugRouteImport
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog_/$slug': {
-      id: '/blog_/$slug'
-      path: '/blog/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/areas_/$area': {
-      id: '/areas_/$area'
-      path: '/areas/$area'
-      fullPath: '/areas/$area'
-      preLoaderRoute: typeof AreasAreaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/keepalive': {
-      id: '/api/keepalive'
-      path: '/api/keepalive'
-      fullPath: '/api/keepalive'
-      preLoaderRoute: typeof ApiKeepaliveRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/admin/login': {
-      id: '/admin/login'
-      path: '/admin/login'
-      fullPath: '/admin/login'
-      preLoaderRoute: typeof AdminLoginRouteImport
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/dashboard': {
@@ -565,32 +258,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sell/$category_/$brand': {
-      id: '/sell/$category_/$brand'
-      path: '/sell/$category/$brand'
-      fullPath: '/sell/$category/$brand'
-      preLoaderRoute: typeof SellCategoryBrandRouteImport
+    '/admin/login': {
+      id: '/admin/login'
+      path: '/admin/login'
+      fullPath: '/admin/login'
+      preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/sell-old-laptop/$brand_/$model': {
-      id: '/sell-old-laptop/$brand_/$model'
-      path: '/sell-old-laptop/$brand/$model'
-      fullPath: '/sell-old-laptop/$brand/$model'
-      preLoaderRoute: typeof SellOldLaptopBrandModelRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sell/$category_/$brand_/$series': {
-      id: '/sell/$category_/$brand_/$series'
-      path: '/sell/$category/$brand/$series'
-      fullPath: '/sell/$category/$brand/$series'
-      preLoaderRoute: typeof SellCategoryBrandSeriesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sell/$category_/$brand_/$series_/$model': {
-      id: '/sell/$category_/$brand_/$series_/$model'
-      path: '/sell/$category/$brand/$series/$model'
-      fullPath: '/sell/$category/$brand/$series/$model'
-      preLoaderRoute: typeof SellCategoryBrandSeriesModelRouteImport
+    '/api/keepalive': {
+      id: '/api/keepalive'
+      path: '/api/keepalive'
+      fullPath: '/api/keepalive'
+      preLoaderRoute: typeof ApiKeepaliveRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -598,15 +277,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AboutRoute: AboutRoute,
   AccountRoute: AccountRoute,
-  AreasRoute: AreasRoute,
   AuthRoute: AuthRoute,
-  BlogRoute: BlogRoute,
-  BusinessRoute: BusinessRoute,
   ContactRoute: ContactRoute,
-  HowItWorksRoute: HowItWorksRoute,
-  ListingsRoute: ListingsRoute,
   MaterialsRoute: MaterialsRoute,
   PickupRoute: PickupRoute,
   PrivacyRoute: PrivacyRoute,
@@ -615,16 +288,6 @@ const rootRouteChildren: RootRouteChildren = {
   AdminDashboardRoute: AdminDashboardRoute,
   AdminLoginRoute: AdminLoginRoute,
   ApiKeepaliveRoute: ApiKeepaliveRoute,
-  AreasAreaRoute: AreasAreaRoute,
-  BlogSlugRoute: BlogSlugRoute,
-  ListingsSlugRoute: ListingsSlugRoute,
-  SellOldLaptopBrandRoute: SellOldLaptopBrandRoute,
-  SellUsedLaptopAreaRoute: SellUsedLaptopAreaRoute,
-  SellCategoryRoute: SellCategoryRoute,
-  SellOldLaptopBrandModelRoute: SellOldLaptopBrandModelRoute,
-  SellCategoryBrandRoute: SellCategoryBrandRoute,
-  SellCategoryBrandSeriesRoute: SellCategoryBrandSeriesRoute,
-  SellCategoryBrandSeriesModelRoute: SellCategoryBrandSeriesModelRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

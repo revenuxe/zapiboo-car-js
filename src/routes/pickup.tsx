@@ -133,7 +133,7 @@ function Pickup() {
     "idle",
   );
 
-  // step 1
+  // steps 1–2: vehicle type, then body style and photo
   const [scrapMode, setScrapMode] = useState<string>("");
   const [items, setItems] = useState<string[]>([]);
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
@@ -142,7 +142,7 @@ function Pickup() {
   const photoUploadPromiseRef = useRef<Promise<string> | null>(null);
   const photoUploadIdRef = useRef<string | null>(null);
 
-  // step 2
+  // step 4
   const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
   const [address, setAddress] = useState("");
   const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
@@ -155,16 +155,15 @@ function Pickup() {
   const [authPhone, setAuthPhone] = useState("");
   const [authBusy, setAuthBusy] = useState(false);
 
-  // final step
+  // step 5
   const [date, setDate] = useState("");
   const [slot, setSlot] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Flow order: 1 = what you're clearing, 3 = sign in (skipped when logged in),
-  // 2 = address (auto-filled from the saved profile), 4 = schedule + confirm.
-  const progressSteps = user ? [1, 2, 4] : [1, 3, 2, 4];
+  // Flow order: vehicle type, vehicle details, sign in (if needed), address, schedule.
+  const progressSteps = user ? [1, 2, 4, 5] : [1, 2, 3, 4, 5];
   const currentProgress = Math.max(1, progressSteps.indexOf(step) + 1);
 
   const bookingRedirectTo =
@@ -229,6 +228,7 @@ function Pickup() {
       pickupDraftKey,
       JSON.stringify({
         step,
+        flowVersion: 2,
         scrapMode,
         items,
         pincode,
@@ -257,6 +257,7 @@ function Pickup() {
       try {
         const draft = JSON.parse(rawDraft) as {
           step?: number;
+          flowVersion?: number;
           scrapMode?: string;
           items?: string[];
           pincode?: string;
@@ -285,8 +286,13 @@ function Pickup() {
             uploadedUrl: draft.photo.uploadedUrl ?? null,
           });
         }
-        if (typeof draft.step === "number" && draft.step >= 1 && draft.step <= 4) {
-          setStep(draft.step);
+        if (typeof draft.step === "number" && draft.step >= 1 && draft.step <= 5) {
+          // Translate drafts saved before vehicle details became their own step.
+          const restoredStep =
+            draft.flowVersion === 2
+              ? draft.step
+              : ({ 1: 2, 2: 4, 3: 3, 4: 5 }[draft.step] ?? 1);
+          setStep(restoredStep);
         }
       } catch {
         window.sessionStorage.removeItem(pickupDraftKey);
@@ -343,7 +349,7 @@ function Pickup() {
   useEffect(() => {
     if (!user) return;
 
-    if (step === 3) setStep(2);
+    if (step === 3) setStep(4);
     if (!authEmail && user.email) setAuthEmail(user.email);
     if (!name) setName(displayName(user));
 
@@ -392,7 +398,7 @@ function Pickup() {
     setAuthBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Signed in. Your saved address is filled in.");
-    setStep(2);
+    setStep(4);
   };
 
   const signInWithGoogleDuringBooking = async () => {
@@ -432,7 +438,7 @@ function Pickup() {
     setPhone(authPhone.trim());
     if (data.session) {
       toast.success("Account created. Let's add your pickup address.");
-      setStep(2);
+      setStep(4);
     } else {
       toast.success("Account created. Please verify your email, then sign in here.");
       setAuthTab("signin");
@@ -473,10 +479,12 @@ function Pickup() {
   const goNext = () => {
     if (step === 1) {
       if (!scrapMode) return toast.error("Tell us what you're selling.");
+    }
+    if (step === 2) {
       if (items.length === 0)
         return toast.error("Pick the body style that matches your vehicle.");
     }
-    if (step === 2) {
+    if (step === 4) {
       if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
       if (pincode.length !== 6) return toast.error("Pincode must be 6 digits.");
       if (!pincodeOk) return toast.error("We don't pick up at this pincode yet.");
@@ -485,17 +493,21 @@ function Pickup() {
         return toast.error("Address looks too short — add your flat, street and a landmark.");
     }
     if (step === 1) {
-      setStep(user ? 2 : 3);
+      setStep(2);
     } else if (step === 2) {
-      setStep(4);
+      setStep(user ? 4 : 3);
+    } else if (step === 4) {
+      setStep(5);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
     setStep((s) => {
-      if (s === 4) return 2;
-      if (s === 2) return user ? 1 : 3;
+      if (s === 5) return 4;
+      if (s === 4) return user ? 2 : 3;
+      if (s === 3) return 2;
+      if (s === 2) return 1;
       return 1;
     });
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -509,7 +521,7 @@ function Pickup() {
       return;
     }
     if (!pincodeOk || !addressOk) {
-      setStep(2);
+      setStep(4);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return toast.error("Please complete your pickup address and a serviceable pincode.");
     }
@@ -707,7 +719,7 @@ function Pickup() {
                     Pick your vehicle type — then choose the body style that matches it.
                   </p>
 
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-5 grid grid-cols-2 gap-3">
                     {vehicleCategories.map((category) => {
                       const Icon = category.icon;
                       const active = scrapMode === category.id;
@@ -742,7 +754,22 @@ function Pickup() {
                       );
                     })}
                   </div>
+                </motion.div>
+              )}
 
+              {/* STEP 2 */}
+              {step === 2 && (
+                <motion.div
+                  key="s2-vehicle-details"
+                  initial={{ opacity: 0, x: 16 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -16 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <h2 className="text-xl font-bold">Tell us about your vehicle</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    Choose the body style that matches it, then add a photo if you like.
+                  </p>
                   <AnimatePresence>
                     {selectedVehicleCategory && (
                       <motion.div
@@ -830,10 +857,10 @@ function Pickup() {
                 </motion.div>
               )}
 
-              {/* STEP 2 */}
-              {step === 2 && (
+              {/* STEP 4 */}
+              {step === 4 && (
                 <motion.div
-                  key="s2"
+                  key="s4-address"
                   initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -16 }}
@@ -1100,10 +1127,10 @@ function Pickup() {
                 </motion.div>
               )}
 
-              {/* STEP 4 */}
-              {step === 4 && (
+              {/* STEP 5 */}
+              {step === 5 && (
                 <motion.form
-                  key="s4"
+                  key="s5-schedule"
                   onSubmit={onSubmit}
                   initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -1192,8 +1219,8 @@ function Pickup() {
               )}
             </AnimatePresence>
 
-            {/* nav buttons (item + address steps) */}
-            {step !== 3 && step !== 4 && (
+            {/* nav buttons (vehicle + address steps) */}
+            {step !== 3 && step !== 5 && (
               <div className="mt-8 flex items-center justify-between gap-3">
                 {step > 1 ? (
                   <Button type="button" variant="ghost" onClick={goBack}>
@@ -1209,7 +1236,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
-            {(step === 3 || step === 4) && (
+            {(step === 3 || step === 5) && (
               <div className="mt-4">
                 <Button type="button" variant="ghost" onClick={goBack}>
                   <ArrowLeft />

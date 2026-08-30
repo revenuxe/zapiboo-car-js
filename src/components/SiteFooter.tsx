@@ -14,8 +14,8 @@ export function SiteFooter() {
             className="rounded-3xl bg-gradient-navy px-6 py-12 text-center text-white shadow-elevated sm:px-10 md:py-16"
             style={{
               backgroundImage:
-                "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.16) 1px, transparent 0)",
-              backgroundSize: "28px 28px",
+                "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.16) 1px, transparent 0), var(--gradient-navy)",
+              backgroundSize: "28px 28px, auto",
             }}
           >
             <Sparkles className="mx-auto size-9 text-brand-green" />
@@ -34,8 +34,8 @@ export function SiteFooter() {
                 </Link>
               </Button>
               <Button asChild size="xl" variant="outlineLight">
-                <Link to="/sell/$category" params={{ category: "laptops" }}>
-                  Sell a laptop
+                <Link to="/pickup">
+                  Sell your vehicle
                 </Link>
               </Button>
             </div>
@@ -55,7 +55,7 @@ export function SiteFooter() {
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
           <div className="grid gap-12 md:grid-cols-3">
             <div>
-              <Logo invert />
+              <Logo className="rounded-xl bg-white px-3 py-2" imageClassName="h-12 md:h-16" />
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy-foreground/70">
                 ZAPIBOO buys and sells used cars, bikes and scooters across Bangalore with
                 market-linked pricing, free doorstep inspection, same-day payment and free RC
@@ -106,12 +106,8 @@ export function SiteFooter() {
                   </Link>
                 </li>
                 <li>
-                  <Link
-                    to="/sell/$category"
-                    params={{ category: "laptops" }}
-                    className="text-navy-foreground/80 transition-colors hover:text-brand-green"
-                  >
-                    Sell laptop
+                  <Link to="/pickup" className="text-navy-foreground/80 transition-colors hover:text-brand-green">
+                    Sell a vehicle
                   </Link>
                 </li>
                 <li>

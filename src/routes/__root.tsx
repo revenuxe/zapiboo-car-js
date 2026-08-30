@@ -18,9 +18,9 @@ import { FloatingWhatsApp } from "../components/FloatingWhatsApp";
 import { Toaster } from "../components/ui/sonner";
 import { absoluteUrl, organizationSchema, websiteSchema } from "../lib/seo";
 
-const rootTitle = "ZAPIBOO | Sell Used Laptop in Bangalore";
+const rootTitle = "ZAPIBOO | Buy & Sell Used Cars, Bikes & Scooters in Bangalore";
 const rootDescription =
-  "Sell your old or used laptop in Bangalore with ZAPIBOO. Get an instant quote, free doorstep pickup and same-day payment.";
+  "Buy or sell used cars, bikes and scooters in Bangalore with free doorstep inspections, instant payment and RC transfer support.";
 
 function NotFoundComponent() {
   return (
@@ -143,20 +143,15 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
-// Laptop buyback keeps the current electric-blue brand; everything else (the
-// scrap side of the business) renders in the original navy + emerald palette.
-const laptopPrefixes = ["/sell", "/blog", "/account", "/admin", "/auth"];
-
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const chromeless = pathname.startsWith("/admin") || pathname.startsWith("/auth");
-  const hideFloatingWhatsApp = chromeless || pathname.startsWith("/sell");
-  const scrapTheme = !laptopPrefixes.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+  const hideFloatingWhatsApp = chromeless;
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className={`flex min-h-screen flex-col${scrapTheme ? " scrap-theme" : ""}`}>
+      <div className="scrap-theme flex min-h-screen flex-col">
         {!chromeless && <SiteHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <main className="flex-1">

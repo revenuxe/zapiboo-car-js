@@ -1,12 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import logo from "@/assets/zapiboo-logo.webp";
+import logo from "@/assets/zapiboo-final-logo-transparent.png";
 import { cn } from "@/lib/utils";
 
 export function Logo({
   className,
+  imageClassName,
   invert = false,
 }: {
   className?: string;
+  imageClassName?: string;
   invert?: boolean;
 }) {
   return (
@@ -16,7 +18,11 @@ export function Logo({
         alt="ZAPIBOO — buy and sell used cars, bikes and scooters in Bangalore"
         width={1774}
         height={887}
-        className={cn("h-10 w-auto md:h-12", invert && "brightness-0 invert")}
+        className={cn(
+          "h-10 w-auto md:h-12",
+          imageClassName,
+          invert && "brightness-0 invert",
+        )}
       />
     </Link>
   );

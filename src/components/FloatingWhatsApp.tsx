@@ -2,7 +2,7 @@ import { businessContact } from "@/lib/seo";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 
 const whatsappMessage =
-  "Hi ZAPIBOO, I want to sell my used laptop in Bangalore. Please help me get a quote.";
+  "Hi ZAPIBOO, I want to sell my used vehicle in Bangalore. Please help me get a valuation.";
 
 export function FloatingWhatsApp() {
   const href = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(whatsappMessage)}`;

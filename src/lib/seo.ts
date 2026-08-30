@@ -134,7 +134,7 @@ export function organizationSchema(path = "/") {
       "@type": "Offer",
       itemOffered: {
         "@type": "Service",
-        name: "Used laptop buyback in Bangalore",
+        name: "Used vehicle buying and selling in Bangalore",
       },
     },
   };
@@ -151,15 +151,15 @@ export function websiteSchema() {
 
 export function serviceSchema(path: string, area?: ServiceArea) {
   const name = area
-    ? `Sell used laptop in ${area.name}, Bangalore`
-    : "Used laptop buyback in Bangalore";
+    ? `Sell your used vehicle in ${area.name}, Bangalore`
+    : "Used vehicle buying and selling in Bangalore";
 
   return {
     "@context": "https://schema.org",
     "@type": "Service",
     "@id": `${absoluteUrl(path)}#service`,
     name,
-    serviceType: "Used laptop buyback with doorstep pickup",
+    serviceType: "Used vehicle valuation with doorstep inspection",
     provider: { "@id": `${siteUrl}/#organization` },
     areaServed: {
       "@type": "Place",
@@ -257,7 +257,7 @@ export function howToSchema(input: {
       value: "0",
     },
     supply: [
-      { "@type": "HowToSupply", name: "Laptop charger" },
+      { "@type": "HowToSupply", name: "Vehicle registration certificate" },
       { "@type": "HowToSupply", name: "Government photo ID" },
     ],
     tool: [{ "@type": "HowToTool", name: "ZAPIBOO doorstep pickup" }],

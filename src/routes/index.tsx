@@ -1,27 +1,21 @@
-import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
   ArrowRight,
-  Bike,
-  Car,
-  Caravan,
   CheckCircle2,
   MapPin,
   Quote,
-  Truck,
-  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { steps, features, testimonials, materials } from "@/lib/site-data";
 
-import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import {
   absoluteUrl,
   breadcrumbSchema,
-  featuredServiceAreas,
   businessContact,
+  featuredServiceAreas,
   organizationSchema,
   serviceAreas,
   serviceSchema,
@@ -29,6 +23,12 @@ import {
 } from "@/lib/seo";
 import heroImg from "@/assets/hero-vehicles.webp";
 import pickupImg from "@/assets/doorstep-inspection.webp";
+import bikeImg from "@/assets/vehicle-bike.webp";
+import carImg from "@/assets/vehicle-car.webp";
+import commercialImg from "@/assets/vehicle-commercial.webp";
+import electricImg from "@/assets/vehicle-electric.webp";
+import scooterImg from "@/assets/vehicle-scooter.webp";
+import suvImg from "@/assets/vehicle-suv.webp";
 
 const homepageTitle = "Sell & Buy Used Cars, Bikes & Scooters in Bangalore | ZAPIBOO";
 const homepageDescription =
@@ -38,37 +38,37 @@ const vehicleSelectionCards = [
   {
     title: "Sell your car",
     text: "Hatchback, sedan or SUV — petrol, diesel, CNG.",
-    icon: Car,
+    image: carImg,
     search: { mode: "mixed" as const },
   },
   {
     title: "Sell your bike",
     text: "Commuter, sports and cruiser motorcycles.",
-    icon: Bike,
+    image: bikeImg,
     search: { mode: "specific" as const, item: "Commuter (100–125cc)" },
   },
   {
     title: "Sell your scooter",
     text: "Activa, Access, Jupiter and city scooters.",
-    icon: Caravan,
+    image: scooterImg,
     search: { mode: "specific" as const, item: "110cc scooter" },
   },
   {
     title: "Sell an SUV",
     text: "Compact SUVs, MUVs and 7-seaters.",
-    icon: Car,
+    image: suvImg,
     search: { mode: "specific" as const, item: "SUV / MUV" },
   },
   {
     title: "Electric vehicles",
     text: "EV cars and electric two-wheelers.",
-    icon: Zap,
+    image: electricImg,
     search: { mode: "specific" as const, item: "Electric car" },
   },
   {
     title: "Commercial vehicles",
     text: "Autos, mini trucks, tempos and fleet cars.",
-    icon: Truck,
+    image: commercialImg,
     search: { mode: "specific" as const, item: "Mini truck / pickup" },
   },
 ];
@@ -103,18 +103,6 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featuredAreas = serviceAreas.filter((area) => featuredServiceAreas.includes(area.slug));
-  const { data: availability } = useServiceAvailability();
-  const [heroPincode, setHeroPincode] = useState("");
-  const [pincodeChecked, setPincodeChecked] = useState(false);
-  const cleanHeroPincode = heroPincode.replace(/\D/g, "").slice(0, 6);
-  const pincodeReady = cleanHeroPincode.length === 6;
-  const pincodeAvailable = pincodeReady && isPincodeAvailable(cleanHeroPincode, availability);
-  const pincodeUnavailable =
-    pincodeChecked &&
-    pincodeReady &&
-    availability &&
-    !isPincodeAvailable(cleanHeroPincode, availability);
-  const pincodeIncomplete = pincodeChecked && !pincodeReady;
 
   return (
     <>
@@ -130,15 +118,15 @@ function Home() {
           <div className="absolute inset-0 bg-navy/45" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 md:py-28 lg:px-8">
-          <div className="max-w-4xl">
+        <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-20 lg:px-8">
+          <div className="max-w-3xl">
             <motion.h1
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl"
             >
-              Sell Your Used Car, Bike or Scooter in <span className="text-gradient">Bangalore</span>
+              Sell your used vehicle in <span className="text-gradient">Bangalore</span>
             </motion.h1>
 
             <motion.p
@@ -147,92 +135,35 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Get a fair, market-linked price for your second-hand car, bike or scooter with a
-              free doorstep inspection anywhere in Bangalore. Instant payment, free RC transfer,
-              and a curated stock of verified used vehicles if you are buying.
+              Free doorstep inspection, a fair offer and instant payment for cars, bikes and scooters.
             </motion.p>
 
             <motion.div
               initial={{ opacity: 0, y: 18 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.18 }}
-              className="mt-7 max-w-2xl"
+              className="mt-6"
             >
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Button asChild variant="hero" size="xl">
-                  <Link to="/pickup">
-                    Get free valuation
-                    <ArrowRight />
-                  </Link>
-                </Button>
-                <form
-                  className="flex min-w-0 flex-1 rounded-2xl border border-white/20 bg-white/10 p-1.5 shadow-elevated backdrop-blur"
-                  onSubmit={(event) => {
-                    event.preventDefault();
-                    setPincodeChecked(true);
-                  }}
-                >
-                  <label className="flex min-w-0 flex-1 items-center gap-2 px-3 text-navy-foreground">
-                    <MapPin className="size-4 shrink-0 text-primary" />
-                    <span className="sr-only">Check pincode availability</span>
-                    <input
-                      type="tel"
-                      inputMode="numeric"
-                      value={cleanHeroPincode}
-                      maxLength={6}
-                      onChange={(event) => {
-                        setHeroPincode(event.target.value);
-                        setPincodeChecked(false);
-                      }}
-                      placeholder="Enter pincode"
-                      className="h-11 min-w-0 flex-1 bg-transparent text-base font-bold outline-none placeholder:text-navy-foreground/55"
-                    />
-                  </label>
-                  {pincodeChecked && pincodeAvailable ? (
-                    <Button
-                      asChild
-                      variant="hero"
-                      size="lg"
-                      className="h-11 rounded-xl px-4 text-sm"
-                    >
-                      <Link to="/pickup" search={{ pincode: cleanHeroPincode }}>
-                        Book
-                      </Link>
-                    </Button>
-                  ) : (
-                    <Button
-                      type="submit"
-                      variant="outlineLight"
-                      size="lg"
-                      className="h-11 rounded-xl px-4 text-sm"
-                    >
-                      Check
-                    </Button>
-                  )}
-                </form>
+              <Button asChild variant="hero" size="xl" className="w-full sm:w-auto">
+                <Link to="/pickup">
+                  Get free valuation
+                  <ArrowRight />
+                </Link>
+              </Button>
+              <div className="mt-4 flex max-w-md items-center gap-3 text-xs font-semibold text-navy-foreground/60">
+                <span className="h-px flex-1 bg-white/25" />
+                OR
+                <span className="h-px flex-1 bg-white/25" />
               </div>
-              <div className="mt-3 min-h-5 text-xs font-medium leading-relaxed sm:text-sm">
-                {!pincodeChecked && (
-                  <span className="text-navy-foreground/70">
-                    Check if free doorstep inspection is available in your 6-digit pincode.
-                  </span>
-                )}
-                {pincodeIncomplete && (
-                  <span className="text-navy-foreground/75">
-                    Enter a valid 6-digit Bangalore pincode.
-                  </span>
-                )}
-                {pincodeChecked && pincodeAvailable && (
-                  <span className="text-primary">
-                    Doorstep inspection available in {cleanHeroPincode}. You can book now.
-                  </span>
-                )}
-                {pincodeUnavailable && (
-                  <span className="text-navy-foreground/75">
-                    Not available in {cleanHeroPincode} yet. Call {businessContact.phone} for help.
-                  </span>
-                )}
-              </div>
+              <a
+                href={`https://wa.me/91${businessContact.phone}?text=${encodeURIComponent("Hi ZAPIBOO, I want a free valuation for my used vehicle in Bangalore.")}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 flex w-full max-w-md items-center justify-center gap-2 rounded-2xl bg-[#00C875] px-5 py-4 text-base font-bold text-white transition-transform hover:-translate-y-0.5 hover:bg-[#00b36a]"
+              >
+                <WhatsAppIcon className="size-5" />
+                Sell instantly on WhatsApp
+              </a>
             </motion.div>
           </div>
         </div>
@@ -258,19 +189,20 @@ function Home() {
                 <Link
                   to="/pickup"
                   search={card.search}
-                  className="group relative flex h-full min-h-36 flex-col overflow-hidden rounded-2xl border border-primary/20 bg-gradient-brand p-4 text-primary-foreground shadow-green transition-all hover:-translate-y-1 hover:brightness-105 hover:shadow-elevated sm:p-5"
+                  className="group relative flex h-full min-h-40 flex-col justify-end overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 p-4 text-foreground shadow-soft transition-all hover:-translate-y-1 hover:bg-primary/10 hover:shadow-elevated sm:p-5"
                 >
                   <span
                     aria-hidden
-                    className="pointer-events-none absolute -right-8 -top-8 size-24 rounded-full bg-white/15 blur-2xl transition-transform group-hover:scale-125"
+                    className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary/10 to-transparent"
                   />
-                  <span className="relative flex size-11 items-center justify-center rounded-2xl bg-white/95 text-primary shadow-soft transition-transform group-hover:scale-105">
-                    <card.icon className="size-5" />
-                  </span>
-                  <span className="relative mt-4 font-bold leading-tight">{card.title}</span>
-                  <span className="relative mt-2 text-xs leading-relaxed text-primary-foreground/80">
-                    {card.text}
-                  </span>
+                  <img
+                    src={card.image}
+                    alt=""
+                    width={1536}
+                    height={1024}
+                    className="pointer-events-none absolute inset-x-4 top-3 h-22 w-[calc(100%-2rem)] object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24"
+                  />
+                  <span className="relative text-center text-sm font-bold leading-tight sm:text-base">{card.title}</span>
                 </Link>
               </Reveal>
             ))}
@@ -402,11 +334,11 @@ function Home() {
           <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
             {materials.map((m, i) => (
               <Reveal key={m.name} delay={(i % 4) * 0.05}>
-                <div className="group h-full rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-soft">
-                  <h3 className="font-bold leading-tight">{m.name}</h3>
+                <div className="group h-full rounded-2xl border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-soft sm:p-6">
+                  <h3 className="whitespace-nowrap text-sm font-bold leading-tight sm:text-base">{m.name}</h3>
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-2xl font-extrabold text-gradient">{m.price}</span>
-                    <span className="text-sm text-muted-foreground">{m.unit}</span>
+                    <span className="text-xl font-extrabold text-gradient sm:text-2xl">{m.price}</span>
+                    <span className="whitespace-nowrap text-[11px] text-muted-foreground sm:text-sm">{m.unit}</span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">{m.blurb}</p>
                 </div>

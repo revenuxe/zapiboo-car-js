@@ -18,12 +18,12 @@ export const Route = createFileRoute("/contact")({
       {
         name: "description",
         content:
-          "Questions about laptop buyback, pricing, pickup or payment? Contact the ZAPIBOO team - we usually reply within one business day.",
+          "Questions about selling or buying a used vehicle, pricing, pickup or payment? Contact the ZAPIBOO team - we usually reply within one business day.",
       },
       { property: "og:title", content: "Contact ZAPIBOO - Talk to Our Team" },
       {
         property: "og:description",
-        content: "Reach the ZAPIBOO team about used laptop quotes, pickup, pricing and payment.",
+        content: "Reach the ZAPIBOO team about used vehicle valuations, pickup, pricing and payment.",
       },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -91,8 +91,8 @@ function Contact() {
     <>
       <PageHeader
         eyebrow="Contact"
-        title={<>Let's <span className="text-gradient">talk laptops</span></>}
-        subtitle="Whether you want a laptop quote, pickup help, or payment support, we would love to help."
+        title={<>Let's <span className="text-gradient">talk vehicles</span></>}
+        subtitle="Whether you need a vehicle valuation, pickup help, or buying support, we would love to help."
       />
 
       <section className="bg-background py-16 md:py-24">
@@ -148,7 +148,7 @@ function Contact() {
               </div>
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="cmsg">Message</Label>
-                <Textarea id="cmsg" name="message" required rows={5} placeholder="Tell us about your laptop or question..." />
+                <Textarea id="cmsg" name="message" required rows={5} placeholder="Tell us about your vehicle or question..." />
               </div>
             </div>
             <Button type="submit" variant="hero" size="xl" className="mt-8 w-full" disabled={sending}>

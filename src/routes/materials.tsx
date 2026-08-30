@@ -93,13 +93,13 @@ const pricingCategories: PricingCategory[] = [
 export const Route = createFileRoute("/materials")({
   head: () => ({
     meta: [
-      { title: "Scrap Rates in Bengaluru (₹ per kg) | HuluMart" },
+      { title: "Scrap Rates in Bengaluru (₹ per kg) | ZAPIBOO" },
       {
         name: "description",
         content:
           "Today's household scrap rates in Bengaluru — newspaper/raddi, plastic, metal, e-waste and more, priced fairly in ₹ per kg. Free doorstep pickup.",
       },
-      { property: "og:title", content: "Scrap Rates in Bengaluru (₹ per kg) | HuluMart" },
+      { property: "og:title", content: "Scrap Rates in Bengaluru (₹ per kg) | ZAPIBOO" },
       {
         property: "og:description",
         content:
@@ -113,7 +113,7 @@ export const Route = createFileRoute("/materials")({
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "ItemList",
-          name: "HuluMart Bengaluru household scrap rates",
+          name: "ZAPIBOO Bengaluru household scrap rates",
           itemListElement: householdRates.map((m, i) => ({
             "@type": "ListItem",
             position: i + 1,

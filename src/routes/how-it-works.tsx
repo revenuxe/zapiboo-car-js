@@ -7,16 +7,16 @@ import { Reveal } from "@/components/Reveal";
 export const Route = createFileRoute("/how-it-works")({
   head: () => ({
     meta: [
-      { title: "How It Works — Doorstep Scrap Pickup | HuluMart" },
+      { title: "How It Works — Doorstep Scrap Pickup | ZAPIBOO" },
       {
         name: "description",
         content:
-          "From booking to instant payment in four simple steps. See how HuluMart's certified doorstep scrap pickup works.",
+          "From booking to instant payment in four simple steps. See how ZAPIBOO's certified doorstep scrap pickup works.",
       },
-      { property: "og:title", content: "How It Works — Doorstep Scrap Pickup | HuluMart" },
+      { property: "og:title", content: "How It Works — Doorstep Scrap Pickup | ZAPIBOO" },
       {
         property: "og:description",
-        content: "Book, prep, get weighed, and get paid. The HuluMart pickup process explained.",
+        content: "Book, prep, get weighed, and get paid. The ZAPIBOO pickup process explained.",
       },
     ],
     links: [{ rel: "canonical", href: "/how-it-works" }],
@@ -38,7 +38,7 @@ const flow = [
   {
     icon: Truck,
     title: "3 · We arrive & weigh",
-    text: "A vetted HuluMart agent arrives on schedule and weighs each material on certified, tamper-proof digital scales in front of you.",
+    text: "A vetted ZAPIBOO agent arrives on schedule and weighs each material on certified, tamper-proof digital scales in front of you.",
   },
   {
     icon: BadgeDollarSign,
@@ -58,11 +58,11 @@ const faqs = [
   },
   {
     q: "What areas do you cover?",
-    a: "HuluMart serves major Bangalore areas including Whitefield, HSR Layout, Koramangala, Indiranagar, JP Nagar, Hebbal and more.",
+    a: "ZAPIBOO serves major Bangalore areas including Whitefield, HSR Layout, Koramangala, Indiranagar, JP Nagar, Hebbal and more.",
   },
   {
     q: "How do I get paid?",
-    a: "Choose instant transfer to your HuluMart wallet, a linked bank account, or popular mobile money — the moment the agent loads your scrap.",
+    a: "Choose instant transfer to your ZAPIBOO wallet, a linked bank account, or popular mobile money — the moment the agent loads your scrap.",
   },
 ];
 
@@ -72,7 +72,7 @@ function HowItWorks() {
       <PageHeader
         eyebrow="How it works"
         title={<>Clutter to cash in <span className="text-gradient">four steps</span></>}
-        subtitle="No middlemen, no haggling, no trips to the scrapyard. Here's exactly what happens when you book with HuluMart."
+        subtitle="No middlemen, no haggling, no trips to the scrapyard. Here's exactly what happens when you book with ZAPIBOO."
       >
         <Button asChild variant="hero" size="lg">
           <Link to="/pickup">

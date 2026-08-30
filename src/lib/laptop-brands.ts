@@ -24,7 +24,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Apple MacBook in Bangalore",
     tagline: "Top cash for MacBook Air & MacBook Pro — Intel and M-series.",
     intro: [
-      "Want to sell your used Apple MacBook in Bangalore? HuluMart pays the best resale price for every MacBook Air and MacBook Pro — from older Intel models to the latest M1, M2, M3 and M4 chips. Because MacBooks hold their value better than any other laptop, you get more cash back when you sell with us.",
+      "Want to sell your used Apple MacBook in Bangalore? ZAPIBOO pays the best resale price for every MacBook Air and MacBook Pro — from older Intel models to the latest M1, M2, M3 and M4 chips. Because MacBooks hold their value better than any other laptop, you get more cash back when you sell with us.",
       "Whether your MacBook is in mint condition, has a few dents, a battery that drains fast or even a cracked screen, we make a fair, transparent offer based on the live Bangalore resale market. Get a free instant quote, free doorstep pickup and same-day UPI payment — no lowball offers, no haggling.",
     ],
     popularSeries: [
@@ -73,7 +73,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Dell Laptop in Bangalore",
     tagline: "Instant cash for Dell XPS, Inspiron, Latitude & Vostro.",
     intro: [
-      "Looking to sell your used Dell laptop in Bangalore? HuluMart is the trusted buyer for every Dell series — XPS, Inspiron, Latitude, Vostro, G-series gaming and Alienware. Get the best resale price for your used Dell with a free instant quote, free doorstep pickup and instant payment.",
+      "Looking to sell your used Dell laptop in Bangalore? ZAPIBOO is the trusted buyer for every Dell series — XPS, Inspiron, Latitude, Vostro, G-series gaming and Alienware. Get the best resale price for your used Dell with a free instant quote, free doorstep pickup and instant payment.",
       "From slim XPS ultrabooks to everyday Inspiron and business-grade Latitude laptops, we buy them all — working perfectly or with minor issues like a weak battery, cracked screen or slow performance. Our valuation is benchmarked to the current Bangalore second-hand market, so you always get a fair deal.",
     ],
     popularSeries: [
@@ -120,7 +120,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used HP Laptop in Bangalore",
     tagline: "Best price for HP Pavilion, Envy, Victus, Omen & EliteBook.",
     intro: [
-      "Sell your used HP laptop in Bangalore for instant cash with HuluMart. We buy every HP series — Pavilion, Envy, Victus, Omen gaming, EliteBook, ProBook and Spectre — at the best resale price, with a free instant quote and free doorstep pickup.",
+      "Sell your used HP laptop in Bangalore for instant cash with ZAPIBOO. We buy every HP series — Pavilion, Envy, Victus, Omen gaming, EliteBook, ProBook and Spectre — at the best resale price, with a free instant quote and free doorstep pickup.",
       "Whether it's a budget Pavilion, a sleek Spectre convertible or a powerful Omen gaming rig, we make a transparent offer based on the live Bangalore market. Working laptops, ageing devices and units with cracked screens or battery problems are all welcome — you get fair value and same-day payment.",
     ],
     popularSeries: [
@@ -167,7 +167,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Lenovo Laptop in Bangalore",
     tagline: "Instant cash for ThinkPad, IdeaPad, Legion, Yoga & LOQ.",
     intro: [
-      "Sell your used Lenovo laptop in Bangalore with HuluMart and get the best resale price instantly. We buy every Lenovo series — ThinkPad, IdeaPad, Legion, Yoga, LOQ and ThinkBook — with a free instant quote, free doorstep pickup and same-day UPI payment.",
+      "Sell your used Lenovo laptop in Bangalore with ZAPIBOO and get the best resale price instantly. We buy every Lenovo series — ThinkPad, IdeaPad, Legion, Yoga, LOQ and ThinkBook — with a free instant quote, free doorstep pickup and same-day UPI payment.",
       "From rugged ThinkPad business machines to Legion and LOQ gaming laptops and flexible Yoga convertibles, we value them all against the current Bangalore second-hand market. Even laptops with a cracked screen, weak battery or minor faults are bought at a fair price.",
     ],
     popularSeries: [
@@ -214,7 +214,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Asus Laptop in Bangalore",
     tagline: "Top cash for ROG, TUF, Zenbook & Vivobook.",
     intro: [
-      "Sell your used Asus laptop in Bangalore for the best price with HuluMart. We buy every Asus series — ROG and TUF gaming laptops, Zenbook ultrabooks and Vivobook everyday laptops — with a free instant quote, free doorstep pickup and instant payment.",
+      "Sell your used Asus laptop in Bangalore for the best price with ZAPIBOO. We buy every Asus series — ROG and TUF gaming laptops, Zenbook ultrabooks and Vivobook everyday laptops — with a free instant quote, free doorstep pickup and instant payment.",
       "Asus gaming laptops are in high demand on the Bangalore resale market, so you get excellent buyback value. Working laptops or units with a cracked screen, battery or performance issues are all bought at a fair, transparent price.",
     ],
     popularSeries: [
@@ -261,7 +261,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used Acer Laptop in Bangalore",
     tagline: "Best price for Aspire, Swift, Nitro & Predator.",
     intro: [
-      "Sell your used Acer laptop in Bangalore with HuluMart and get instant cash. We buy every Acer series — Aspire, Swift, Nitro gaming and Predator — with a free instant quote, free doorstep pickup and same-day payment.",
+      "Sell your used Acer laptop in Bangalore with ZAPIBOO and get instant cash. We buy every Acer series — Aspire, Swift, Nitro gaming and Predator — with a free instant quote, free doorstep pickup and same-day payment.",
       "From budget Aspire laptops to slim Swift ultrabooks and powerful Nitro and Predator gaming machines, we make a fair offer based on the live Bangalore resale market. Even laptops with minor faults or cosmetic damage are welcome.",
     ],
     popularSeries: [
@@ -308,7 +308,7 @@ const brandData: LaptopBrand[] = [
     headline: "Sell Your Used MSI Laptop in Bangalore",
     tagline: "Premium cash for MSI gaming & creator laptops.",
     intro: [
-      "Sell your used MSI laptop in Bangalore for top cash with HuluMart. We buy every MSI series — Gaming (Katana, Stealth, Raider), Creator and Modern — with a free instant quote, free doorstep pickup and instant payment.",
+      "Sell your used MSI laptop in Bangalore for top cash with ZAPIBOO. We buy every MSI series — Gaming (Katana, Stealth, Raider), Creator and Modern — with a free instant quote, free doorstep pickup and instant payment.",
       "MSI gaming and creator laptops are highly sought after on the Bangalore resale market, so you get premium buyback value. Working units or laptops with a cracked screen, battery or performance issues are all bought at a fair, transparent price.",
     ],
     popularSeries: [

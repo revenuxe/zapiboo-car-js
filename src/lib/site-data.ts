@@ -3,10 +3,10 @@ import {
   Truck,
   Wallet,
   ShieldCheck,
-  Leaf,
+  FileCheck2,
   Globe2,
   BarChart3,
-  Recycle,
+  Car,
 } from "lucide-react";
 
 export type Material = {
@@ -18,76 +18,143 @@ export type Material = {
   trend: string;
 };
 
+/** Indicative resale price bands for used vehicles in Bangalore. */
 export const materials: Material[] = [
-  { slug: "copper", name: "Copper", price: "₹520", unit: "/ kg", blurb: "Wire, tubing, and copper household scrap.", trend: "High demand" },
-  { slug: "aluminium", name: "Aluminium", price: "₹105", unit: "/ kg", blurb: "Utensils, sheets, cans, and profiles.", trend: "Stable" },
-  { slug: "brass", name: "Brass", price: "₹330", unit: "/ kg", blurb: "Fittings, valves, and yellow brass scrap.", trend: "High value" },
-  { slug: "steel", name: "Iron & Steel", price: "₹28", unit: "/ kg", blurb: "Rods, grills, sheets, and mixed iron.", trend: "Daily rate" },
-  { slug: "e-waste", name: "E-Waste", price: "₹35", unit: "/ kg", blurb: "Small devices, boards, cables, and chargers.", trend: "Handled safely" },
-  { slug: "paper", name: "Paper & Raddi", price: "₹15", unit: "/ kg", blurb: "Newspaper, books, cardboard, and magazines.", trend: "Popular" },
+  {
+    slug: "hatchback",
+    name: "Used Hatchbacks",
+    price: "₹1.2L",
+    unit: "onwards",
+    blurb: "Swift, i10, Alto, Baleno and other city hatchbacks.",
+    trend: "Fastest selling",
+  },
+  {
+    slug: "sedan",
+    name: "Used Sedans",
+    price: "₹2.5L",
+    unit: "onwards",
+    blurb: "Dzire, City, Verna, Ciaz and premium sedans.",
+    trend: "High demand",
+  },
+  {
+    slug: "suv",
+    name: "Used SUVs",
+    price: "₹4.5L",
+    unit: "onwards",
+    blurb: "Creta, Venue, Brezza, Seltos, XUV and MUVs.",
+    trend: "Best resale value",
+  },
+  {
+    slug: "bikes",
+    name: "Used Bikes",
+    price: "₹28,000",
+    unit: "onwards",
+    blurb: "Splendor, Pulsar, Apache, Classic 350 and sports bikes.",
+    trend: "Quick payout",
+  },
+  {
+    slug: "scooters",
+    name: "Used Scooters",
+    price: "₹22,000",
+    unit: "onwards",
+    blurb: "Activa, Access, Jupiter, Ntorq and electric scooters.",
+    trend: "Popular",
+  },
+  {
+    slug: "commercial",
+    name: "Commercial Vehicles",
+    price: "Quoted",
+    unit: "on inspection",
+    blurb: "Auto rickshaws, mini trucks, tempos and fleet cars.",
+    trend: "Bulk friendly",
+  },
 ];
 
 export const steps = [
   {
     icon: CalendarClock,
-    title: "Book in 60 seconds",
-    text: "Choose your scrap type, pickup slot, and Bangalore address. No haggling, no long phone calls.",
+    title: "Share your vehicle in 60 seconds",
+    text: "Pick your car, bike or scooter, add the year, kilometres and your Bangalore locality. No haggling, no long phone calls.",
   },
   {
     icon: Truck,
-    title: "We come to your door",
-    text: "A verified HuluMart agent arrives on schedule, weighs on a certified scale, and shows the rate clearly.",
+    title: "Free doorstep inspection",
+    text: "A ZAPIBOO evaluator visits your home or office, checks the vehicle and paperwork, and confirms a fair market price on the spot.",
   },
   {
     icon: Wallet,
-    title: "Get paid instantly",
-    text: "Approve the quote and get paid instantly once your scrap is collected.",
+    title: "Instant payment, free RC transfer",
+    text: "Accept the offer and get paid the same day. We handle the RC transfer and NOC paperwork end to end.",
   },
 ];
 
 export const features = [
-  { icon: ShieldCheck, title: "Certified weighing", text: "Tamper-proof, calibrated scales with a digital receipt for every pickup." },
-  { icon: Wallet, title: "Transparent rates", text: "Clear Bangalore scrap prices before pickup, with no surprise deductions at your doorstep." },
-  { icon: Globe2, title: "Wide Bangalore coverage", text: "Doorstep scrap collection across apartments, homes, shops, and offices in major localities." },
-  { icon: Leaf, title: "Responsible recycling", text: "Recovered scrap is routed to recycling partners instead of informal dumping." },
-  { icon: BarChart3, title: "Bulk pickup support", text: "Businesses and apartments can request planned pickups for larger scrap volumes." },
-  { icon: Recycle, title: "Household to e-waste", text: "Paper, plastic, metal, appliances, and e-waste handled through one simple booking flow." },
+  {
+    icon: ShieldCheck,
+    title: "Fair, market-linked pricing",
+    text: "Every offer is benchmarked against live Bangalore resale demand for your make, model, variant and year.",
+  },
+  {
+    icon: Wallet,
+    title: "Same-day payment",
+    text: "Money is transferred to your bank the moment you accept the offer — no instalments and no held-back deposits.",
+  },
+  {
+    icon: FileCheck2,
+    title: "Free RC transfer & NOC",
+    text: "We complete the ownership transfer, insurance updates and RTO paperwork at no extra cost to you.",
+  },
+  {
+    icon: Globe2,
+    title: "Doorstep across Bangalore",
+    text: "Inspections at homes, apartments and offices in Whitefield, HSR, Koramangala, Hebbal, JP Nagar and 40+ areas.",
+  },
+  {
+    icon: Car,
+    title: "Verified used vehicles to buy",
+    text: "Inspected, accident-checked cars, bikes and scooters with clear documents and transparent history.",
+  },
+  {
+    icon: BarChart3,
+    title: "Dealers & fleets welcome",
+    text: "Bulk buying and selling support for dealerships, cab fleets and companies retiring their vehicles.",
+  },
 ];
 
 export const stats = [
   { value: "40+", label: "Bangalore areas" },
-  { value: "12K+", label: "Pickups completed" },
-  { value: "24 hr", label: "Pickup support" },
-  { value: "4.9/5", label: "Pickup rating" },
+  { value: "8K+", label: "Vehicles sold" },
+  { value: "60 min", label: "Free inspection" },
+  { value: "4.9/5", label: "Seller rating" },
 ];
 
 export const testimonials = [
   {
     quote:
-      "Booked a raddi and iron pickup from our HSR Layout apartment. The agent came in the selected slot, showed the weight clearly, and paid on the spot.",
+      "Sold my 2016 Swift from our HSR Layout apartment. The evaluator came in the slot I picked, the price matched the online estimate, and the money hit my account the same evening.",
     name: "Nikhil Rao",
-    role: "Resident, HSR Layout",
+    role: "Sold a Maruti Swift, HSR Layout",
   },
   {
     quote:
-      "We had cardboard, old wires, and a broken appliance after shifting in Whitefield. HuluMart handled everything in one visit without bargaining.",
+      "I was worried about the RC transfer after selling my Activa in Whitefield. ZAPIBOO handled the paperwork and sent me the confirmation without a single RTO visit.",
     name: "Ananya Shetty",
-    role: "Homeowner, Whitefield",
+    role: "Sold a Honda Activa, Whitefield",
   },
   {
     quote:
-      "Our shop near Indiranagar uses them for mixed scrap because the rate is told before pickup and the weighing is done in front of us.",
+      "Bought a well-kept Hyundai Creta near Indiranagar. Service history and insurance were shared upfront, so there were no surprises after the purchase.",
     name: "Faisal Ahmed",
-    role: "Shop owner, Indiranagar",
+    role: "Bought a Hyundai Creta, Indiranagar",
   },
 ];
 
 export const navLinks = [
   { to: "/how-it-works", label: "How it works" },
-  { to: "/materials", label: "Materials & Prices" },
-  { to: "/listings", label: "Listings" },
+  { to: "/materials", label: "Price guide" },
+  { to: "/listings", label: "Buy vehicles" },
   { to: "/areas", label: "Areas" },
-  { to: "/business", label: "For Business" },
+  { to: "/business", label: "Dealers & fleets" },
   { to: "/blog", label: "Blog" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
@@ -96,8 +163,8 @@ export const navLinks = [
 // Trimmed set shown in the site header (the rest live only in the footer).
 export const headerNavLinks = [
   { to: "/how-it-works", label: "How it works" },
-  { to: "/materials", label: "Materials & Prices" },
-  { to: "/listings", label: "Listings" },
+  { to: "/materials", label: "Price guide" },
+  { to: "/listings", label: "Buy vehicles" },
   { to: "/areas", label: "Areas" },
   { to: "/contact", label: "Contact" },
 ] as const;

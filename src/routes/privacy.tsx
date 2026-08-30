@@ -4,16 +4,16 @@ import { PageHeader } from "@/components/PageHeader";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacy Policy | HuluMart" },
+      { title: "Privacy Policy | ZAPIBOO" },
       {
         name: "description",
         content:
-          "How HuluMart collects, uses, stores and protects your personal information when you request a used laptop quote or use our services.",
+          "How ZAPIBOO collects, uses, stores and protects your personal information when you request a used laptop quote or use our services.",
       },
-      { property: "og:title", content: "Privacy Policy | HuluMart" },
+      { property: "og:title", content: "Privacy Policy | ZAPIBOO" },
       {
         property: "og:description",
-        content: "Learn how HuluMart handles and protects your personal data.",
+        content: "Learn how ZAPIBOO handles and protects your personal data.",
       },
     ],
     links: [{ rel: "canonical", href: "/privacy" }],
@@ -27,7 +27,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "1. Who we are",
     body: [
-      "HuluMart (\"HuluMart\", \"we\", \"us\" or \"our\") operates a used laptop buyback service and online platform. This Privacy Policy explains how we handle personal information when you visit our website, request a quote, or otherwise interact with us.",
+      "ZAPIBOO (\"ZAPIBOO\", \"we\", \"us\" or \"our\") operates a used laptop buyback service and online platform. This Privacy Policy explains how we handle personal information when you visit our website, request a quote, or otherwise interact with us.",
     ],
   },
   {
@@ -50,7 +50,7 @@ const sections: { heading: string; body: string[] }[] = [
     heading: "4. Sharing your information",
     body: [
       "We share request details only with the field agents and logistics partners who fulfil your pickup. We do not sell your personal information.",
-      "We may disclose information where required by law, regulation, legal process, or to protect the rights, property or safety of HuluMart, our users or others.",
+      "We may disclose information where required by law, regulation, legal process, or to protect the rights, property or safety of ZAPIBOO, our users or others.",
     ],
   },
   {
@@ -80,7 +80,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "9. Contact us",
     body: [
-      "Questions about this policy or your data? Email us at hulumart.com@gmail.com or reach out through our Contact page.",
+      "Questions about this policy or your data? Email us at zapiboo.com@gmail.com or reach out through our Contact page.",
     ],
   },
 ];

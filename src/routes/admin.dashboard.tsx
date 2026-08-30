@@ -35,7 +35,7 @@ export const Route = createFileRoute("/admin/dashboard")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Admin Dashboard | HuluMart" },
+      { title: "Admin Dashboard | ZAPIBOO" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

@@ -11,7 +11,7 @@ export function SiteFooter() {
       <section className="bg-background py-14">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div
-            className="rounded-3xl bg-emerald-900 px-6 py-12 text-center text-white shadow-elevated sm:px-10 md:py-16"
+            className="rounded-3xl bg-gradient-navy px-6 py-12 text-center text-white shadow-elevated sm:px-10 md:py-16"
             style={{
               backgroundImage:
                 "radial-gradient(circle at 1px 1px, rgba(255,255,255,0.16) 1px, transparent 0)",
@@ -20,16 +20,16 @@ export function SiteFooter() {
           >
             <Sparkles className="mx-auto size-9 text-brand-green" />
             <h2 className="mx-auto mt-5 max-w-2xl text-3xl font-bold sm:text-4xl">
-              Ready to clear your scrap?
+              Ready to sell your vehicle?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-white/80">
-              Book a doorstep pickup in 60 seconds. Certified weighing, live Bangalore rates and
-              instant payment when we collect.
+              Book a free doorstep inspection in 60 seconds. Market-linked pricing, same-day
+              payment and free RC transfer anywhere in Bangalore.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="xl" variant="hero">
                 <Link to="/pickup">
-                  Book a free pickup
+                  Get free valuation
                   <ArrowRight />
                 </Link>
               </Button>
@@ -40,7 +40,7 @@ export function SiteFooter() {
               </Button>
             </div>
             <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm text-white/80">
-              {["Free pickup", "Data-wipe support", "Instant payment"].map((item) => (
+              {["Free doorstep inspection", "Free RC transfer", "Same-day payment"].map((item) => (
                 <span key={item} className="flex items-center gap-2">
                   <CheckCircle2 className="size-4 text-brand-green" />
                   {item}
@@ -57,8 +57,9 @@ export function SiteFooter() {
             <div>
               <Logo invert />
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy-foreground/70">
-                HuluMart buys scrap and used laptops across Bangalore with live rates, certified
-                weighing, free doorstep pickup and instant payment.
+                ZAPIBOO buys and sells used cars, bikes and scooters across Bangalore with
+                market-linked pricing, free doorstep inspection, same-day payment and free RC
+                transfer.
               </p>
               <div className="mt-6 space-y-2 text-sm text-navy-foreground/70">
                 <p className="flex items-center gap-2">
@@ -101,7 +102,7 @@ export function SiteFooter() {
                     to="/pickup"
                     className="text-navy-foreground/80 transition-colors hover:text-brand-green"
                   >
-                    Book a scrap pickup
+                    Sell my vehicle
                   </Link>
                 </li>
                 <li>
@@ -126,7 +127,7 @@ export function SiteFooter() {
           </div>
 
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-navy-foreground/15 pt-8 text-sm text-navy-foreground/60 sm:flex-row">
-            <p>© {new Date().getFullYear()} HuluMart. Doorstep scrap collection & laptop buyback in Bangalore.</p>
+            <p>© {new Date().getFullYear()} ZAPIBOO. Buy and sell used cars, bikes and scooters in Bangalore.</p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <Link to="/privacy" className="transition-colors hover:text-brand-green">
                 Privacy Policy

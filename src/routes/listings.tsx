@@ -29,13 +29,13 @@ import {
 export const Route = createFileRoute("/listings")({
   head: () => ({
     meta: [
-      { title: "Scrap Listings in Bengaluru | HuluMart" },
+      { title: "Scrap Listings in Bengaluru | ZAPIBOO" },
       {
         name: "description",
         content:
           "Browse live scrap listings in Bengaluru — metal, e-waste, car scrap, appliances and more. Filter by category, condition and price, then book a doorstep pickup.",
       },
-      { property: "og:title", content: "Scrap Listings in Bengaluru | HuluMart" },
+      { property: "og:title", content: "Scrap Listings in Bengaluru | ZAPIBOO" },
       {
         property: "og:description",
         content: "Browse live scrap listings with photos, prices and doorstep pickup across Bengaluru.",

@@ -3,19 +3,19 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
 import {
   ArrowRight,
-  Boxes,
+  Bike,
+  Car,
+  Caravan,
   CheckCircle2,
-  Cpu,
   MapPin,
-  Package,
   Quote,
-  Recycle,
-  Wrench,
+  Truck,
+  Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
-import { steps, features, testimonials } from "@/lib/site-data";
-import { householdRates } from "@/lib/bangalore-data";
+import { steps, features, testimonials, materials } from "@/lib/site-data";
+
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import {
   absoluteUrl,
@@ -27,49 +27,49 @@ import {
   serviceSchema,
   websiteSchema,
 } from "@/lib/seo";
-import heroImg from "@/assets/hero-scrap.webp";
-import pickupImg from "@/assets/doorstep-pickup.webp";
+import heroImg from "@/assets/hero-vehicles.webp";
+import pickupImg from "@/assets/doorstep-inspection.webp";
 
-const homepageTitle = "Best Scrap Buyers in Bangalore | Doorstep Scrap Collection";
+const homepageTitle = "Sell & Buy Used Cars, Bikes & Scooters in Bangalore | ZAPIBOO";
 const homepageDescription =
-  "HuluMart is one of the best scrap buyers in Bangalore for doorstep scrap collection, live scrap prices, certified weighing and instant payment across major Bangalore areas.";
+  "Sell your used car, bike or scooter in Bangalore at the best price. Free doorstep inspection, instant payment, free RC transfer — and verified second-hand vehicles to buy.";
 
-const scrapSelectionCards = [
+const vehicleSelectionCards = [
   {
-    title: "Mixed scrap",
-    text: "Raddi, plastic, bottles and metal together.",
-    icon: Boxes,
+    title: "Sell your car",
+    text: "Hatchback, sedan or SUV — petrol, diesel, CNG.",
+    icon: Car,
     search: { mode: "mixed" as const },
   },
   {
-    title: "Metal",
-    text: "Iron, steel, aluminium, brass and copper.",
-    icon: Wrench,
-    search: { mode: "specific" as const, item: "Iron & Metal" },
+    title: "Sell your bike",
+    text: "Commuter, sports and cruiser motorcycles.",
+    icon: Bike,
+    search: { mode: "specific" as const, item: "Commuter (100–125cc)" },
   },
   {
-    title: "Plastic",
-    text: "PET bottles, mixed plastic and containers.",
-    icon: Recycle,
-    search: { mode: "specific" as const, item: "Plastic & Bottles" },
+    title: "Sell your scooter",
+    text: "Activa, Access, Jupiter and city scooters.",
+    icon: Caravan,
+    search: { mode: "specific" as const, item: "110cc scooter" },
   },
   {
-    title: "Paper / raddi",
-    text: "Newspapers, books, cartons and cardboard.",
-    icon: Package,
-    search: { mode: "specific" as const, item: "Newspaper / Raddi" },
+    title: "Sell an SUV",
+    text: "Compact SUVs, MUVs and 7-seaters.",
+    icon: Car,
+    search: { mode: "specific" as const, item: "SUV / MUV" },
   },
   {
-    title: "E-waste",
-    text: "Small devices, wires, chargers and boards.",
-    icon: Cpu,
-    search: { mode: "specific" as const, item: "E-Waste" },
+    title: "Electric vehicles",
+    text: "EV cars and electric two-wheelers.",
+    icon: Zap,
+    search: { mode: "specific" as const, item: "Electric car" },
   },
   {
-    title: "Other items",
-    text: "Appliances, glass bottles and shop scrap.",
-    icon: CheckCircle2,
-    search: { mode: "specific" as const, item: "Old Appliances" },
+    title: "Commercial vehicles",
+    text: "Autos, mini trucks, tempos and fleet cars.",
+    icon: Truck,
+    search: { mode: "specific" as const, item: "Mini truck / pickup" },
   },
 ];
 
@@ -122,7 +122,7 @@ function Home() {
         <div className="absolute inset-0">
           <img
             src={heroImg}
-            alt="Sorted recyclable scrap ready for professional pickup in Bangalore"
+            alt="Used cars, bikes and scooters ready for resale in Bangalore"
             width={1920}
             height={1080}
             className="h-full w-full object-cover opacity-30"
@@ -138,7 +138,7 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.05 }}
               className="text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl"
             >
-              Best Scrap Buyers in <span className="text-gradient">Bangalore</span>
+              Sell Your Used Car, Bike or Scooter in <span className="text-gradient">Bangalore</span>
             </motion.h1>
 
             <motion.p
@@ -147,9 +147,9 @@ function Home() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              Doorstep scrap collection for newspaper, raddi, metal, plastic, e-waste and old
-              appliances. Book a pickup, see transparent rates, and get paid after certified
-              weighing at your door.
+              Get a fair, market-linked price for your second-hand car, bike or scooter with a
+              free doorstep inspection anywhere in Bangalore. Instant payment, free RC transfer,
+              and a curated stock of verified used vehicles if you are buying.
             </motion.p>
 
             <motion.div
@@ -161,7 +161,7 @@ function Home() {
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Button asChild variant="hero" size="xl">
                   <Link to="/pickup">
-                    Book a pickup
+                    Get free valuation
                     <ArrowRight />
                   </Link>
                 </Button>
@@ -214,7 +214,7 @@ function Home() {
               <div className="mt-3 min-h-5 text-xs font-medium leading-relaxed sm:text-sm">
                 {!pincodeChecked && (
                   <span className="text-navy-foreground/70">
-                    Check if doorstep pickup is available in your 6-digit pincode.
+                    Check if free doorstep inspection is available in your 6-digit pincode.
                   </span>
                 )}
                 {pincodeIncomplete && (
@@ -224,7 +224,7 @@ function Home() {
                 )}
                 {pincodeChecked && pincodeAvailable && (
                   <span className="text-primary">
-                    Pickup available in {cleanHeroPincode}. You can book now.
+                    Doorstep inspection available in {cleanHeroPincode}. You can book now.
                   </span>
                 )}
                 {pincodeUnavailable && (
@@ -243,17 +243,17 @@ function Home() {
           <Reveal className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-                Select scrap to sell
+                What are you selling?
               </p>
-              <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Start with what you have</h2>
+              <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Start with your vehicle</h2>
             </div>
             <p className="max-w-md text-sm text-muted-foreground">
-              Choose a category and the booking flow opens with your scrap type already selected.
+              Choose a category and the valuation flow opens with your vehicle type already selected.
             </p>
           </Reveal>
 
           <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
-            {scrapSelectionCards.map((card, index) => (
+            {vehicleSelectionCards.map((card, index) => (
               <Reveal key={card.title} delay={(index % 3) * 0.05}>
                 <Link
                   to="/pickup"
@@ -281,10 +281,10 @@ function Home() {
       <section className="border-b border-border bg-background">
         <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-4 gap-y-8 overflow-hidden px-4 py-10 sm:px-6 md:py-12 lg:grid-cols-4 lg:px-8">
           {[
-            { value: "30 min", label: "Avg. callback time" },
+            { value: "60 min", label: "Free inspection" },
             { value: "40+", label: "Bangalore areas" },
-            { value: "24 hr", label: "Pickup support" },
-            { value: "4.9/5", label: "Pickup rating" },
+            { value: "Free", label: "RC transfer" },
+            { value: "4.9/5", label: "Seller rating" },
           ].map((s, i) => (
             <Reveal key={s.label} delay={i * 0.06} className="px-4 text-center">
               <div className="text-3xl font-extrabold text-foreground md:text-4xl">
@@ -303,10 +303,10 @@ function Home() {
               How it works
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              Selling scrap, finally made simple
+              Selling your vehicle, finally made simple
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Three steps from clutter to cash, with no haggling and no hidden charges.
+              Three steps from listing to payment, with no haggling and no hidden charges.
             </p>
           </Reveal>
 
@@ -333,7 +333,7 @@ function Home() {
             <div className="relative overflow-hidden rounded-3xl shadow-elevated">
               <img
                 src={pickupImg}
-                alt="HuluMart doorstep scrap pickup with certified weighing in Bangalore"
+                alt="ZAPIBOO evaluator inspecting a used car at a Bangalore home"
                 width={1200}
                 height={1000}
                 loading="lazy"
@@ -344,22 +344,22 @@ function Home() {
 
           <Reveal delay={0.1}>
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Doorstep pickup
+              Doorstep inspection
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              We bring trusted scrap buying to your front door
+              We buy your used vehicle right at your doorstep
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Whether it is a single box of newspapers or a full home clean-out, a vetted HuluMart
-              agent comes to you. Watch the live weight, see the live rate and approve your payout
-              right there.
+              Whether it is a 12-year-old hatchback or a two-year-old scooter, a trained ZAPIBOO
+              evaluator comes to you. See the inspection report, understand how the price was
+              arrived at, and approve your payout on the spot.
             </p>
             <ul className="mt-8 space-y-4">
               {[
-                "Same-day and next-day pickup slots",
-                "Live weighing on certified digital scales",
-                "Instant payment after pickup",
-                "Digital receipt for your scrap sale",
+                "Same-day and next-day inspection slots",
+                "140-point inspection with a shared report",
+                "Instant bank transfer once you accept",
+                "Free RC transfer, NOC and insurance handover",
               ].map((item) => (
                 <li key={item} className="flex items-start gap-3">
                   <CheckCircle2 className="mt-0.5 size-5 shrink-0 text-primary" />
@@ -369,7 +369,7 @@ function Home() {
             </ul>
             <Button asChild variant="hero" size="lg" className="mt-9">
               <Link to="/pickup">
-                Schedule my pickup
+                Book my free inspection
                 <ArrowRight />
               </Link>
             </Button>
@@ -382,25 +382,25 @@ function Home() {
           <Reveal className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
             <div className="max-w-xl">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-                Bangalore scrap rates
+                Bangalore resale price guide
               </p>
               <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-                Fair rates for everyday household scrap
+                What used vehicles sell for in Bangalore
               </h2>
               <p className="mt-4 text-muted-foreground">
-                The same honest price for every home, sorted and weighed at your door.
+                Indicative price bands by body type. Your final offer depends on year, kilometres, variant and condition.
               </p>
             </div>
             <Button asChild variant="outline" size="lg">
               <Link to="/materials">
-                View all rates
+                View full price guide
                 <ArrowRight />
               </Link>
             </Button>
           </Reveal>
 
           <div className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {householdRates.slice(0, 8).map((m, i) => (
+            {materials.map((m, i) => (
               <Reveal key={m.name} delay={(i % 4) * 0.05}>
                 <div className="group h-full rounded-2xl border border-border bg-card p-6 transition-all hover:border-primary/40 hover:shadow-soft">
                   <h3 className="font-bold leading-tight">{m.name}</h3>
@@ -408,6 +408,7 @@ function Home() {
                     <span className="text-2xl font-extrabold text-gradient">{m.price}</span>
                     <span className="text-sm text-muted-foreground">{m.unit}</span>
                   </div>
+                  <p className="mt-3 text-sm text-muted-foreground">{m.blurb}</p>
                 </div>
               </Reveal>
             ))}
@@ -425,7 +426,7 @@ function Home() {
               Serving All Areas of <span className="text-primary">Bangalore</span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Free doorstep scrap pickup across every major Bangalore neighbourhood.
+              Free doorstep vehicle inspection and pickup across every major Bangalore neighbourhood.
             </p>
           </Reveal>
 
@@ -464,10 +465,10 @@ function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Why HuluMart
+              Why ZAPIBOO
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              A reliable scrap buyer for Bangalore homes
+              A trusted used-vehicle partner in Bangalore
             </h2>
           </Reveal>
 
@@ -490,7 +491,7 @@ function Home() {
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">Trusted by Bangalore sellers</h2>
+            <h2 className="text-3xl font-bold sm:text-4xl">Trusted by Bangalore buyers and sellers</h2>
           </Reveal>
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {testimonials.map((t, i) => (

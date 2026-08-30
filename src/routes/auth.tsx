@@ -14,7 +14,7 @@ export const Route = createFileRoute("/auth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Sign in or create an account | HuluMart" },
+      { title: "Sign in or create an account | ZAPIBOO" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -106,7 +106,7 @@ function AuthPage() {
               <Recycle className="size-5" />
             </div>
             <div className="min-w-0">
-              <p className="text-sm font-extrabold leading-tight">HuluMart</p>
+              <p className="text-sm font-extrabold leading-tight">ZAPIBOO</p>
               <p className="truncate text-xs text-navy-foreground/65">Bengaluru laptop buyback</p>
             </div>
           </Link>
@@ -289,7 +289,7 @@ function AuthPage() {
             </Tabs>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              By continuing you agree to HuluMart's fair-pricing terms.
+              By continuing you agree to ZAPIBOO's fair-pricing terms.
             </p>
           </motion.div>
         </div>

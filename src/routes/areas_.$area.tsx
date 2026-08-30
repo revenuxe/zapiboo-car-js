@@ -23,7 +23,7 @@ export const Route = createFileRoute("/areas_/$area")({
     const area = getAreaBySlug(params.area);
     if (!area) return {};
     const title = `Best Scrap Buyers in ${area.name}, Bangalore | Doorstep Scrap Collection`;
-    const description = `Sell scrap online in ${area.name}, Bangalore with HuluMart. Book doorstep scrap collection for paper, metal, plastic, e-waste and appliances with certified weighing and instant payment.`;
+    const description = `Sell scrap online in ${area.name}, Bangalore with ZAPIBOO. Book doorstep scrap collection for paper, metal, plastic, e-waste and appliances with certified weighing and instant payment.`;
     const path = `/areas/${area.slug}`;
 
     return {
@@ -82,7 +82,7 @@ function AreaLandingPage() {
               Best Scrap Buyers in <span className="text-gradient">{area.name}</span>
             </h1>
             <p className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg">
-              HuluMart offers doorstep scrap collection in {area.name}, Bangalore for paper,
+              ZAPIBOO offers doorstep scrap collection in {area.name}, Bangalore for paper,
               raddi, metal, plastic, e-waste and old appliances. Get transparent rates,
               certified weighing and instant payment.
             </p>
@@ -143,7 +143,7 @@ function AreaLandingPage() {
 
           <Reveal delay={0.1}>
             <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-              <h2 className="text-xl font-bold">Why choose HuluMart in {area.name}?</h2>
+              <h2 className="text-xl font-bold">Why choose ZAPIBOO in {area.name}?</h2>
               <ul className="mt-5 space-y-4">
                 {[
                   "Free doorstep pickup for serviceable Bangalore pincodes",

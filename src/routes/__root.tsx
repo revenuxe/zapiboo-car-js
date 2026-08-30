@@ -18,9 +18,9 @@ import { FloatingWhatsApp } from "../components/FloatingWhatsApp";
 import { Toaster } from "../components/ui/sonner";
 import { absoluteUrl, organizationSchema, websiteSchema } from "../lib/seo";
 
-const rootTitle = "HuluMart | Sell Used Laptop in Bangalore";
+const rootTitle = "ZAPIBOO | Sell Used Laptop in Bangalore";
 const rootDescription =
-  "Sell your old or used laptop in Bangalore with HuluMart. Get an instant quote, free doorstep pickup and same-day payment.";
+  "Sell your old or used laptop in Bangalore with ZAPIBOO. Get an instant quote, free doorstep pickup and same-day payment.";
 
 function NotFoundComponent() {
   return (
@@ -92,14 +92,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "description",
         content: rootDescription,
       },
-      { name: "author", content: "HuluMart" },
+      { name: "author", content: "ZAPIBOO" },
       { property: "og:title", content: rootTitle },
       {
         property: "og:description",
         content: rootDescription,
       },
       { property: "og:type", content: "website" },
-      { property: "og:site_name", content: "HuluMart" },
+      { property: "og:site_name", content: "ZAPIBOO" },
       { property: "og:url", content: absoluteUrl("/") },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: rootTitle },

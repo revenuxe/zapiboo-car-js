@@ -14,7 +14,7 @@ import {
 export const Route = createFileRoute("/sell/$category_/$brand_/$series")({
   head: ({ params }) => {
     const path = `/sell/${params.category}/${params.brand}/${params.series}`;
-    const title = `Sell ${cap(params.brand)} ${cap(params.series)} in Bangalore | HuluMart`;
+    const title = `Sell ${cap(params.brand)} ${cap(params.series)} in Bangalore | ZAPIBOO`;
     const description = `Select your ${cap(params.brand)} ${cap(params.series)} model and get an instant buyback price with free doorstep pickup in Bangalore.`;
     return {
       meta: [

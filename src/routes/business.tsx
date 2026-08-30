@@ -23,15 +23,15 @@ import { supabase } from "@/integrations/supabase/client";
 export const Route = createFileRoute("/business")({
   head: () => ({
     meta: [
-      { title: "For Business - Scrap Pickup, Delivery and Auctions | HuluMart" },
+      { title: "For Business - Scrap Pickup, Delivery and Auctions | ZAPIBOO" },
       {
         name: "description",
         content:
-          "HuluMart works with small scrap shops, corporate offices and bulk sellers for scrap pickup, delivery support, auction listings and responsible recycling.",
+          "ZAPIBOO works with small scrap shops, corporate offices and bulk sellers for scrap pickup, delivery support, auction listings and responsible recycling.",
       },
       {
         property: "og:title",
-        content: "For Business - Scrap Pickup, Delivery and Auctions | HuluMart",
+        content: "For Business - Scrap Pickup, Delivery and Auctions | ZAPIBOO",
       },
       {
         property: "og:description",
@@ -116,7 +116,7 @@ function Business() {
         eyebrow="For business"
         title={
           <>
-            Move business scrap with <span className="text-gradient">HuluMart</span>
+            Move business scrap with <span className="text-gradient">ZAPIBOO</span>
           </>
         }
         subtitle="We pick up scraps from small scrap shops, deliver scrap to the right destination, list auction lots, handle corporate scrap and support many more bulk scrap needs."
@@ -156,7 +156,7 @@ function Business() {
               </div>
               <h2 className="text-3xl font-bold sm:text-4xl">Bulk scrap, handled end to end</h2>
               <p className="text-muted-foreground">
-                HuluMart helps business sellers move scrap faster, reach better buyers and keep the
+                ZAPIBOO helps business sellers move scrap faster, reach better buyers and keep the
                 process organized from enquiry to settlement.
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -202,7 +202,7 @@ function Business() {
               </p>
               <ul className="space-y-3">
                 {[
-                  "Quick response from the HuluMart team",
+                  "Quick response from the ZAPIBOO team",
                   "Support for one-time and recurring scrap",
                   "Clear next steps before any movement",
                 ].map((item) => (

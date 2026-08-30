@@ -30,13 +30,13 @@ import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availa
 export const Route = createFileRoute("/sell/$category")({
   head: () => ({
     meta: [
-      { title: "Sell Used Laptop in Bangalore - Instant Cash | HuluMart" },
+      { title: "Sell Used Laptop in Bangalore - Instant Cash | ZAPIBOO" },
       {
         name: "description",
         content:
           "Sell your old or used laptop in Bangalore for instant cash. Get a free instant quote, free doorstep pickup and same-day payment. Apple, Dell, HP, Lenovo & more.",
       },
-      { property: "og:title", content: "Sell Used Laptop in Bangalore - Instant Cash | HuluMart" },
+      { property: "og:title", content: "Sell Used Laptop in Bangalore - Instant Cash | ZAPIBOO" },
       {
         property: "og:description",
         content:
@@ -52,7 +52,7 @@ export const Route = createFileRoute("/sell/$category")({
           "@type": "Service",
           name: "Sell Used Laptop in Bangalore",
           areaServed: "Bengaluru",
-          provider: { "@type": "Organization", name: "HuluMart" },
+          provider: { "@type": "Organization", name: "ZAPIBOO" },
           serviceType: "Used laptop buyback with doorstep pickup",
         }),
       },
@@ -219,7 +219,7 @@ function Landing({
             </div>
             <a
               href={`https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-                `Hi HuluMart, I want to sell my ${lower} in Bangalore. Please help me get a quote.`,
+                `Hi ZAPIBOO, I want to sell my ${lower} in Bangalore. Please help me get a quote.`,
               )}`}
               target="_blank"
               rel="noreferrer"

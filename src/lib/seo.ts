@@ -1,13 +1,13 @@
 import { serviceLocalities } from "@/lib/bangalore-data";
 
-export const siteUrl = "https://www.hulumart.com";
+export const siteUrl = "https://www.zapiboo.com";
 
 export const businessContact = {
-  name: "HuluMart",
+  name: "ZAPIBOO",
   phone: "9886285028",
   phoneHref: "tel:+919886285028",
-  email: "hulumart.com@gmail.com",
-  emailHref: "mailto:hulumart.com@gmail.com",
+  email: "zapiboo.com@gmail.com",
+  emailHref: "mailto:zapiboo.com@gmail.com",
   address: "HBR Layout, Bangalore, 560043",
   locality: "HBR Layout",
   city: "Bangalore",
@@ -260,7 +260,7 @@ export function howToSchema(input: {
       { "@type": "HowToSupply", name: "Laptop charger" },
       { "@type": "HowToSupply", name: "Government photo ID" },
     ],
-    tool: [{ "@type": "HowToTool", name: "HuluMart doorstep pickup" }],
+    tool: [{ "@type": "HowToTool", name: "ZAPIBOO doorstep pickup" }],
     step: input.steps.map((step, index) => ({
       "@type": "HowToStep",
       position: index + 1,

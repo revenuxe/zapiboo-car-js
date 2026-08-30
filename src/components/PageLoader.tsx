@@ -1,8 +1,8 @@
-import logo from "@/assets/hulumart-logo.webp";
+import logo from "@/assets/zapiboo-logo.webp";
 import { cn } from "@/lib/utils";
 
 /**
- * Brand-forward page loader. Pulses the HuluMart mark inside a soft glow ring —
+ * Brand-forward page loader. Pulses the ZAPIBOO mark inside a soft glow ring —
  * used across route transitions, dashboards and long buttons so the wait
  * never feels dead.
  */

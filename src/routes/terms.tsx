@@ -4,16 +4,16 @@ import { PageHeader } from "@/components/PageHeader";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Terms & Conditions | HuluMart" },
+      { title: "Terms & Conditions | ZAPIBOO" },
       {
         name: "description",
         content:
-          "The terms and conditions governing your use of HuluMart's website and used laptop buyback services.",
+          "The terms and conditions governing your use of ZAPIBOO's website and used laptop buyback services.",
       },
-      { property: "og:title", content: "Terms & Conditions | HuluMart" },
+      { property: "og:title", content: "Terms & Conditions | ZAPIBOO" },
       {
         property: "og:description",
-        content: "Read the terms that govern your use of HuluMart's services.",
+        content: "Read the terms that govern your use of ZAPIBOO's services.",
       },
     ],
     links: [{ rel: "canonical", href: "/terms" }],
@@ -28,13 +28,13 @@ const sections: { heading: string; body: string[] }[] = [
     heading: "1. Acceptance of terms",
     body: [
       "By accessing our website, requesting a quote, or booking a pickup, you agree to these Terms & Conditions. If you do not agree, please do not use our services.",
-      "These terms apply to HuluMart used laptop and device buyback services.",
+      "These terms apply to ZAPIBOO used laptop and device buyback services.",
     ],
   },
   {
     heading: "2. Our services",
     body: [
-      "HuluMart provides a buyback service for used laptops and electronic devices.",
+      "ZAPIBOO provides a buyback service for used laptops and electronic devices.",
       "Service availability depends on your locality and pincode. We may decline or reschedule a pickup where an area is not yet serviceable or where conditions prevent safe collection.",
     ],
   },
@@ -67,15 +67,15 @@ const sections: { heading: string; body: string[] }[] = [
     heading: "6. Data, accounts and device locks",
     body: [
       "Before handover you must back up and permanently remove all your personal data, and sign out of and remove all accounts and security locks - including Apple ID / Find My, Google account, Windows / Microsoft account, MDM and any anti-theft locks.",
-      "HuluMart is not responsible for any data left on the device. We recommend performing a factory reset before pickup.",
+      "ZAPIBOO is not responsible for any data left on the device. We recommend performing a factory reset before pickup.",
       "Devices that are reported lost or stolen, are blacklisted, or carry unremovable activation / ownership locks cannot be purchased.",
     ],
   },
   {
     heading: "7. Buyback payment and ownership transfer",
     body: [
-      "Once you accept the final price, payment is made instantly via UPI or bank transfer to the account or number you provide. Please verify your payment details carefully - HuluMart is not liable for payments sent to incorrect details provided by you.",
-      "Ownership of the device transfers to HuluMart only after payment is completed and you hand over the device. After successful purchase, the sale is final and the device will not be returned.",
+      "Once you accept the final price, payment is made instantly via UPI or bank transfer to the account or number you provide. Please verify your payment details carefully - ZAPIBOO is not liable for payments sent to incorrect details provided by you.",
+      "Ownership of the device transfers to ZAPIBOO only after payment is completed and you hand over the device. After successful purchase, the sale is final and the device will not be returned.",
     ],
   },
   {
@@ -102,7 +102,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "11. Limitation of liability",
     body: [
-      "To the maximum extent permitted by law, HuluMart is not liable for indirect, incidental or consequential losses arising from the use of our services, including any loss of data from a device. Our total liability for any claim is limited to the value of the relevant pickup or buyback transaction.",
+      "To the maximum extent permitted by law, ZAPIBOO is not liable for indirect, incidental or consequential losses arising from the use of our services, including any loss of data from a device. Our total liability for any claim is limited to the value of the relevant pickup or buyback transaction.",
     ],
   },
   {
@@ -114,7 +114,7 @@ const sections: { heading: string; body: string[] }[] = [
   {
     heading: "13. Contact us",
     body: [
-      "For any questions about these terms, email hulumart.com@gmail.com or use our Contact page.",
+      "For any questions about these terms, email zapiboo.com@gmail.com or use our Contact page.",
     ],
   },
 ];
@@ -125,7 +125,7 @@ function Terms() {
       <PageHeader
         eyebrow="Legal"
         title={<>Terms &amp; <span className="text-gradient">Conditions</span></>}
-        subtitle={`The rules of the road for using HuluMart. Last updated ${updated}.`}
+        subtitle={`The rules of the road for using ZAPIBOO. Last updated ${updated}.`}
       />
 
       <section className="bg-background py-16 md:py-24">

@@ -31,9 +31,9 @@ import {
 } from "@/lib/seo";
 import heroImg from "@/assets/hero-scrap.webp";
 
-const pageTitle = "Scrap Cars Buyers in Bangalore | Sell Old Car Scrap | HuluMart";
+const pageTitle = "Scrap Cars Buyers in Bangalore | Sell Old Car Scrap | ZAPIBOO";
 const pageDescription =
-  "Sell scrap cars in Bangalore with HuluMart. Get help with old car scrap price, vehicle scrap valuation, negotiation, towing, documents, transparent weighing and responsible recycling.";
+  "Sell scrap cars in Bangalore with ZAPIBOO. Get help with old car scrap price, vehicle scrap valuation, negotiation, towing, documents, transparent weighing and responsible recycling.";
 
 const bookingSearch = { mode: "specific" as const, item: "Car Scrap" };
 
@@ -49,7 +49,7 @@ const services = [
   {
     icon: SearchCheck,
     title: "Scrap car valuation",
-    text: "Share your car details, photos and location. HuluMart helps estimate fair scrap car value before you commit.",
+    text: "Share your car details, photos and location. ZAPIBOO helps estimate fair scrap car value before you commit.",
   },
   {
     icon: BadgeCheck,
@@ -98,7 +98,7 @@ const steps = [
   {
     step: "02",
     title: "Get buyer guidance",
-    text: "HuluMart helps with price discussion, negotiation and clarity on towing or dismantling requirements.",
+    text: "ZAPIBOO helps with price discussion, negotiation and clarity on towing or dismantling requirements.",
   },
   {
     step: "03",
@@ -110,15 +110,15 @@ const steps = [
 const faq = [
   {
     q: "How do I sell my scrap car in Bangalore?",
-    a: "Book a car scrap request with HuluMart, share vehicle photos and location, then our team helps with valuation, buyer coordination, transport and transparent settlement.",
+    a: "Book a car scrap request with ZAPIBOO, share vehicle photos and location, then our team helps with valuation, buyer coordination, transport and transparent settlement.",
   },
   {
     q: "Do you buy accident or non-running cars?",
-    a: "Yes. HuluMart can help with accident cars, dead cars, old cars, body shells, engine scrap and mixed automobile scrap depending on condition and documents.",
+    a: "Yes. ZAPIBOO can help with accident cars, dead cars, old cars, body shells, engine scrap and mixed automobile scrap depending on condition and documents.",
   },
   {
     q: "Is towing available for car scrap?",
-    a: "For eligible locations, HuluMart helps coordinate towing or transport so the vehicle can be moved safely to the buyer or dismantling yard.",
+    a: "For eligible locations, ZAPIBOO helps coordinate towing or transport so the vehicle can be moved safely to the buyer or dismantling yard.",
   },
   {
     q: "How is scrap car price calculated?",
@@ -216,7 +216,7 @@ function ScrapCarsPage() {
               transition={{ duration: 0.6, delay: 0.12 }}
               className="mt-5 max-w-2xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
             >
-              HuluMart helps Bangalore sellers with old car scrap valuation, buyer negotiation,
+              ZAPIBOO helps Bangalore sellers with old car scrap valuation, buyer negotiation,
               towing coordination, document guidance, transparent weighing and responsible vehicle
               recycling.
             </motion.p>
@@ -336,7 +336,7 @@ function ScrapCarsPage() {
               What affects your scrap car price?
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Scrap car price in Bangalore is not a flat number. HuluMart helps you understand the
+              Scrap car price in Bangalore is not a flat number. ZAPIBOO helps you understand the
               vehicle scrap value by looking at body metal, reusable parts, running condition,
               documents and transport needs.
             </p>
@@ -371,7 +371,7 @@ function ScrapCarsPage() {
               Complete support for selling scrap cars in Bangalore
             </h2>
             <p className="mt-4 text-muted-foreground">
-              From scrap car valuation to towing and settlement, HuluMart keeps the process simple,
+              From scrap car valuation to towing and settlement, ZAPIBOO keeps the process simple,
               transparent and practical for car owners, garages and businesses.
             </p>
           </Reveal>
@@ -430,7 +430,7 @@ function ScrapCarsPage() {
                 Old cars, accident cars, dead vehicles and parts
               </h2>
               <p className="text-muted-foreground">
-                HuluMart can help sellers looking for scrap car buyers near me, old car scrap
+                ZAPIBOO can help sellers looking for scrap car buyers near me, old car scrap
                 buyers in Bangalore, junk car buyers, vehicle scrap dealers and car dismantling
                 support.
               </p>
@@ -544,7 +544,7 @@ function ScrapCarsPage() {
               Ready to sell your old car as scrap?
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-navy-foreground/75">
-              Book a car scrap request and HuluMart will help with valuation, negotiation, towing
+              Book a car scrap request and ZAPIBOO will help with valuation, negotiation, towing
               support and transparent settlement.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

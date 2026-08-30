@@ -11,9 +11,9 @@ import {
   serviceSchema,
 } from "@/lib/seo";
 
-const areasTitle = "Scrap Pickup Areas in Bangalore | HuluMart";
+const areasTitle = "Scrap Pickup Areas in Bangalore | ZAPIBOO";
 const areasDescription =
-  "See all Bangalore areas served by HuluMart for doorstep scrap collection, certified weighing and instant payment.";
+  "See all Bangalore areas served by ZAPIBOO for doorstep scrap collection, certified weighing and instant payment.";
 
 export const Route = createFileRoute("/areas")({
   head: () => ({
@@ -48,7 +48,7 @@ function AreasPage() {
       <PageHeader
         eyebrow="Areas we serve"
         title={<>Scrap Pickup Areas in Bangalore</>}
-        subtitle="HuluMart covers major Bangalore neighbourhoods for convenient doorstep scrap collection, transparent rates and certified weighing."
+        subtitle="ZAPIBOO covers major Bangalore neighbourhoods for convenient doorstep scrap collection, transparent rates and certified weighing."
       >
         <Button asChild variant="hero" size="lg">
           <Link to="/pickup">

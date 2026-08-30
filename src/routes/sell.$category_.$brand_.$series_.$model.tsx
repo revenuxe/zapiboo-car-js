@@ -32,7 +32,7 @@ import { PageLoader } from "@/components/PageLoader";
 export const Route = createFileRoute("/sell/$category_/$brand_/$series_/$model")({
   head: ({ params }) => ({
     meta: [
-      { title: `Sell ${cap(params.model)} in Bangalore — Book Free Pickup | HuluMart` },
+      { title: `Sell ${cap(params.model)} in Bangalore — Book Free Pickup | ZAPIBOO` },
       {
         name: "description",
         content: `Book a free doorstep pickup for your ${cap(params.model)} in Bangalore. Our team will inspect, quote and pay you on the spot.`,
@@ -148,7 +148,7 @@ function SellModelPage() {
   };
 
   const waHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell my ${modelRow.name} in Bangalore. Please help me book a free pickup.`,
+    `Hi ZAPIBOO, I want to sell my ${modelRow.name} in Bangalore. Please help me book a free pickup.`,
   )}`;
 
   return (
@@ -478,7 +478,7 @@ function BookingForm({
       <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-2xl border border-border bg-secondary/40 p-3.5">
         <Checkbox checked={agreed} onCheckedChange={(v) => setAgreed(v === true)} className="mt-0.5" />
         <span className="text-xs leading-relaxed text-muted-foreground">
-          I agree to HuluMart's{" "}
+          I agree to ZAPIBOO's{" "}
           <Link to="/terms" target="_blank" className="font-semibold text-primary underline-offset-2 hover:underline">
             Terms &amp; Conditions
           </Link>{" "}

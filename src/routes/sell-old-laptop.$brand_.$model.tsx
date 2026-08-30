@@ -34,7 +34,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand_/$model")({
     if (!found) return {};
     const { brand, name } = found;
     const path = `/sell-old-laptop/${brand.slug}/${modelSlug(name)}`;
-    const title = `Sell ${name} in Bangalore - Instant Cash Price | HuluMart`;
+    const title = `Sell ${name} in Bangalore - Instant Cash Price | ZAPIBOO`;
     const description = `Sell your used ${name} in Bangalore for the best price. Free instant quote, free doorstep pickup and same-day UPI payment. Certified data wiping on every laptop.`;
     return {
       meta: [
@@ -95,7 +95,7 @@ function SellModelPage() {
   const areas = serviceAreas.filter((a) => featuredServiceAreas.includes(a.slug)).slice(0, 12);
   const otherModels = brand.models.filter((m: string) => m !== name).slice(0, 8);
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell my ${name} in Bangalore. Please share a quote.`,
+    `Hi ZAPIBOO, I want to sell my ${name} in Bangalore. Please share a quote.`,
   )}`;
 
   return (
@@ -148,7 +148,7 @@ function SellModelPage() {
             </h2>
             <div className="mt-4 space-y-4 text-muted-foreground">
               <p>
-                Want to sell your old {name}? HuluMart pays the best resale price in Bangalore. Our
+                Want to sell your old {name}? ZAPIBOO pays the best resale price in Bangalore. Our
                 valuation is benchmarked to the live second-hand market and accounts for your exact
                 configuration - processor, RAM, storage and graphics - so you get a fair, transparent
                 offer every time.
@@ -162,7 +162,7 @@ function SellModelPage() {
           </Reveal>
           <Reveal delay={0.1}>
             <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-              <h2 className="text-xl font-bold">Why sell your {name} with HuluMart?</h2>
+              <h2 className="text-xl font-bold">Why sell your {name} with ZAPIBOO?</h2>
               <ul className="mt-5 space-y-4">
                 {[
                   `Best resale price for the ${name} in Bangalore`,

@@ -14,7 +14,7 @@ import {
 export const Route = createFileRoute("/sell/$category_/$brand")({
   head: ({ params }) => {
     const path = `/sell/${params.category}/${params.brand}`;
-    const title = `Sell ${cap(params.brand)} ${cap(params.category)} in Bangalore | HuluMart`;
+    const title = `Sell ${cap(params.brand)} ${cap(params.category)} in Bangalore | ZAPIBOO`;
     const description = `Pick your ${cap(params.brand)} series and get an instant price for your ${params.category} in Bangalore with free doorstep pickup.`;
     // The static /sell-old-laptop/{brand} content page covers the same brand
     // keyword with deeper content — canonicalize to it there to avoid

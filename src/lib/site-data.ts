@@ -36,7 +36,7 @@ export const steps = [
   {
     icon: Truck,
     title: "We come to your door",
-    text: "A verified HuluMart agent arrives on schedule, weighs on a certified scale, and shows the rate clearly.",
+    text: "A verified ZAPIBOO agent arrives on schedule, weighs on a certified scale, and shows the rate clearly.",
   },
   {
     icon: Wallet,
@@ -70,7 +70,7 @@ export const testimonials = [
   },
   {
     quote:
-      "We had cardboard, old wires, and a broken appliance after shifting in Whitefield. HuluMart handled everything in one visit without bargaining.",
+      "We had cardboard, old wires, and a broken appliance after shifting in Whitefield. ZAPIBOO handled everything in one visit without bargaining.",
     name: "Ananya Shetty",
     role: "Homeowner, Whitefield",
   },

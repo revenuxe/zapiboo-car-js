@@ -36,7 +36,7 @@ export const Route = createFileRoute("/sell-old-laptop/$brand")({
     const brand = getLaptopBrandBySlug(params.brand);
     if (!brand) return {};
     const path = `/sell-old-laptop/${brand.slug}`;
-    const title = `Sell Used ${brand.name} Laptop in Bangalore - Instant Cash | HuluMart`;
+    const title = `Sell Used ${brand.name} Laptop in Bangalore - Instant Cash | ZAPIBOO`;
     const description = `Sell your old or used ${brand.name} laptop in Bangalore for instant cash. Free instant quote, free doorstep pickup and same-day UPI payment. ${brand.priceRange} for ${brand.popularSeries
       .map((s) => s.name)
       .slice(0, 3)
@@ -89,7 +89,7 @@ function SellBrandLaptop() {
   const otherBrands = laptopBrands.filter((b) => b.slug !== brand.slug);
   const areas = serviceAreas.filter((a) => featuredServiceAreas.includes(a.slug)).slice(0, 12);
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell my used ${brand.name} laptop in Bangalore. Please help me with a quote.`,
+    `Hi ZAPIBOO, I want to sell my used ${brand.name} laptop in Bangalore. Please help me with a quote.`,
   )}`;
 
   return (
@@ -167,7 +167,7 @@ function SellBrandLaptop() {
 
           <Reveal delay={0.1}>
             <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-              <h2 className="text-xl font-bold">Why sell your {brand.name} laptop with HuluMart?</h2>
+              <h2 className="text-xl font-bold">Why sell your {brand.name} laptop with ZAPIBOO?</h2>
               <ul className="mt-5 space-y-4">
                 {[
                   `Best price for ${brand.name} laptops in the Bangalore resale market`,

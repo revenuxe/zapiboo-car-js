@@ -8,7 +8,7 @@ import {
   organizationSchema,
 } from "@/lib/seo";
 
-const title = "Laptop Resale Blog - Prices, Data Safety & Selling Guides | HuluMart";
+const title = "Laptop Resale Blog - Prices, Data Safety & Selling Guides | ZAPIBOO";
 const description =
   "Practical guides on selling used laptops in Bangalore: real resale price bands, how buyers calculate value, safe data wiping and the best time to sell.";
 
@@ -39,7 +39,7 @@ export const Route = createFileRoute("/blog")({
             "@context": "https://schema.org",
             "@type": "Blog",
             "@id": `${absoluteUrl("/blog")}#blog`,
-            name: "HuluMart Laptop Resale Blog",
+            name: "ZAPIBOO Laptop Resale Blog",
             url: absoluteUrl("/blog"),
             blogPost: blogPosts.map((p) => ({
               "@type": "BlogPosting",
@@ -65,7 +65,7 @@ function BlogIndex() {
       <section className="bg-gradient-navy py-14 text-navy-foreground sm:py-20">
         <div className="mx-auto max-w-5xl px-4 text-center sm:px-6">
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-green">
-            HuluMart Journal
+            ZAPIBOO Journal
           </p>
           <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-5xl">
             Selling a used laptop in Bangalore, explained properly

@@ -35,7 +35,7 @@ export const Route = createFileRoute("/account")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "My account | HuluMart" },
+      { title: "My account | ZAPIBOO" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),

@@ -32,7 +32,7 @@ import pickupImg from "@/assets/doorstep-pickup.webp";
 
 const homepageTitle = "Best Scrap Buyers in Bangalore | Doorstep Scrap Collection";
 const homepageDescription =
-  "HuluMart is one of the best scrap buyers in Bangalore for doorstep scrap collection, live scrap prices, certified weighing and instant payment across major Bangalore areas.";
+  "ZAPIBOO is one of the best scrap buyers in Bangalore for doorstep scrap collection, live scrap prices, certified weighing and instant payment across major Bangalore areas.";
 
 const scrapSelectionCards = [
   {
@@ -333,7 +333,7 @@ function Home() {
             <div className="relative overflow-hidden rounded-3xl shadow-elevated">
               <img
                 src={pickupImg}
-                alt="HuluMart doorstep scrap pickup with certified weighing in Bangalore"
+                alt="ZAPIBOO doorstep scrap pickup with certified weighing in Bangalore"
                 width={1200}
                 height={1000}
                 loading="lazy"
@@ -350,7 +350,7 @@ function Home() {
               We bring trusted scrap buying to your front door
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Whether it is a single box of newspapers or a full home clean-out, a vetted HuluMart
+              Whether it is a single box of newspapers or a full home clean-out, a vetted ZAPIBOO
               agent comes to you. Watch the live weight, see the live rate and approve your payout
               right there.
             </p>
@@ -464,7 +464,7 @@ function Home() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Why HuluMart
+              Why ZAPIBOO
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
               A reliable scrap buyer for Bangalore homes

@@ -57,7 +57,7 @@ export function SiteFooter() {
             <div>
               <Logo invert />
               <p className="mt-5 max-w-sm text-sm leading-relaxed text-navy-foreground/70">
-                HuluMart buys scrap and used laptops across Bangalore with live rates, certified
+                ZAPIBOO buys scrap and used laptops across Bangalore with live rates, certified
                 weighing, free doorstep pickup and instant payment.
               </p>
               <div className="mt-6 space-y-2 text-sm text-navy-foreground/70">
@@ -126,7 +126,7 @@ export function SiteFooter() {
           </div>
 
           <div className="mt-14 flex flex-col items-center justify-between gap-4 border-t border-navy-foreground/15 pt-8 text-sm text-navy-foreground/60 sm:flex-row">
-            <p>© {new Date().getFullYear()} HuluMart. Doorstep scrap collection & laptop buyback in Bangalore.</p>
+            <p>© {new Date().getFullYear()} ZAPIBOO. Doorstep scrap collection & laptop buyback in Bangalore.</p>
             <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
               <Link to="/privacy" className="transition-colors hover:text-brand-green">
                 Privacy Policy

@@ -21,9 +21,9 @@ import { PageHeader } from "@/components/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { absoluteUrl, breadcrumbSchema, organizationSchema, serviceSchema } from "@/lib/seo";
 
-const pageTitle = "Top Scrap Buyers in Bangalore | HuluMart Scrap Dealers";
+const pageTitle = "Top Scrap Buyers in Bangalore | ZAPIBOO Scrap Dealers";
 const pageDescription =
-  "HuluMart is a trusted scrap buyer and scrap dealer in Bangalore for office scrap, computer scrap, e-waste, AC scrap, DG sets, batteries, metal scrap and dismantling scrap.";
+  "ZAPIBOO is a trusted scrap buyer and scrap dealer in Bangalore for office scrap, computer scrap, e-waste, AC scrap, DG sets, batteries, metal scrap and dismantling scrap.";
 
 export const Route = createFileRoute("/top-scrap-buyers")({
   head: () => ({
@@ -109,7 +109,7 @@ const reasons = [
   {
     icon: Gavel,
     title: "Competitive pricing",
-    text: "HuluMart offers fair market-linked prices for scrap materials so homes, offices, shops and businesses get strong value for reusable assets.",
+    text: "ZAPIBOO offers fair market-linked prices for scrap materials so homes, offices, shops and businesses get strong value for reusable assets.",
   },
   {
     icon: Recycle,
@@ -124,7 +124,7 @@ const reasons = [
   {
     icon: ShieldCheck,
     title: "Local expertise",
-    text: "With roots in the scrap market and an online platform built for 2025 onward, HuluMart understands scrap grades, buyer demand and Bangalore service areas.",
+    text: "With roots in the scrap market and an online platform built for 2025 onward, ZAPIBOO understands scrap grades, buyer demand and Bangalore service areas.",
   },
 ];
 
@@ -152,7 +152,7 @@ function TopScrapBuyers() {
             <span className="text-gradient">Bangalore</span>
           </>
         }
-        subtitle="HuluMart is your one-stop solution for reliable scrap buying, bulk scrap pickup, office scrap disposal, e-waste handling and responsible recycling across Bangalore, Karnataka."
+        subtitle="ZAPIBOO is your one-stop solution for reliable scrap buying, bulk scrap pickup, office scrap disposal, e-waste handling and responsible recycling across Bangalore, Karnataka."
       >
         <Button asChild variant="hero" size="lg">
           <Link to="/pickup">
@@ -174,7 +174,7 @@ function TopScrapBuyers() {
               </h2>
               <p className="text-muted-foreground">
                 Are you looking for reliable scrap buyers and dealers in Bangalore, Karnataka?
-                HuluMart specializes in buying various types of scrap materials and providing
+                ZAPIBOO specializes in buying various types of scrap materials and providing
                 professional service in and around Bangalore.
               </p>
               <p className="text-muted-foreground">
@@ -200,7 +200,7 @@ function TopScrapBuyers() {
               </div>
               <p className="mt-6 text-muted-foreground">
                 From IT companies and software offices to shopping malls, warehouses, apartments,
-                factories and old buildings, HuluMart helps sellers clear scrap efficiently while
+                factories and old buildings, ZAPIBOO helps sellers clear scrap efficiently while
                 keeping recycling and documentation in mind.
               </p>
             </div>
@@ -218,7 +218,7 @@ function TopScrapBuyers() {
               We buy a wide range of commercial, office and industrial scrap
             </h2>
             <p className="mt-4 text-muted-foreground">
-              HuluMart works with homes, offices, scrap shops, corporates and bulk sellers for
+              ZAPIBOO works with homes, offices, scrap shops, corporates and bulk sellers for
               doorstep pickup, dismantling scrap, e-waste, metal scrap and recycling support.
             </p>
           </Reveal>
@@ -246,13 +246,13 @@ function TopScrapBuyers() {
           <Reveal>
             <div className="space-y-4">
               <p className="text-sm font-semibold uppercase tracking-wider text-primary">
-                Why choose HuluMart?
+                Why choose ZAPIBOO?
               </p>
               <h2 className="text-3xl font-bold sm:text-4xl">
                 A smarter, cleaner way to sell scrap
               </h2>
               <p className="text-muted-foreground">
-                We go beyond buying and selling scrap. HuluMart is committed to practical service,
+                We go beyond buying and selling scrap. ZAPIBOO is committed to practical service,
                 better recycling flows and a smoother experience for anyone searching for scrap
                 buyers in Bangalore.
               </p>
@@ -282,7 +282,7 @@ function TopScrapBuyers() {
           <Reveal>
             <h2 className="text-3xl font-bold sm:text-4xl">Need trusted scrap buyers near you?</h2>
             <p className="mx-auto mt-4 max-w-2xl text-navy-foreground/75">
-              Book a HuluMart pickup for office scrap, computer scrap, AC scrap, battery scrap,
+              Book a ZAPIBOO pickup for office scrap, computer scrap, AC scrap, battery scrap,
               metal scrap, old vehicle scrap and dismantling scrap across Bangalore.
             </p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">

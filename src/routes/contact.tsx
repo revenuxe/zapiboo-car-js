@@ -14,16 +14,16 @@ import { isSpamLead } from "@/lib/spam-filter";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact HuluMart - Talk to Our Team" },
+      { title: "Contact ZAPIBOO - Talk to Our Team" },
       {
         name: "description",
         content:
-          "Questions about laptop buyback, pricing, pickup or payment? Contact the HuluMart team - we usually reply within one business day.",
+          "Questions about laptop buyback, pricing, pickup or payment? Contact the ZAPIBOO team - we usually reply within one business day.",
       },
-      { property: "og:title", content: "Contact HuluMart - Talk to Our Team" },
+      { property: "og:title", content: "Contact ZAPIBOO - Talk to Our Team" },
       {
         property: "og:description",
-        content: "Reach the HuluMart team about used laptop quotes, pickup, pricing and payment.",
+        content: "Reach the ZAPIBOO team about used laptop quotes, pickup, pricing and payment.",
       },
     ],
     links: [{ rel: "canonical", href: "/contact" }],

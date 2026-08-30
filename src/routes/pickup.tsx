@@ -63,13 +63,13 @@ export const Route = createFileRoute("/pickup")({
   },
   head: () => ({
     meta: [
-      { title: "Book a Doorstep Scrap Pickup in Bengaluru | HuluMart" },
+      { title: "Book a Doorstep Scrap Pickup in Bengaluru | ZAPIBOO" },
       {
         name: "description",
         content:
           "Book a free doorstep scrap pickup across Bengaluru in a few taps. Transparent live ₹ rates, certified weighing at your door and instant payment.",
       },
-      { property: "og:title", content: "Book a Doorstep Scrap Pickup in Bengaluru | HuluMart" },
+      { property: "og:title", content: "Book a Doorstep Scrap Pickup in Bengaluru | ZAPIBOO" },
       {
         property: "og:description",
         content:
@@ -83,7 +83,7 @@ export const Route = createFileRoute("/pickup")({
 
 const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "Evening (5–8)"];
 const todayStr = new Date().toISOString().split("T")[0];
-const pickupDraftKey = "hulumart-pickup-draft";
+const pickupDraftKey = "zapiboo-pickup-draft";
 
 function imageToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {

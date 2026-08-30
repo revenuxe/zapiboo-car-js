@@ -1,7 +1,7 @@
 import type { Block, BlogPost, HowTo } from "@/lib/blog";
 import { serviceAreas } from "@/lib/seo";
 
-const AUTHOR = { name: "Hari Prasad", role: "Buyback lead, HuluMart Bangalore" };
+const AUTHOR = { name: "Hari Prasad", role: "Buyback lead, ZAPIBOO Bangalore" };
 
 type AreaSeed = {
   slug: string;
@@ -21,7 +21,7 @@ const seeds: AreaSeed[] = [
   {
     slug: "hbr-layout",
     angle:
-      "HBR Layout is our home ground — the HuluMart desk sits in 560043, so pickups here are usually the fastest slot on the board.",
+      "HBR Layout is our home ground — the ZAPIBOO desk sits in 560043, so pickups here are usually the fastest slot on the board.",
     landmarks: ["HBR 1st to 5th Block", "Kalyan Nagar junction", "Hennur Main Road", "Banaswadi Ring Road"],
     deviceMix:
       "A high share of family laptops — Dell Inspiron, HP Pavilion, Lenovo IdeaPad — three to six years old, plus a steady stream of student MacBook Airs after semester breaks.",
@@ -248,7 +248,7 @@ const howTo: HowTo = {
   steps: [
     {
       name: "Pick your laptop model online",
-      text: "Choose the brand, series and model on HuluMart to see an indicative price band for your configuration.",
+      text: "Choose the brand, series and model on ZAPIBOO to see an indicative price band for your configuration.",
     },
     {
       name: "Book a free doorstep pickup slot",

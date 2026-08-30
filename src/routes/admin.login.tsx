@@ -12,7 +12,7 @@ import { Logo } from "@/components/Logo";
 export const Route = createFileRoute("/admin/login")({
   head: () => ({
     meta: [
-      { title: "Admin Login | HuluMart" },
+      { title: "Admin Login | ZAPIBOO" },
       { name: "robots", content: "noindex, nofollow" },
     ],
   }),
@@ -157,7 +157,7 @@ function AdminLogin() {
                   type="email"
                   autoComplete="email"
                   className="h-11"
-                  placeholder="you@hulumart.com"
+                  placeholder="you@zapiboo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />

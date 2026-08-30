@@ -25,8 +25,8 @@ import { businessContact } from "@/lib/seo";
 export const Route = createFileRoute("/listings_/$slug")({
   head: () => ({
     meta: [
-      { title: "Scrap Listing | HuluMart" },
-      { name: "description", content: "View this scrap listing and talk to HuluMart for transparent scrap selling support in Bengaluru." },
+      { title: "Scrap Listing | ZAPIBOO" },
+      { name: "description", content: "View this scrap listing and talk to ZAPIBOO for transparent scrap selling support in Bengaluru." },
     ],
   }),
   component: ListingDetailPage,
@@ -74,7 +74,7 @@ function ListingDetailPage() {
   const images = listing.images.length ? listing.images : [];
   const numericPrice = listing.price && /^\d/.test(listing.price.trim());
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell scrap like "${listing.title}". Please help with best rate, transport and negotiation.`,
+    `Hi ZAPIBOO, I want to sell scrap like "${listing.title}". Please help with best rate, transport and negotiation.`,
   )}`;
 
   return (
@@ -198,10 +198,10 @@ function ListingDetailPage() {
               </div>
 
               <div className="mt-8 rounded-2xl border border-border bg-card p-5">
-                <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">How HuluMart helps</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground">How ZAPIBOO helps</h2>
                 <p className="mt-2 leading-relaxed text-foreground/90">
                   Sell scrap with support on rate negotiation, buyer coordination and transport.
-                  HuluMart helps you understand the best available price, keeps weighing transparent
+                  ZAPIBOO helps you understand the best available price, keeps weighing transparent
                   and confirms payment clearly before the material moves.
                 </p>
                 {listing.description && (
@@ -216,7 +216,7 @@ function ListingDetailPage() {
 
         {/* How selling works */}
         <section className="mt-16 rounded-3xl bg-secondary/50 p-6 sm:p-10">
-          <h2 className="text-center text-2xl font-bold">How HuluMart helps you sell scrap</h2>
+          <h2 className="text-center text-2xl font-bold">How ZAPIBOO helps you sell scrap</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-3">
             {[
               { step: "01", title: "Share the scrap", text: "Tell us the material, condition, quantity and location so we can guide the buyer rate." },

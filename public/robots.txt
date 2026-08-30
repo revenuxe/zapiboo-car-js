@@ -5,4 +5,4 @@ Disallow: /admin
 Disallow: /account
 Disallow: /auth
 
-Sitemap: https://www.hulumart.com/sitemap.xml
+Sitemap: https://www.zapiboo.com/sitemap.xml

@@ -43,7 +43,7 @@ export type BlogPost = {
   areaSlug?: string;
 };
 
-const AUTHOR = { name: "Hari Prasad", role: "Buyback lead, HuluMart Bangalore" };
+const AUTHOR = { name: "Hari Prasad", role: "Buyback lead, ZAPIBOO Bangalore" };
 
 const topAreas = serviceAreas.slice(0, 14);
 
@@ -108,7 +108,7 @@ const pillar: BlogPost = {
       caption: "Bangalore used-laptop buyer types compared",
       head: ["Buyer type", "Typical payout", "Speed", "Risk to you"],
       rows: [
-        ["Organised buyback service (HuluMart, Cashify)", "Fair market, fixed", "Same day", "Low - documented, paid on pickup"],
+        ["Organised buyback service (ZAPIBOO, Cashify)", "Fair market, fixed", "Same day", "Low - documented, paid on pickup"],
         ["Local computer shop (SP Road, Nagarathpete)", "Low to fair", "Same day", "Medium - cash only, no receipt"],
         ["Peer-to-peer (OLX, Quikr, WhatsApp groups)", "Highest on paper", "1-6 weeks", "High - no-shows, fake UPI screenshots"],
         ["Brand exchange offer", "Below market, as discount", "Instant", "Low, but locked to a new purchase"],
@@ -143,7 +143,7 @@ const pillar: BlogPost = {
     {
       type: "cta",
       title: "Check your model's live price",
-      text: "Pick your brand, series and model and see what HuluMart pays for it in Bangalore today - no sign-up needed to look.",
+      text: "Pick your brand, series and model and see what ZAPIBOO pays for it in Bangalore today - no sign-up needed to look.",
       to: "/",
       label: "Get my laptop price",
     },
@@ -238,7 +238,7 @@ const pillar: BlogPost = {
       ],
     },
 
-    { type: "h2", id: "process", text: "What selling to HuluMart looks like end to end" },
+    { type: "h2", id: "process", text: "What selling to ZAPIBOO looks like end to end" },
     {
       type: "ol",
       items: [
@@ -302,7 +302,7 @@ const pricing: BlogPost = {
   slug: "used-laptop-resale-value-calculation",
   title: "How Used Laptop Resale Value Is Calculated in India (With Real Examples)",
   cardTitle: "How resale value is calculated",
-  metaTitle: "Used Laptop Resale Value Calculator Logic - India 2026 | HuluMart",
+  metaTitle: "Used Laptop Resale Value Calculator Logic - India 2026 | ZAPIBOO",
   description:
     "The exact depreciation curve, configuration weightings and condition deductions buyers use to price a second-hand laptop in India - with three worked examples you can copy.",
   excerpt:
@@ -386,7 +386,7 @@ const pricing: BlogPost = {
     {
       type: "cta",
       title: "Run the numbers on your own laptop",
-      text: "Select your exact model and configuration to see today's HuluMart price band in Bangalore.",
+      text: "Select your exact model and configuration to see today's ZAPIBOO price band in Bangalore.",
       to: "/",
       label: "Check my price",
     },
@@ -418,7 +418,7 @@ const safety: BlogPost = {
   slug: "wipe-data-before-selling-laptop",
   title: "How to Wipe Your Data Before Selling a Laptop (Windows & macOS)",
   cardTitle: "Wipe your data before selling",
-  metaTitle: "Erase Data Before Selling a Laptop - Windows & Mac Steps | HuluMart",
+  metaTitle: "Erase Data Before Selling a Laptop - Windows & Mac Steps | ZAPIBOO",
   description:
     "Step-by-step factory reset and secure erase for Windows 11 and macOS, plus the account sign-outs and activation locks you must clear before selling a used laptop in India.",
   excerpt:
@@ -526,7 +526,7 @@ const brand: BlogPost = {
   slug: "sell-macbook-vs-windows-laptop-bangalore",
   title: "Selling a MacBook vs a Windows Laptop in Bangalore: What Changes",
   cardTitle: "MacBook vs Windows resale",
-  metaTitle: "Sell MacBook or Windows Laptop in Bangalore - Price Difference | HuluMart",
+  metaTitle: "Sell MacBook or Windows Laptop in Bangalore - Price Difference | ZAPIBOO",
   description:
     "Why MacBooks hold 15-20 points more resale value than Windows laptops in Bangalore, which Windows models are the exception, and how the selling process differs for each.",
   excerpt:
@@ -620,7 +620,7 @@ const timing: BlogPost = {
   slug: "best-time-to-sell-your-laptop",
   title: "When Is the Best Time to Sell Your Laptop? A Depreciation-Based Answer",
   cardTitle: "Best time to sell your laptop",
-  metaTitle: "Best Time to Sell a Used Laptop in India - Timing Guide | HuluMart",
+  metaTitle: "Best Time to Sell a Used Laptop in India - Timing Guide | ZAPIBOO",
   description:
     "The month, the model year and the life stage at which selling a used laptop returns the most money in India - and the three signals that mean you already waited too long.",
   excerpt:
@@ -708,7 +708,7 @@ const instantCash: BlogPost = {
   slug: "sell-laptop-in-bangalore-instant-cash",
   title: "Sell Laptop in Bangalore for Instant Cash: The Same-Day Doorstep Payment Guide",
   cardTitle: "Sell laptop in Bangalore for instant cash",
-  metaTitle: "Sell Laptop in Bangalore for Instant Cash - Same Day Pickup | HuluMart",
+  metaTitle: "Sell Laptop in Bangalore for Instant Cash - Same Day Pickup | ZAPIBOO",
   description:
     "Sell your laptop in Bangalore and get paid the same day. Real instant-cash price bands, the 6-point doorstep check, documents to keep, area-wise pickup timings and how to avoid lowball offers.",
   excerpt:
@@ -735,7 +735,7 @@ const instantCash: BlogPost = {
     steps: [
       {
         name: "Get an online price for your model",
-        text: "Select the brand, series, model and configuration on HuluMart to see an indicative price band for your laptop.",
+        text: "Select the brand, series, model and configuration on ZAPIBOO to see an indicative price band for your laptop.",
       },
       {
         name: "Book a free doorstep pickup slot",
@@ -829,7 +829,7 @@ const instantCash: BlogPost = {
     {
       type: "cta",
       title: "See your instant-cash figure first",
-      text: "Pick your brand and model to see what HuluMart pays in Bangalore today, then book a free doorstep pickup slot.",
+      text: "Pick your brand and model to see what ZAPIBOO pays in Bangalore today, then book a free doorstep pickup slot.",
       to: "/",
       label: "Check my laptop price",
     },
@@ -959,7 +959,7 @@ const macbookCash: BlogPost = {
   slug: "sell-macbook-online-instant-cash",
   title: "Sell MacBook Online for Instant Cash: 2026 Price Chart, Checks and Payout Guide",
   cardTitle: "Sell MacBook online for instant cash",
-  metaTitle: "Sell MacBook Online for Instant Cash - 2026 Price Chart | HuluMart",
+  metaTitle: "Sell MacBook Online for Instant Cash - 2026 Price Chart | ZAPIBOO",
   description:
     "Sell your MacBook Air or Pro online and get paid the same day. Model-wise 2026 resale ranges, battery-cycle rules, Find My and Activation Lock steps, and what changes an M-series quote.",
   excerpt:
@@ -986,7 +986,7 @@ const macbookCash: BlogPost = {
     steps: [
       {
         name: "Identify your MacBook and configuration",
-        text: "Check the model, year, chip, RAM and storage under About This Mac, then select the matching MacBook on HuluMart for an indicative price.",
+        text: "Check the model, year, chip, RAM and storage under About This Mac, then select the matching MacBook on ZAPIBOO for an indicative price.",
       },
       {
         name: "Check battery cycles and display condition",

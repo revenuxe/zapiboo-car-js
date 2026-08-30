@@ -1,5 +1,5 @@
 import { jsPDF } from "jspdf";
-import logoAsset from "@/assets/hulumart-logo.webp.asset.json";
+import logoAsset from "@/assets/zapiboo-logo.webp.asset.json";
 
 export type BookingInvoiceData = {
   reference: string;
@@ -41,7 +41,7 @@ const EVALUATION_TERMS = [
   "Please keep the device, original charger and any available bill/box ready. Carry a valid government photo ID for KYC.",
   "Before handover, remove all accounts and locks (e.g. Apple/Google/Windows account, Find My, anti-theft) and back up your data. We are not responsible for any data left on the device.",
   "Devices reported lost/stolen or with unremovable activation locks cannot be purchased.",
-  "Ownership transfers to HuluMart only after payment is completed and you hand over the device.",
+  "Ownership transfers to ZAPIBOO only after payment is completed and you hand over the device.",
 ];
 
 async function loadLogoPng(): Promise<{ dataUrl: string; w: number; h: number } | null> {
@@ -88,7 +88,7 @@ export async function downloadBookingInvoice(data: BookingInvoiceData): Promise<
     doc.setTextColor(255, 255, 255);
     doc.setFont("helvetica", "bold");
     doc.setFontSize(22);
-    doc.text("HuluMart", margin, 56);
+    doc.text("ZAPIBOO", margin, 56);
   }
 
   doc.setTextColor(255, 255, 255);
@@ -204,8 +204,8 @@ export async function downloadBookingInvoice(data: BookingInvoiceData): Promise<
   doc.setTextColor(...MUTED);
   doc.setFont("helvetica", "normal");
   doc.setFontSize(8);
-  doc.text("HuluMart · Doorstep device buyback across Bangalore · hulumart.com@gmail.com", margin, footerY);
-  doc.text("Thank you for choosing HuluMart", pageW - margin, footerY, { align: "right" });
+  doc.text("ZAPIBOO · Doorstep device buyback across Bangalore · zapiboo.com@gmail.com", margin, footerY);
+  doc.text("Thank you for choosing ZAPIBOO", pageW - margin, footerY, { align: "right" });
 
-  doc.save(`HuluMart-Invoice-${data.reference}.pdf`);
+  doc.save(`ZAPIBOO-Invoice-${data.reference}.pdf`);
 }

@@ -46,7 +46,7 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
     const area = getAreaBySlug(params.area);
     if (!area) return {};
     const path = `/sell-used-laptop/${area.slug}`;
-    const title = `Sell Used Laptop in ${area.name}, Bangalore - Instant Cash | HuluMart`;
+    const title = `Sell Used Laptop in ${area.name}, Bangalore - Instant Cash | ZAPIBOO`;
     const description = `Sell your old or used laptop in ${area.name}, Bangalore for instant cash. Free instant quote, free doorstep pickup and same-day UPI payment for Apple, Dell, HP, Lenovo, Asus & more.`;
 
     return {
@@ -113,7 +113,7 @@ export const Route = createFileRoute("/sell-used-laptop/$area")({
 function SellLaptopArea() {
   const { area } = Route.useLoaderData();
   const whatsappHref = `https://wa.me/91${businessContact.phone}?text=${encodeURIComponent(
-    `Hi HuluMart, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`,
+    `Hi ZAPIBOO, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`,
   )}`;
 
   return (
@@ -126,7 +126,7 @@ function SellLaptopArea() {
         }
         subtitle={`Get the best price for your used laptop in ${area.name}, Bangalore. Free doorstep pickup and instant payment the moment we collect it.`}
         defaultPincode={area.pincode ?? ""}
-        whatsappMessage={`Hi HuluMart, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`}
+        whatsappMessage={`Hi ZAPIBOO, I want to sell my used laptop in ${area.name}, Bangalore. Please help me with a quote.`}
       />
 
       <LaptopBrandsSection
@@ -146,7 +146,7 @@ function SellLaptopArea() {
             </h2>
             <div className="mt-4 space-y-4 text-muted-foreground">
               <p>
-                Looking to <strong>sell your used laptop in {area.name}</strong>? HuluMart is the
+                Looking to <strong>sell your used laptop in {area.name}</strong>? ZAPIBOO is the
                 trusted local laptop buyer for {area.name} and nearby areas. Whether your laptop is
                 a few months old or a few years old, working perfectly or has a cracked screen,
                 battery or keyboard issues - we make you a fair, transparent offer based on the
@@ -181,7 +181,7 @@ function SellLaptopArea() {
 
           <Reveal delay={0.1}>
             <div className="rounded-2xl border border-border bg-card p-6 shadow-soft">
-              <h2 className="text-xl font-bold">Why sell your laptop in {area.name} with HuluMart?</h2>
+              <h2 className="text-xl font-bold">Why sell your laptop in {area.name} with ZAPIBOO?</h2>
               <ul className="mt-5 space-y-4">
                 {[
                   "Best market price benchmarked for Bangalore resale",

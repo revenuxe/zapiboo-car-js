@@ -700,54 +700,49 @@ function Pickup() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <h2 className="text-xl font-bold">What are you clearing?</h2>
+                  <h2 className="text-xl font-bold">What are you selling?</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Not sure what's in there? Pick mixed — we'll sort and price it for you.
+                    Pick your vehicle type — then choose the body style that matches it.
                   </p>
 
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      onClick={() => setScrapMode("mixed")}
-                      className={cn(
-                        "rounded-2xl border-2 p-5 text-left transition-all",
-                        scrapMode === "mixed"
-                          ? "border-primary bg-accent shadow-soft"
-                          : "border-border hover:border-primary/40",
-                      )}
-                    >
-                      <div className="flex items-center justify-between">
-                        <Boxes className="size-7 text-primary" />
-                        <span className="rounded-full bg-gradient-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
-                          Easiest
-                        </span>
-                      </div>
-                      <div className="mt-3 font-bold">Mixed household scrap</div>
-                      <div className="mt-1 text-sm text-muted-foreground">
-                        Newspaper, plastic, metal, bottles — all together.
-                      </div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setScrapMode("specific")}
-                      className={cn(
-                        "rounded-2xl border-2 p-5 text-left transition-all",
-                        scrapMode === "specific"
-                          ? "border-primary bg-accent shadow-soft"
-                          : "border-border hover:border-primary/40",
-                      )}
-                    >
-                      <CheckCircle2 className="size-7 text-primary" />
-                      <div className="mt-3 font-bold">Pick specific items</div>
-                      <div className="mt-1 text-sm text-muted-foreground">
-                        Know what you have? Choose the categories.
-                      </div>
-                    </button>
+                    {vehicleCategories.map((category) => {
+                      const Icon = category.icon;
+                      const active = scrapMode === category.id;
+                      return (
+                        <button
+                          type="button"
+                          key={category.id}
+                          onClick={() => {
+                            setScrapMode(category.id);
+                            setItems([]);
+                          }}
+                          className={cn(
+                            "rounded-2xl border-2 p-5 text-left transition-all",
+                            active
+                              ? "border-primary bg-accent shadow-soft"
+                              : "border-border hover:border-primary/40",
+                          )}
+                        >
+                          <div className="flex items-center justify-between">
+                            <Icon className="size-7 text-primary" />
+                            {category.badge && (
+                              <span className="rounded-full bg-gradient-brand px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">
+                                {category.badge}
+                              </span>
+                            )}
+                          </div>
+                          <div className="mt-3 font-bold">{category.name}</div>
+                          <div className="mt-1 text-sm text-muted-foreground">
+                            {category.tagline}
+                          </div>
+                        </button>
+                      );
+                    })}
                   </div>
 
                   <AnimatePresence>
-                    {scrapMode === "specific" && (
+                    {selectedVehicleCategory && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
                         animate={{ opacity: 1, height: "auto" }}
@@ -755,14 +750,14 @@ function Pickup() {
                         className="overflow-hidden"
                       >
                         <div className="mt-5 flex flex-wrap gap-2">
-                          {categories.map((c) => {
-                            const active = items.includes(c.name);
-                            const Icon = iconForCategory(c.name);
+                          {selectedVehicleCategory.subcategories.map((sub) => {
+                            const active = items.includes(sub);
+                            const Icon = selectedVehicleCategory.icon;
                             return (
                               <button
                                 type="button"
-                                key={c.id}
-                                onClick={() => toggleItem(c.name)}
+                                key={sub}
+                                onClick={() => toggleItem(sub)}
                                 className={cn(
                                   "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-all",
                                   active
@@ -771,7 +766,7 @@ function Pickup() {
                                 )}
                               >
                                 <Icon className="size-4" />
-                                {c.name}
+                                {sub}
                               </button>
                             );
                           })}
@@ -779,6 +774,7 @@ function Pickup() {
                       </motion.div>
                     )}
                   </AnimatePresence>
+
 
                   <div className="mt-8">
                     <h3 className="font-bold">Add a photo (optional)</h3>

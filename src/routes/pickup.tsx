@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -18,17 +19,20 @@ import {
   Phone,
   Chrome,
   Loader2,
+  ChevronsUpDown,
+  Car,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { supabase } from "@/integrations/supabase/client";
 import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
-import { vehicleCategories, vehicleCategoryById } from "@/lib/bangalore-data";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
@@ -36,6 +40,8 @@ import carImg from "@/assets/vehicle-car.webp";
 import bikeImg from "@/assets/vehicle-bike.webp";
 import scooterImg from "@/assets/vehicle-scooter.webp";
 import commercialImg from "@/assets/vehicle-commercial.webp";
+import suvImg from "@/assets/vehicle-suv.webp";
+import electricImg from "@/assets/vehicle-electric.webp";
 
 const pickupVehicleCards = [
   { id: "car", vehicleType: "car", name: "Car", tagline: "Hatchback, sedan, SUV — petrol, diesel, CNG or electric.", badge: "Most sold", image: carImg },
@@ -43,6 +49,9 @@ const pickupVehicleCards = [
   { id: "scooter", vehicleType: "scooter", name: "Scooter", tagline: "Petrol and electric scooters.", image: scooterImg },
   { id: "commercial", vehicleType: "commercial", name: "Commercial", tagline: "Autos, pickups, tempos and trucks.", image: commercialImg },
 ];
+
+const subcategoryFallbackImage = (name: string, categoryImage?: string | null) =>
+  ({ SUV: suvImg, Electric: electricImg }[name] ?? categoryImage ?? carImg);
 
 type PickupSearch = {
   pincode?: string;
@@ -81,6 +90,8 @@ export const Route = createFileRoute("/pickup")({
 const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "Evening (5–8)"];
 const todayStr = new Date().toISOString().split("T")[0];
 const pickupDraftKey = "zapiboo-pickup-draft";
+type VehicleOption = { id: string; name: string; image_url?: string | null };
+const catalogueDb = supabase as unknown as { from: (table: string) => any };
 
 function imageToDataUrl(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -118,6 +129,27 @@ type PickupPhoto = {
   uploadedUrl: string | null;
 };
 
+function useVehicleOptions(table: string, foreignKey?: string, parentId?: string) {
+  return useQuery({
+    queryKey: ["vehicle-catalogue", table, parentId],
+    enabled: !foreignKey || Boolean(parentId),
+    queryFn: async () => {
+      const fields = table === "vehicle_categories" || table === "vehicle_subcategories" ? "id, name, image_url" : "id, name";
+      let query = catalogueDb.from(table).select(fields).eq("active", true).order("sort_order").order("name");
+      if (foreignKey && parentId) query = query.eq(foreignKey, parentId);
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as VehicleOption[];
+    },
+  });
+}
+
+function VehicleSelect({ label, placeholder, options, value, disabled, onChange }: { label: string; placeholder: string; options: VehicleOption[]; value: string; disabled?: boolean; onChange: (id: string) => void }) {
+  const [open, setOpen] = useState(false);
+  const selected = options.find((option) => option.id === value);
+  return <div className="space-y-1.5"><Label className="text-sm font-semibold">{label}</Label><Popover open={open} onOpenChange={setOpen}><PopoverTrigger asChild><Button type="button" variant="outline" disabled={disabled} className="h-12 w-full justify-between rounded-xl px-3 text-left font-normal"><span className={selected ? "text-foreground" : "text-muted-foreground"}>{selected?.name ?? placeholder}</span><ChevronsUpDown className="size-4 opacity-50" /></Button></PopoverTrigger><PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] p-0"><Command><CommandInput placeholder={`Search ${label.toLowerCase()}…`} /><CommandList><CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>{options.map((option) => <CommandItem key={option.id} value={option.name} onSelect={() => { onChange(option.id); setOpen(false); }}><Check className={option.id === value ? "size-4 opacity-100" : "size-4 opacity-0"} />{option.name}</CommandItem>)}</CommandList></Command></PopoverContent></Popover></div>;
+}
+
 function Pickup() {
   const pickupSearch = Route.useSearch();
   const { data: availability } = useServiceAvailability();
@@ -131,7 +163,13 @@ function Pickup() {
 
   // steps 1–2: vehicle type, then body style and photo
   const [vehicleType, setVehicleType] = useState<string>("");
-  const [vehicleDetails, setVehicleDetails] = useState<string[]>([]);
+  const [vehicleBrandId, setVehicleBrandId] = useState("");
+  const [vehicleCategoryId, setVehicleCategoryId] = useState("");
+  const [vehicleSubcategoryId, setVehicleSubcategoryId] = useState("");
+  const [vehicleModelId, setVehicleModelId] = useState("");
+  const [vehicleVariantId, setVehicleVariantId] = useState("");
+  const [vehicleModelName, setVehicleModelName] = useState("");
+  const [vehicleVariantName, setVehicleVariantName] = useState("");
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -158,17 +196,42 @@ function Pickup() {
   const [phone, setPhone] = useState("");
   const [saving, setSaving] = useState(false);
 
-  // Flow order: vehicle type, vehicle details, sign in (if needed), address, schedule.
-  const progressSteps = user ? [1, 2, 4, 5] : [1, 2, 3, 4, 5];
+  // Flow order: category, vehicle details, optional photo, sign in (if needed), address, schedule.
+  const progressSteps = user ? [1, 2, 3, 5, 6] : [1, 2, 3, 4, 5, 6];
   const currentProgress = Math.max(1, progressSteps.indexOf(step) + 1);
 
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/pickup?bookingAuth=1` : undefined;
 
-  const selectedVehicleCategory = vehicleCategoryById(vehicleType);
+  const { data: vehicleCategories = [] } = useVehicleOptions("vehicle_categories");
+  const { data: vehicleSubcategories = [] } = useVehicleOptions("vehicle_subcategories", "category_id", vehicleCategoryId);
+  const { data: vehicleBrands = [] } = useVehicleOptions("vehicle_brands", "subcategory_id", vehicleSubcategoryId);
+  const { data: vehicleModels = [] } = useVehicleOptions("vehicle_models", "brand_id", vehicleBrandId);
+  const { data: vehicleVariants = [] } = useVehicleOptions("vehicle_variants", "model_id", vehicleModelId);
+  const selectedBrand = vehicleBrands.find((item) => item.id === vehicleBrandId);
+  const selectedCategory = vehicleCategories.find((item) => item.id === vehicleCategoryId);
+  const selectedModel = vehicleModels.find((item) => item.id === vehicleModelId);
+  const selectedVariant = vehicleVariants.find((item) => item.id === vehicleVariantId);
 
-  const toggleItem = (id: string) =>
-    setVehicleDetails((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
+  useEffect(() => {
+    if (!vehicleType || vehicleCategoryId || !vehicleCategories.length) return;
+    const match = vehicleCategories.find((category) => {
+      const name = category.name.toLowerCase();
+      const type = vehicleType.toLowerCase();
+      return name === type || name.startsWith(type);
+    });
+    if (match) setVehicleCategoryId(match.id);
+  }, [vehicleType, vehicleCategoryId, vehicleCategories]);
+
+  useEffect(() => {
+    if (step !== 2) return;
+    setVehicleSubcategoryId("");
+    setVehicleBrandId("");
+    setVehicleModelId("");
+    setVehicleVariantId("");
+    setVehicleModelName("");
+    setVehicleVariantName("");
+  }, [step]);
 
   const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
     try {
@@ -226,7 +289,11 @@ function Pickup() {
         step,
         flowVersion: 2,
         vehicleType,
-        vehicleDetails,
+        vehicleBrandId,
+        vehicleCategoryId,
+        vehicleSubcategoryId,
+        vehicleModelId,
+        vehicleVariantId,
         pincode,
         address,
         geo,
@@ -255,7 +322,11 @@ function Pickup() {
           step?: number;
           flowVersion?: number;
           vehicleType?: string;
-          vehicleDetails?: string[];
+          vehicleBrandId?: string;
+          vehicleCategoryId?: string;
+          vehicleSubcategoryId?: string;
+          vehicleModelId?: string;
+          vehicleVariantId?: string;
           pincode?: string;
           address?: string;
           geo?: { lat: number; lng: number } | null;
@@ -266,7 +337,11 @@ function Pickup() {
           photo?: { id?: string; previewUrl?: string; uploadedUrl?: string | null } | null;
         };
         if (draft.vehicleType) setVehicleType(draft.vehicleType);
-        if (Array.isArray(draft.vehicleDetails)) setVehicleDetails(draft.vehicleDetails);
+        if (draft.vehicleBrandId) setVehicleBrandId(draft.vehicleBrandId);
+        if (draft.vehicleCategoryId) setVehicleCategoryId(draft.vehicleCategoryId);
+        if (draft.vehicleSubcategoryId) setVehicleSubcategoryId(draft.vehicleSubcategoryId);
+        if (draft.vehicleModelId) setVehicleModelId(draft.vehicleModelId);
+        if (draft.vehicleVariantId) setVehicleVariantId(draft.vehicleVariantId);
         if (draft.pincode) setPincode(draft.pincode);
         if (draft.address) setAddress(draft.address);
         if (draft.geo) setGeo(draft.geo);
@@ -282,7 +357,7 @@ function Pickup() {
             uploadedUrl: draft.photo.uploadedUrl ?? null,
           });
         }
-        if (typeof draft.step === "number" && draft.step >= 1 && draft.step <= 5) {
+        if (typeof draft.step === "number" && draft.step >= 1 && draft.step <= 6) {
           // Translate drafts saved before vehicle details became their own step.
           const restoredStep =
             draft.flowVersion === 2
@@ -305,7 +380,7 @@ function Pickup() {
     if (!hydrated || submitted) return;
     savePickupDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, submitted, step, vehicleType, vehicleDetails, pincode, address, geo, date, slot, name, phone, photo]);
+  }, [hydrated, submitted, step, vehicleType, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, vehicleModelId, vehicleVariantId, pincode, address, geo, date, slot, name, phone, photo]);
 
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {
@@ -324,7 +399,7 @@ function Pickup() {
   useEffect(() => {
     if (!user) return;
 
-    if (step === 3) setStep(4);
+    if (step === 4) setStep(5);
     if (!authEmail && user.email) setAuthEmail(user.email);
     if (!name) setName(displayName(user));
 
@@ -373,7 +448,7 @@ function Pickup() {
     setAuthBusy(false);
     if (error) return toast.error(error.message);
     toast.success("Signed in. Your saved address is filled in.");
-    setStep(4);
+    setStep(5);
   };
 
   const signInWithGoogleDuringBooking = async () => {
@@ -413,7 +488,7 @@ function Pickup() {
     setPhone(authPhone.trim());
     if (data.session) {
       toast.success("Account created. Let's add your pickup address.");
-      setStep(4);
+      setStep(5);
     } else {
       toast.success("Account created. Please verify your email, then sign in here.");
       setAuthTab("signin");
@@ -456,10 +531,14 @@ function Pickup() {
       if (!vehicleType) return toast.error("Tell us what vehicle you're selling.");
     }
     if (step === 2) {
-      if (vehicleDetails.length === 0)
-        return toast.error("Pick the body style that matches your vehicle.");
+      if (!selectedCategory || !vehicleSubcategoryId)
+        return toast.error("Choose your vehicle type.");
     }
-    if (step === 4) {
+    if (step === 3) {
+      if (!selectedBrand || vehicleModelName.trim().length < 2)
+        return toast.error("Enter your vehicle model.");
+    }
+    if (step === 5) {
       if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
       if (pincode.length !== 6) return toast.error("Pincode must be 6 digits.");
       if (!pincodeOk) return toast.error("We don't pick up at this pincode yet.");
@@ -470,17 +549,20 @@ function Pickup() {
     if (step === 1) {
       setStep(2);
     } else if (step === 2) {
-      setStep(user ? 4 : 3);
-    } else if (step === 4) {
-      setStep(5);
+      setStep(3);
+    } else if (step === 3) {
+      setStep(user ? 5 : 4);
+    } else if (step === 5) {
+      setStep(6);
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
     setStep((s) => {
-      if (s === 5) return 4;
-      if (s === 4) return user ? 2 : 3;
+      if (s === 6) return 5;
+      if (s === 5) return user ? 3 : 4;
+      if (s === 4) return 3;
       if (s === 3) return 2;
       if (s === 2) return 1;
       return 1;
@@ -492,11 +574,11 @@ function Pickup() {
     e.preventDefault();
     if (!user) {
       toast.error("Please sign in before confirming your pickup.");
-      setStep(3);
+      setStep(4);
       return;
     }
     if (!pincodeOk || !addressOk) {
-      setStep(4);
+      setStep(5);
       window.scrollTo({ top: 0, behavior: "smooth" });
       return toast.error("Please complete your pickup address and a serviceable pincode.");
     }
@@ -521,8 +603,14 @@ function Pickup() {
     }
 
     const { error } = await supabase.from("leads").insert({
-      vehicle_type: vehicleType || "car",
-      items: vehicleDetails,
+      vehicle_type: selectedCategory?.name ?? vehicleType ?? "car",
+      items: [selectedBrand?.name, vehicleModelName.trim(), vehicleVariantName].filter(Boolean) as string[],
+      brand_id: selectedBrand?.id ?? null,
+      brand_name: selectedBrand?.name ?? null,
+      model_id: null,
+      model_name: vehicleModelName.trim() || null,
+      variant_id: null,
+      variant_name: vehicleVariantName || null,
       has_photo: !!photoUrl,
       photo_url: photoUrl,
       locality: null,
@@ -694,15 +782,19 @@ function Pickup() {
                   </p>
 
                   <div className="mt-3 grid grid-cols-2 gap-2.5">
-                    {pickupVehicleCards.map((category) => {
-                      const active = vehicleType === category.vehicleType;
+                    {vehicleCategories.map((category) => {
+                      const active = vehicleCategoryId === category.id;
                       return (
                         <button
                           type="button"
                           key={category.id}
                           onClick={() => {
-                            setVehicleType(category.vehicleType);
-                            setVehicleDetails([]);
+                            setVehicleType(category.name.toLowerCase());
+                            setVehicleCategoryId(category.id);
+                            setVehicleSubcategoryId("");
+                            setVehicleBrandId("");
+                            setVehicleModelId("");
+                            setVehicleVariantId("");
                           }}
                           className={cn(
                             "relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 text-left transition-all sm:p-5",
@@ -712,21 +804,12 @@ function Pickup() {
                           )}
                         >
                           <div className="relative flex h-20 items-center justify-center sm:h-28">
-                            <img
-                              src={category.image}
-                              alt=""
-                              className="h-full w-full object-contain pt-3"
-                            />
-                            {category.badge && (
-                              <span className="absolute -top-1 right-0 whitespace-nowrap rounded-full bg-gradient-brand px-2 py-1 text-[9px] font-bold uppercase tracking-tight text-primary-foreground">
-                                {category.badge}
-                              </span>
-                            )}
+                            <img src={category.image_url || ({ Car: carImg, Bike: bikeImg, Scooter: scooterImg, "Commercial vehicle": commercialImg }[category.name] ?? carImg)} alt="" className="h-full w-full object-contain pt-3" />
                           </div>
                           <div
                             className={cn(
                               "mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg",
-                              category.id === "commercial" && "whitespace-nowrap tracking-tight",
+                              category.name.length > 12 && "whitespace-nowrap tracking-tight",
                             )}
                           >
                             {category.name}
@@ -749,44 +832,19 @@ function Pickup() {
                 >
                   <h2 className="text-xl font-bold">Tell us about your vehicle</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Choose the body style that matches it, then add a photo if you like.
+                    Choose its subcategory, then search for the exact brand, model and variant.
                   </p>
-                  <AnimatePresence>
-                    {selectedVehicleCategory && (
-                      <motion.div
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: "auto" }}
-                        exit={{ opacity: 0, height: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="mt-5 flex flex-wrap gap-2">
-                          {selectedVehicleCategory.subcategories.map((sub) => {
-                            const active = vehicleDetails.includes(sub);
-                            const Icon = selectedVehicleCategory.icon;
-                            return (
-                              <button
-                                type="button"
-                                key={sub}
-                                onClick={() => toggleItem(sub)}
-                                className={cn(
-                                  "inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm font-medium transition-all",
-                                  active
-                                    ? "border-primary bg-gradient-brand text-primary-foreground shadow-green"
-                                    : "border-border bg-background hover:border-primary/40",
-                                )}
-                              >
-                                <Icon className="size-4" />
-                                {sub}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setVehicleModelId(""); setVehicleVariantId(""); setStep(3); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
+                    <div className="hidden">
+                    <VehicleSelect label="Brand" placeholder={vehicleSubcategoryId ? "Search brand" : "Choose subcategory first"} options={vehicleBrands} value={vehicleBrandId} disabled={!vehicleSubcategoryId} onChange={(id) => { setVehicleBrandId(id); setVehicleModelId(""); setVehicleVariantId(""); }} />
+                    <VehicleSelect label="Model" placeholder={vehicleBrandId ? "Search model" : "Choose brand first"} options={vehicleModels} value={vehicleModelId} disabled={!vehicleBrandId} onChange={(id) => { setVehicleModelId(id); setVehicleVariantId(""); }} />
+                    <VehicleSelect label="Variant" placeholder={vehicleModelId ? "Search variant" : "Choose model first"} options={vehicleVariants} value={vehicleVariantId} disabled={!vehicleModelId} onChange={setVehicleVariantId} />
+                    </div>
+                  </div>
 
 
-                  <div className="mt-8">
+                  <div className="mt-8 hidden">
                     <h3 className="font-bold">Add a photo (optional)</h3>
                     <p className="mt-1 text-sm text-muted-foreground">
                       Snap it and we'll come prepared.
@@ -838,10 +896,27 @@ function Pickup() {
                 </motion.div>
               )}
 
-              {/* STEP 4 */}
-              {step === 4 && (
+              {/* STEP 3 */}
+              {step === 3 && (
+                <motion.div key="s3-photo" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}>
+                  <h2 className="text-xl font-bold">Choose the exact vehicle</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Select its brand, model and variant, then add a photo if you like.</p>
+                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
+                    <VehicleSelect label="Brand" placeholder="Search brand" options={vehicleBrands} value={vehicleBrandId} onChange={(id) => { setVehicleBrandId(id); setVehicleModelName(""); setVehicleVariantName(""); }} />
+                    <div className="space-y-1.5"><Label className="text-sm font-semibold">Model <span className="text-destructive">*</span></Label><Input disabled={!vehicleBrandId} value={vehicleModelName} onChange={(e) => setVehicleModelName(e.target.value)} placeholder={vehicleBrandId ? "e.g. Swift, Activa 6G" : "Choose brand first"} /></div>
+                    <div className="space-y-1.5"><Label className="text-sm font-semibold">Variant <span className="font-normal text-muted-foreground">(optional)</span></Label><div className="flex h-10 gap-1 rounded-xl border bg-background p-1">{["Base", "Mid", "Top"].map((variant) => <button type="button" key={variant} onClick={() => setVehicleVariantName((current) => current === variant ? "" : variant)} className={cn("flex-1 rounded-lg text-xs font-semibold transition-colors", vehicleVariantName === variant ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")}>{variant}</button>)}</div></div>
+                  </div>
+                  <h3 className="mt-8 font-bold">Add a photo <span className="font-normal text-muted-foreground">(optional)</span></h3>
+                  <p className="mt-1 text-sm text-muted-foreground">A clear photo helps our evaluator arrive prepared.</p>
+                  <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
+                  {photo ? <div className="mt-5 relative w-fit"><img src={photo.previewUrl} alt="Your vehicle" className="size-40 rounded-2xl object-cover" /><button type="button" onClick={() => { setPhoto(null); if (fileRef.current) fileRef.current.value = ""; }} className="absolute -right-2 -top-2 flex size-7 items-center justify-center rounded-full bg-foreground text-background" aria-label="Remove photo"><X className="size-4" /></button><p className="mt-2 text-xs text-muted-foreground">{photoUploading ? "Saving photo…" : "Photo ready to attach."}</p></div> : <button type="button" onClick={() => fileRef.current?.click()} className="mt-5 flex w-full min-h-40 items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border text-sm font-semibold text-muted-foreground transition-colors hover:border-primary hover:text-foreground"><Camera className="size-5" /> Take or upload a photo</button>}
+                </motion.div>
+              )}
+
+              {/* STEP 5 */}
+              {step === 5 && (
                 <motion.div
-                  key="s4-address"
+                  key="s5-address"
                   initial={{ opacity: 0, x: 16 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -16 }}
@@ -934,7 +1009,7 @@ function Pickup() {
               )}
 
               {/* STEP 3 */}
-              {step === 3 && (
+              {step === 4 && (
                 <motion.div
                   key="s3-auth"
                   initial={{ opacity: 0, x: 16 }}
@@ -1109,7 +1184,7 @@ function Pickup() {
               )}
 
               {/* STEP 5 */}
-              {step === 5 && (
+              {step === 6 && (
                 <motion.form
                   key="s5-schedule"
                   onSubmit={onSubmit}
@@ -1201,7 +1276,7 @@ function Pickup() {
             </AnimatePresence>
 
             {/* nav buttons (vehicle + address steps) */}
-            {step !== 3 && step !== 5 && (
+            {step !== 2 && step !== 4 && step !== 6 && (
               <div className="mt-4 flex items-center justify-between gap-3">
                 {step > 1 ? (
                   <Button type="button" variant="ghost" onClick={goBack}>
@@ -1217,7 +1292,7 @@ function Pickup() {
                 </Button>
               </div>
             )}
-            {(step === 3 || step === 5) && (
+            {(step === 2 || step === 4 || step === 6) && (
               <div className="mt-4">
                 <Button type="button" variant="ghost" onClick={goBack}>
                   <ArrowLeft />

@@ -6,6 +6,7 @@ import {
   LayoutDashboard,
   Inbox,
   Users,
+  CarFront,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,8 @@ import { PageLoader } from "@/components/PageLoader";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { UsersPanel } from "@/components/admin/UsersPanel";
 import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";
+import { VehiclesPanel } from "@/components/admin/VehiclesPanel";
+import { CatalogueTaxonomyPanel } from "@/components/admin/CatalogueTaxonomyPanel";
 
 export const Route = createFileRoute("/admin/dashboard")({
   ssr: false,
@@ -97,11 +100,16 @@ function AdminDashboard() {
         </p>
 
         <Tabs defaultValue="bookings" className="mt-6">
-          <TabsList className="grid w-full grid-cols-4 gap-1 sm:w-auto sm:inline-grid">
+          <TabsList className="flex w-full max-w-full flex-nowrap justify-start gap-1 overflow-x-auto p-1 sm:w-auto">
             <TabsTrigger value="bookings" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Bookings</span>
             </TabsTrigger>
             <TabsTrigger value="availability">Availability</TabsTrigger>
+            <TabsTrigger value="vehicles" className="gap-1.5">
+              <CarFront className="size-4" /> <span className="hidden sm:inline">Vehicles</span>
+            </TabsTrigger>
+            <TabsTrigger value="categories">Categories</TabsTrigger>
+            <TabsTrigger value="types">Vehicle types</TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5">
               <Inbox className="size-4" /> <span className="hidden sm:inline">Leads</span>
             </TabsTrigger>
@@ -114,6 +122,9 @@ function AdminDashboard() {
             <LeadsPanel scope="bookings" />
           </TabsContent>
           <TabsContent value="availability" className="mt-5"><AvailabilityPanel /></TabsContent>
+          <TabsContent value="vehicles" className="mt-5"><VehiclesPanel /></TabsContent>
+          <TabsContent value="categories" className="mt-5"><CatalogueTaxonomyPanel kind="categories" /></TabsContent>
+          <TabsContent value="types" className="mt-5"><CatalogueTaxonomyPanel kind="subcategories" /></TabsContent>
 
           <TabsContent value="leads" className="mt-5">
             <LeadsPanel scope="queries" />

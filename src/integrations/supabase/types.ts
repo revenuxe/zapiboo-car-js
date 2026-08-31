@@ -1,3 +1,4 @@
+// Generated from the linked Supabase schema.
 export type Json =
   | string
   | number

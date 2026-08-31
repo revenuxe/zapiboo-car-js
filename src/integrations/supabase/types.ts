@@ -14,16 +14,379 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          address: string | null
+          brand_id: string | null
+          brand_name: string | null
+          created_at: string
+          email: string | null
+          fuel_type: string | null
+          has_photo: boolean
+          id: string
+          items: string[]
+          km_driven: number | null
+          lat: number | null
+          lead_type: string
+          lng: number | null
+          locality: string | null
+          manufacture_year: number | null
+          message: string | null
+          model_id: string | null
+          model_name: string | null
+          name: string
+          notes: string | null
+          phone: string
+          photo_url: string | null
+          pincode: string | null
+          preferred_date: string | null
+          registration_number: string | null
+          slot: string | null
+          status: string
+          subject: string | null
+          updated_at: string
+          user_id: string | null
+          variant_id: string | null
+          variant_name: string | null
+          vehicle_type: string
+        }
+        Insert: {
+          address?: string | null
+          brand_id?: string | null
+          brand_name?: string | null
+          created_at?: string
+          email?: string | null
+          fuel_type?: string | null
+          has_photo?: boolean
+          id?: string
+          items?: string[]
+          km_driven?: number | null
+          lat?: number | null
+          lead_type?: string
+          lng?: number | null
+          locality?: string | null
+          manufacture_year?: number | null
+          message?: string | null
+          model_id?: string | null
+          model_name?: string | null
+          name: string
+          notes?: string | null
+          phone: string
+          photo_url?: string | null
+          pincode?: string | null
+          preferred_date?: string | null
+          registration_number?: string | null
+          slot?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string | null
+          variant_id?: string | null
+          variant_name?: string | null
+          vehicle_type?: string
+        }
+        Update: {
+          address?: string | null
+          brand_id?: string | null
+          brand_name?: string | null
+          created_at?: string
+          email?: string | null
+          fuel_type?: string | null
+          has_photo?: boolean
+          id?: string
+          items?: string[]
+          km_driven?: number | null
+          lat?: number | null
+          lead_type?: string
+          lng?: number | null
+          locality?: string | null
+          manufacture_year?: number | null
+          message?: string | null
+          model_id?: string | null
+          model_name?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string
+          photo_url?: string | null
+          pincode?: string | null
+          preferred_date?: string | null
+          registration_number?: string | null
+          slot?: string | null
+          status?: string
+          subject?: string | null
+          updated_at?: string
+          user_id?: string | null
+          variant_id?: string | null
+          variant_name?: string | null
+          vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "leads_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_variant_id_fkey"
+            columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_variants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_locations: {
+        Row: {
+          active: boolean
+          area: string | null
+          created_at: string
+          id: string
+          location_type: string
+          pincode: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          area?: string | null
+          created_at?: string
+          id?: string
+          location_type?: string
+          pincode?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          area?: string | null
+          created_at?: string
+          id?: string
+          location_type?: string
+          pincode?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          locality: string | null
+          pincode: string | null
+          updated_at: string
+          user_id: string
+          whatsapp: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          locality?: string | null
+          pincode?: string | null
+          updated_at?: string
+          user_id: string
+          whatsapp?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          locality?: string | null
+          pincode?: string | null
+          updated_at?: string
+          user_id?: string
+          whatsapp?: string | null
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vehicle_brands: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          logo_url: string | null
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          vehicle_type: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          logo_url?: string | null
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          vehicle_type?: string
+        }
+        Relationships: []
+      }
+      vehicle_models: {
+        Row: {
+          active: boolean
+          body_type: string | null
+          brand_id: string
+          created_at: string
+          fuel_types: string[]
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          body_type?: string | null
+          brand_id: string
+          created_at?: string
+          fuel_types?: string[]
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          body_type?: string | null
+          brand_id?: string
+          created_at?: string
+          fuel_types?: string[]
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_models_brand_id_fkey"
+            columns: ["brand_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_variants: {
+        Row: {
+          active: boolean
+          created_at: string
+          fuel_type: string | null
+          id: string
+          model_id: string
+          name: string
+          sort_order: number
+          transmission: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          fuel_type?: string | null
+          id?: string
+          model_id: string
+          name: string
+          sort_order?: number
+          transmission?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          fuel_type?: string | null
+          id?: string
+          model_id?: string
+          name?: string
+          sort_order?: number
+          transmission?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_variants_model_id_fkey"
+            columns: ["model_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_models"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      admin_exists: { Args: never; Returns: boolean }
+      claim_first_admin: { Args: never; Returns: boolean }
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +513,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const

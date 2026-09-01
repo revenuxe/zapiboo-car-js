@@ -167,10 +167,6 @@ function Pickup() {
   const [vehicleBrandId, setVehicleBrandId] = useState("");
   const [vehicleCategoryId, setVehicleCategoryId] = useState("");
   const [vehicleSubcategoryId, setVehicleSubcategoryId] = useState("");
-  const [vehicleModelId, setVehicleModelId] = useState("");
-  const [vehicleVariantId, setVehicleVariantId] = useState("");
-  const [vehicleModelName, setVehicleModelName] = useState("");
-  const [vehicleVariantName, setVehicleVariantName] = useState("");
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -295,8 +291,6 @@ function Pickup() {
         vehicleBrandId,
         vehicleCategoryId,
         vehicleSubcategoryId,
-        vehicleModelId,
-        vehicleVariantId,
         pincode,
         address,
         geo,
@@ -328,8 +322,6 @@ function Pickup() {
           vehicleBrandId?: string;
           vehicleCategoryId?: string;
           vehicleSubcategoryId?: string;
-          vehicleModelId?: string;
-          vehicleVariantId?: string;
           pincode?: string;
           address?: string;
           geo?: { lat: number; lng: number } | null;
@@ -343,8 +335,6 @@ function Pickup() {
         if (draft.vehicleBrandId) setVehicleBrandId(draft.vehicleBrandId);
         if (draft.vehicleCategoryId) setVehicleCategoryId(draft.vehicleCategoryId);
         if (draft.vehicleSubcategoryId) setVehicleSubcategoryId(draft.vehicleSubcategoryId);
-        if (draft.vehicleModelId) setVehicleModelId(draft.vehicleModelId);
-        if (draft.vehicleVariantId) setVehicleVariantId(draft.vehicleVariantId);
         if (draft.pincode) setPincode(draft.pincode);
         if (draft.address) setAddress(draft.address);
         if (draft.geo) setGeo(draft.geo);
@@ -383,7 +373,7 @@ function Pickup() {
     if (!hydrated || submitted) return;
     savePickupDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, submitted, step, vehicleType, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, vehicleModelId, vehicleVariantId, pincode, address, geo, date, slot, name, phone, photo]);
+  }, [hydrated, submitted, step, vehicleType, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, pincode, address, geo, date, slot, name, phone, photo]);
 
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {
@@ -538,8 +528,7 @@ function Pickup() {
         return toast.error("Choose your vehicle type.");
     }
     if (step === 3) {
-      if (!selectedBrand || vehicleModelName.trim().length < 2)
-        return toast.error("Enter your vehicle model.");
+      if (!selectedBrand) return toast.error("Choose your vehicle brand.");
     }
     if (step === 5) {
       if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
@@ -607,13 +596,13 @@ function Pickup() {
 
     const { error } = await supabase.from("leads").insert({
       vehicle_type: selectedCategory?.name ?? vehicleType ?? "car",
-      items: [selectedBrand?.name, vehicleModelName.trim(), vehicleVariantName].filter(Boolean) as string[],
+      items: [selectedCategory?.name, selectedSubcategory?.name, selectedBrand?.name].filter(Boolean) as string[],
       brand_id: selectedBrand?.id ?? null,
       brand_name: selectedBrand?.name ?? null,
       model_id: null,
-      model_name: vehicleModelName.trim() || null,
+      model_name: selectedSubcategory?.name ?? null,
       variant_id: null,
-      variant_name: vehicleVariantName || null,
+      variant_name: null,
       has_photo: !!photoUrl,
       photo_url: photoUrl,
       locality: null,
@@ -833,9 +822,9 @@ function Pickup() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <h2 className="text-xl font-bold">Tell us about your vehicle</h2>
+                  <h2 className="text-xl font-bold">What type of vehicle?</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Choose its subcategory, then search for the exact brand, model and variant.
+                    Pick the exact vehicle type — the next step asks for the brand.
                   </p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
                     <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setBrandQuery(""); setStep(3); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>

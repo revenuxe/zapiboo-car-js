@@ -221,10 +221,7 @@ function Pickup() {
     if (step !== 2) return;
     setVehicleSubcategoryId("");
     setVehicleBrandId("");
-    setVehicleModelId("");
-    setVehicleVariantId("");
-    setVehicleModelName("");
-    setVehicleVariantName("");
+    setBrandQuery("");
   }, [step]);
 
   const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
@@ -780,8 +777,7 @@ function Pickup() {
                             setVehicleCategoryId(category.id);
                             setVehicleSubcategoryId("");
                             setVehicleBrandId("");
-                            setVehicleModelId("");
-                            setVehicleVariantId("");
+                            setBrandQuery("");
                           }}
                           className={cn(
                             "relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 text-left transition-all sm:p-5",

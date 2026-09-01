@@ -899,12 +899,36 @@ function Pickup() {
               {/* STEP 3 */}
               {step === 3 && (
                 <motion.div key="s3-photo" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}>
-                  <h2 className="text-xl font-bold">Choose the exact vehicle</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Select its brand, model and variant, then add a photo if you like.</p>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <VehicleSelect label="Brand" placeholder="Search brand" options={vehicleBrands} value={vehicleBrandId} onChange={(id) => { setVehicleBrandId(id); setVehicleModelName(""); setVehicleVariantName(""); }} />
-                    <div className="space-y-1.5"><Label className="text-sm font-semibold">Model <span className="text-destructive">*</span></Label><Input disabled={!vehicleBrandId} value={vehicleModelName} onChange={(e) => setVehicleModelName(e.target.value)} placeholder={vehicleBrandId ? "e.g. Swift, Activa 6G" : "Choose brand first"} /></div>
-                    <div className="space-y-1.5"><Label className="text-sm font-semibold">Variant <span className="font-normal text-muted-foreground">(optional)</span></Label><div className="flex h-10 gap-1 rounded-xl border bg-background p-1">{["Base", "Mid", "Top"].map((variant) => <button type="button" key={variant} onClick={() => setVehicleVariantName((current) => current === variant ? "" : variant)} className={cn("flex-1 rounded-lg text-xs font-semibold transition-colors", vehicleVariantName === variant ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")}>{variant}</button>)}</div></div>
+                  <h2 className="text-xl font-bold">Which brand is it?</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Pick your vehicle's brand{selectedCategory ? ` (${selectedCategory.name})` : ""}. You can add a photo below.</p>
+                  <div className="mt-5">
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input value={brandQuery} onChange={(e) => setBrandQuery(e.target.value)} placeholder="Search brands — e.g. Maruti, Honda, Hyundai" className="h-12 rounded-xl pl-9" />
+                    </div>
+                    {filteredBrands.length ? (
+                      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                        {filteredBrands.map((brand) => (
+                          <button
+                            type="button"
+                            key={brand.id}
+                            onClick={() => setVehicleBrandId(brand.id)}
+                            className={cn(
+                              "flex min-h-14 items-center justify-center rounded-2xl border-2 px-3 py-3 text-center text-sm font-bold transition-all",
+                              vehicleBrandId === brand.id
+                                ? "border-primary bg-accent shadow-soft"
+                                : "border-border hover:-translate-y-0.5 hover:border-primary/40",
+                            )}
+                          >
+                            {brand.name}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-4 rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                        No brands match “{brandQuery}”. Continue anyway and our evaluator will confirm the brand at your doorstep.
+                      </p>
+                    )}
                   </div>
                   <h3 className="mt-8 font-bold">Add a photo <span className="font-normal text-muted-foreground">(optional)</span></h3>
                   <p className="mt-1 text-sm text-muted-foreground">A clear photo helps our evaluator arrive prepared.</p>

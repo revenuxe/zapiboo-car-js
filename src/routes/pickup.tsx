@@ -207,12 +207,14 @@ function Pickup() {
   const { data: vehicleCategories = [] } = useVehicleOptions("vehicle_categories");
   const { data: vehicleSubcategories = [] } = useVehicleOptions("vehicle_subcategories", "category_id", vehicleCategoryId);
   const { data: vehicleBrands = [] } = useVehicleOptions("vehicle_brands", "subcategory_id", vehicleSubcategoryId);
-  const { data: vehicleModels = [] } = useVehicleOptions("vehicle_models", "brand_id", vehicleBrandId);
-  const { data: vehicleVariants = [] } = useVehicleOptions("vehicle_variants", "model_id", vehicleModelId);
   const selectedBrand = vehicleBrands.find((item) => item.id === vehicleBrandId);
   const selectedCategory = vehicleCategories.find((item) => item.id === vehicleCategoryId);
-  const selectedModel = vehicleModels.find((item) => item.id === vehicleModelId);
-  const selectedVariant = vehicleVariants.find((item) => item.id === vehicleVariantId);
+  const selectedSubcategory = vehicleSubcategories.find((item) => item.id === vehicleSubcategoryId);
+  const [brandQuery, setBrandQuery] = useState("");
+  const filteredBrands = vehicleBrands.filter((brand) =>
+    brand.name.toLowerCase().includes(brandQuery.trim().toLowerCase()),
+  );
+
 
   useEffect(() => {
     if (!vehicleType || vehicleCategoryId || !vehicleCategories.length) return;

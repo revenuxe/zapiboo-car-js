@@ -21,6 +21,7 @@ import {
   Loader2,
   ChevronsUpDown,
   Car,
+  Search,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";

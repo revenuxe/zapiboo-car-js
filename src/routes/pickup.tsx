@@ -145,11 +145,6 @@ function useVehicleOptions(table: string, foreignKey?: string, parentId?: string
   });
 }
 
-function VehicleSelect({ label, placeholder, options, value, disabled, onChange }: { label: string; placeholder: string; options: VehicleOption[]; value: string; disabled?: boolean; onChange: (id: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const selected = options.find((option) => option.id === value);
-  return <div className="space-y-1.5"><Label className="text-sm font-semibold">{label}</Label><Popover open={open} onOpenChange={setOpen}><PopoverTrigger asChild><Button type="button" variant="outline" disabled={disabled} className="h-12 w-full justify-between rounded-xl px-3 text-left font-normal"><span className={selected ? "text-foreground" : "text-muted-foreground"}>{selected?.name ?? placeholder}</span><ChevronsUpDown className="size-4 opacity-50" /></Button></PopoverTrigger><PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] p-0"><Command><CommandInput placeholder={`Search ${label.toLowerCase()}…`} /><CommandList><CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>{options.map((option) => <CommandItem key={option.id} value={option.name} onSelect={() => { onChange(option.id); setOpen(false); }}><Check className={option.id === value ? "size-4 opacity-100" : "size-4 opacity-0"} />{option.name}</CommandItem>)}</CommandList></Command></PopoverContent></Popover></div>;
-}
 
 function Pickup() {
   const pickupSearch = Route.useSearch();

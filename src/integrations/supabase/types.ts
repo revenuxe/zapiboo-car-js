@@ -1,4 +1,3 @@
-// Generated from the linked Supabase schema.
 export type Json =
   | string
   | number
@@ -49,7 +48,13 @@ export type Database = {
           user_id: string | null
           variant_id: string | null
           variant_name: string | null
+          vehicle_brand_id: string | null
+          vehicle_brand_name: string | null
+          vehicle_model_id: string | null
+          vehicle_model_name: string | null
           vehicle_type: string
+          vehicle_variant_id: string | null
+          vehicle_variant_name: string | null
         }
         Insert: {
           address?: string | null
@@ -84,7 +89,13 @@ export type Database = {
           user_id?: string | null
           variant_id?: string | null
           variant_name?: string | null
+          vehicle_brand_id?: string | null
+          vehicle_brand_name?: string | null
+          vehicle_model_id?: string | null
+          vehicle_model_name?: string | null
           vehicle_type?: string
+          vehicle_variant_id?: string | null
+          vehicle_variant_name?: string | null
         }
         Update: {
           address?: string | null
@@ -119,7 +130,13 @@ export type Database = {
           user_id?: string | null
           variant_id?: string | null
           variant_name?: string | null
+          vehicle_brand_id?: string | null
+          vehicle_brand_name?: string | null
+          vehicle_model_id?: string | null
+          vehicle_model_name?: string | null
           vehicle_type?: string
+          vehicle_variant_id?: string | null
+          vehicle_variant_name?: string | null
         }
         Relationships: [
           {
@@ -139,6 +156,27 @@ export type Database = {
           {
             foreignKeyName: "leads_variant_id_fkey"
             columns: ["variant_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_variants"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_vehicle_brand_id_fkey"
+            columns: ["vehicle_brand_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_brands"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_vehicle_model_id_fkey"
+            columns: ["vehicle_model_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_models"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "leads_vehicle_variant_id_fkey"
+            columns: ["vehicle_variant_id"]
             isOneToOne: false
             referencedRelation: "vehicle_variants"
             referencedColumns: ["id"]
@@ -247,36 +285,87 @@ export type Database = {
       vehicle_brands: {
         Row: {
           active: boolean
+          category_id: string | null
           created_at: string
           id: string
           logo_url: string | null
           name: string
           slug: string
           sort_order: number
+          subcategory_id: string | null
           updated_at: string
           vehicle_type: string
         }
         Insert: {
           active?: boolean
+          category_id?: string | null
           created_at?: string
           id?: string
           logo_url?: string | null
           name: string
           slug: string
           sort_order?: number
+          subcategory_id?: string | null
           updated_at?: string
           vehicle_type?: string
         }
         Update: {
           active?: boolean
+          category_id?: string | null
           created_at?: string
           id?: string
           logo_url?: string | null
           name?: string
           slug?: string
           sort_order?: number
+          subcategory_id?: string | null
           updated_at?: string
           vehicle_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_brands_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "vehicle_brands_subcategory_id_fkey"
+            columns: ["subcategory_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_subcategories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_categories: {
+        Row: {
+          active: boolean
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -323,6 +412,47 @@ export type Database = {
             columns: ["brand_id"]
             isOneToOne: false
             referencedRelation: "vehicle_brands"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      vehicle_subcategories: {
+        Row: {
+          active: boolean
+          category_id: string
+          created_at: string
+          id: string
+          image_url: string | null
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          category_id: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          category_id?: string
+          created_at?: string
+          id?: string
+          image_url?: string | null
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_subcategories_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "vehicle_categories"
             referencedColumns: ["id"]
           },
         ]

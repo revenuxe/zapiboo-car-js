@@ -21,6 +21,7 @@ import {
   Loader2,
   ChevronsUpDown,
   Car,
+  Search,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -144,11 +145,6 @@ function useVehicleOptions(table: string, foreignKey?: string, parentId?: string
   });
 }
 
-function VehicleSelect({ label, placeholder, options, value, disabled, onChange }: { label: string; placeholder: string; options: VehicleOption[]; value: string; disabled?: boolean; onChange: (id: string) => void }) {
-  const [open, setOpen] = useState(false);
-  const selected = options.find((option) => option.id === value);
-  return <div className="space-y-1.5"><Label className="text-sm font-semibold">{label}</Label><Popover open={open} onOpenChange={setOpen}><PopoverTrigger asChild><Button type="button" variant="outline" disabled={disabled} className="h-12 w-full justify-between rounded-xl px-3 text-left font-normal"><span className={selected ? "text-foreground" : "text-muted-foreground"}>{selected?.name ?? placeholder}</span><ChevronsUpDown className="size-4 opacity-50" /></Button></PopoverTrigger><PopoverContent align="start" className="w-[var(--radix-popover-trigger-width)] p-0"><Command><CommandInput placeholder={`Search ${label.toLowerCase()}…`} /><CommandList><CommandEmpty>No {label.toLowerCase()} found.</CommandEmpty>{options.map((option) => <CommandItem key={option.id} value={option.name} onSelect={() => { onChange(option.id); setOpen(false); }}><Check className={option.id === value ? "size-4 opacity-100" : "size-4 opacity-0"} />{option.name}</CommandItem>)}</CommandList></Command></PopoverContent></Popover></div>;
-}
 
 function Pickup() {
   const pickupSearch = Route.useSearch();
@@ -166,10 +162,6 @@ function Pickup() {
   const [vehicleBrandId, setVehicleBrandId] = useState("");
   const [vehicleCategoryId, setVehicleCategoryId] = useState("");
   const [vehicleSubcategoryId, setVehicleSubcategoryId] = useState("");
-  const [vehicleModelId, setVehicleModelId] = useState("");
-  const [vehicleVariantId, setVehicleVariantId] = useState("");
-  const [vehicleModelName, setVehicleModelName] = useState("");
-  const [vehicleVariantName, setVehicleVariantName] = useState("");
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
   const [photoUploading, setPhotoUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -206,12 +198,14 @@ function Pickup() {
   const { data: vehicleCategories = [] } = useVehicleOptions("vehicle_categories");
   const { data: vehicleSubcategories = [] } = useVehicleOptions("vehicle_subcategories", "category_id", vehicleCategoryId);
   const { data: vehicleBrands = [] } = useVehicleOptions("vehicle_brands", "subcategory_id", vehicleSubcategoryId);
-  const { data: vehicleModels = [] } = useVehicleOptions("vehicle_models", "brand_id", vehicleBrandId);
-  const { data: vehicleVariants = [] } = useVehicleOptions("vehicle_variants", "model_id", vehicleModelId);
   const selectedBrand = vehicleBrands.find((item) => item.id === vehicleBrandId);
   const selectedCategory = vehicleCategories.find((item) => item.id === vehicleCategoryId);
-  const selectedModel = vehicleModels.find((item) => item.id === vehicleModelId);
-  const selectedVariant = vehicleVariants.find((item) => item.id === vehicleVariantId);
+  const selectedSubcategory = vehicleSubcategories.find((item) => item.id === vehicleSubcategoryId);
+  const [brandQuery, setBrandQuery] = useState("");
+  const filteredBrands = vehicleBrands.filter((brand) =>
+    brand.name.toLowerCase().includes(brandQuery.trim().toLowerCase()),
+  );
+
 
   useEffect(() => {
     if (!vehicleType || vehicleCategoryId || !vehicleCategories.length) return;
@@ -227,10 +221,7 @@ function Pickup() {
     if (step !== 2) return;
     setVehicleSubcategoryId("");
     setVehicleBrandId("");
-    setVehicleModelId("");
-    setVehicleVariantId("");
-    setVehicleModelName("");
-    setVehicleVariantName("");
+    setBrandQuery("");
   }, [step]);
 
   const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
@@ -292,8 +283,6 @@ function Pickup() {
         vehicleBrandId,
         vehicleCategoryId,
         vehicleSubcategoryId,
-        vehicleModelId,
-        vehicleVariantId,
         pincode,
         address,
         geo,
@@ -325,8 +314,6 @@ function Pickup() {
           vehicleBrandId?: string;
           vehicleCategoryId?: string;
           vehicleSubcategoryId?: string;
-          vehicleModelId?: string;
-          vehicleVariantId?: string;
           pincode?: string;
           address?: string;
           geo?: { lat: number; lng: number } | null;
@@ -340,8 +327,6 @@ function Pickup() {
         if (draft.vehicleBrandId) setVehicleBrandId(draft.vehicleBrandId);
         if (draft.vehicleCategoryId) setVehicleCategoryId(draft.vehicleCategoryId);
         if (draft.vehicleSubcategoryId) setVehicleSubcategoryId(draft.vehicleSubcategoryId);
-        if (draft.vehicleModelId) setVehicleModelId(draft.vehicleModelId);
-        if (draft.vehicleVariantId) setVehicleVariantId(draft.vehicleVariantId);
         if (draft.pincode) setPincode(draft.pincode);
         if (draft.address) setAddress(draft.address);
         if (draft.geo) setGeo(draft.geo);
@@ -380,7 +365,7 @@ function Pickup() {
     if (!hydrated || submitted) return;
     savePickupDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, submitted, step, vehicleType, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, vehicleModelId, vehicleVariantId, pincode, address, geo, date, slot, name, phone, photo]);
+  }, [hydrated, submitted, step, vehicleType, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, pincode, address, geo, date, slot, name, phone, photo]);
 
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {
@@ -535,8 +520,7 @@ function Pickup() {
         return toast.error("Choose your vehicle type.");
     }
     if (step === 3) {
-      if (!selectedBrand || vehicleModelName.trim().length < 2)
-        return toast.error("Enter your vehicle model.");
+      if (!selectedBrand) return toast.error("Choose your vehicle brand.");
     }
     if (step === 5) {
       if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
@@ -604,13 +588,13 @@ function Pickup() {
 
     const { error } = await supabase.from("leads").insert({
       vehicle_type: selectedCategory?.name ?? vehicleType ?? "car",
-      items: [selectedBrand?.name, vehicleModelName.trim(), vehicleVariantName].filter(Boolean) as string[],
+      items: [selectedCategory?.name, selectedSubcategory?.name, selectedBrand?.name].filter(Boolean) as string[],
       brand_id: selectedBrand?.id ?? null,
       brand_name: selectedBrand?.name ?? null,
       model_id: null,
-      model_name: vehicleModelName.trim() || null,
+      model_name: selectedSubcategory?.name ?? null,
       variant_id: null,
-      variant_name: vehicleVariantName || null,
+      variant_name: null,
       has_photo: !!photoUrl,
       photo_url: photoUrl,
       locality: null,
@@ -793,8 +777,7 @@ function Pickup() {
                             setVehicleCategoryId(category.id);
                             setVehicleSubcategoryId("");
                             setVehicleBrandId("");
-                            setVehicleModelId("");
-                            setVehicleVariantId("");
+                            setBrandQuery("");
                           }}
                           className={cn(
                             "relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 text-left transition-all sm:p-5",
@@ -830,17 +813,12 @@ function Pickup() {
                   exit={{ opacity: 0, x: -16 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <h2 className="text-xl font-bold">Tell us about your vehicle</h2>
+                  <h2 className="text-xl font-bold">What type of vehicle?</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Choose its subcategory, then search for the exact brand, model and variant.
+                    Pick the exact vehicle type — the next step asks for the brand.
                   </p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setVehicleModelId(""); setVehicleVariantId(""); setStep(3); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
-                    <div className="hidden">
-                    <VehicleSelect label="Brand" placeholder={vehicleSubcategoryId ? "Search brand" : "Choose subcategory first"} options={vehicleBrands} value={vehicleBrandId} disabled={!vehicleSubcategoryId} onChange={(id) => { setVehicleBrandId(id); setVehicleModelId(""); setVehicleVariantId(""); }} />
-                    <VehicleSelect label="Model" placeholder={vehicleBrandId ? "Search model" : "Choose brand first"} options={vehicleModels} value={vehicleModelId} disabled={!vehicleBrandId} onChange={(id) => { setVehicleModelId(id); setVehicleVariantId(""); }} />
-                    <VehicleSelect label="Variant" placeholder={vehicleModelId ? "Search variant" : "Choose model first"} options={vehicleVariants} value={vehicleVariantId} disabled={!vehicleModelId} onChange={setVehicleVariantId} />
-                    </div>
+                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setBrandQuery(""); setStep(3); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
                   </div>
 
 
@@ -899,12 +877,36 @@ function Pickup() {
               {/* STEP 3 */}
               {step === 3 && (
                 <motion.div key="s3-photo" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }}>
-                  <h2 className="text-xl font-bold">Choose the exact vehicle</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">Select its brand, model and variant, then add a photo if you like.</p>
-                  <div className="mt-5 grid gap-3 sm:grid-cols-3">
-                    <VehicleSelect label="Brand" placeholder="Search brand" options={vehicleBrands} value={vehicleBrandId} onChange={(id) => { setVehicleBrandId(id); setVehicleModelName(""); setVehicleVariantName(""); }} />
-                    <div className="space-y-1.5"><Label className="text-sm font-semibold">Model <span className="text-destructive">*</span></Label><Input disabled={!vehicleBrandId} value={vehicleModelName} onChange={(e) => setVehicleModelName(e.target.value)} placeholder={vehicleBrandId ? "e.g. Swift, Activa 6G" : "Choose brand first"} /></div>
-                    <div className="space-y-1.5"><Label className="text-sm font-semibold">Variant <span className="font-normal text-muted-foreground">(optional)</span></Label><div className="flex h-10 gap-1 rounded-xl border bg-background p-1">{["Base", "Mid", "Top"].map((variant) => <button type="button" key={variant} onClick={() => setVehicleVariantName((current) => current === variant ? "" : variant)} className={cn("flex-1 rounded-lg text-xs font-semibold transition-colors", vehicleVariantName === variant ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-secondary")}>{variant}</button>)}</div></div>
+                  <h2 className="text-xl font-bold">Which brand is it?</h2>
+                  <p className="mt-1 text-sm text-muted-foreground">Pick your vehicle's brand{selectedCategory ? ` (${selectedCategory.name})` : ""}. You can add a photo below.</p>
+                  <div className="mt-5">
+                    <div className="relative">
+                      <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input value={brandQuery} onChange={(e) => setBrandQuery(e.target.value)} placeholder="Search brands — e.g. Maruti, Honda, Hyundai" className="h-12 rounded-xl pl-9" />
+                    </div>
+                    {filteredBrands.length ? (
+                      <div className="mt-4 grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+                        {filteredBrands.map((brand) => (
+                          <button
+                            type="button"
+                            key={brand.id}
+                            onClick={() => setVehicleBrandId(brand.id)}
+                            className={cn(
+                              "flex min-h-14 items-center justify-center rounded-2xl border-2 px-3 py-3 text-center text-sm font-bold transition-all",
+                              vehicleBrandId === brand.id
+                                ? "border-primary bg-accent shadow-soft"
+                                : "border-border hover:-translate-y-0.5 hover:border-primary/40",
+                            )}
+                          >
+                            {brand.name}
+                          </button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-4 rounded-2xl border border-dashed border-border p-6 text-center text-sm text-muted-foreground">
+                        No brands match “{brandQuery}”. Continue anyway and our evaluator will confirm the brand at your doorstep.
+                      </p>
+                    )}
                   </div>
                   <h3 className="mt-8 font-bold">Add a photo <span className="font-normal text-muted-foreground">(optional)</span></h3>
                   <p className="mt-1 text-sm text-muted-foreground">A clear photo helps our evaluator arrive prepared.</p>

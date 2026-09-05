@@ -1,15 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import {
-  ArrowRight,
-  CheckCircle2,
-  MapPin,
-  Quote,
-  ShieldCheck,
-
-} from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin, Quote } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";
+import { HeroLeadForm } from "@/components/HeroLeadForm";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { steps, features, testimonials, materials } from "@/lib/site-data";
 
@@ -124,21 +118,11 @@ function Home() {
         <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-24 lg:px-8">
           <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)]">
             <div>
-              <motion.span
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-navy-foreground/80"
-              >
-                <ShieldCheck className="size-3.5" />
-                Bangalore's doorstep vehicle buyers
-              </motion.span>
-
               <motion.h1
                 initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.05 }}
-                className="mt-6 text-4xl font-extrabold leading-[1.05] sm:text-5xl lg:text-6xl"
+                className="text-4xl font-extrabold leading-[1.05] sm:text-5xl lg:text-6xl"
               >
                 Sell your used <span className="text-primary">car</span>,{" "}
                 <span className="text-primary">bike</span> or{" "}
@@ -151,8 +135,8 @@ function Home() {
                 transition={{ duration: 0.6, delay: 0.12 }}
                 className="mt-5 max-w-xl text-base leading-relaxed text-navy-foreground/75 sm:text-lg"
               >
-                A market-linked offer in minutes, a free 140-point doorstep inspection, same-day bank
-                transfer and free RC transfer — all without a single showroom visit.
+                A market-linked offer in minutes, a free 140-point doorstep inspection, same-day
+                bank transfer and free RC transfer — all without a single showroom visit.
               </motion.p>
 
               <motion.div
@@ -179,49 +163,18 @@ function Home() {
               </motion.div>
 
               <ul className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-sm text-navy-foreground/70">
-                {["No listing fees", "Free RC transfer & NOC", "Payment before pickup"].map((item) => (
-                  <li key={item} className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-primary" />
-                    {item}
-                  </li>
-                ))}
+                {["No listing fees", "Free RC transfer & NOC", "Payment before pickup"].map(
+                  (item) => (
+                    <li key={item} className="flex items-center gap-2">
+                      <CheckCircle2 className="size-4 text-primary" />
+                      {item}
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="rounded-3xl border border-white/15 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-8"
-            >
-              <h2 className="text-lg font-bold">What your vehicle could fetch today</h2>
-              <p className="mt-1 text-sm text-navy-foreground/70">
-                Indicative Bangalore resale bands — final offer after inspection.
-              </p>
-              <div className="mt-6 space-y-3">
-                {materials.slice(0, 4).map((m) => (
-                  <div
-                    key={m.slug}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-navy/40 px-4 py-3"
-                  >
-                    <div>
-                      <div className="text-sm font-semibold">{m.name}</div>
-                      <div className="text-xs text-navy-foreground/60">{m.trend}</div>
-                    </div>
-                    <div className="whitespace-nowrap text-right">
-                      <span className="text-lg font-extrabold text-primary">{m.price}</span>
-                      <span className="ml-1 text-xs text-navy-foreground/60">{m.unit}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <Button asChild variant="outlineLight" size="lg" className="mt-6 w-full">
-                <Link to="/materials">
-                  See the full price guide
-                  <ArrowRight />
-                </Link>
-              </Button>
-            </motion.div>
+            <HeroLeadForm />
           </div>
         </div>
       </section>
@@ -236,7 +189,8 @@ function Home() {
               <h2 className="mt-2 text-3xl font-bold sm:text-4xl">Start with your vehicle</h2>
             </div>
             <p className="max-w-md text-sm text-muted-foreground">
-              Choose a category and the valuation flow opens with your vehicle type already selected.
+              Choose a category and the valuation flow opens with your vehicle type already
+              selected.
             </p>
           </Reveal>
 
@@ -258,7 +212,9 @@ function Home() {
                     height={1024}
                     className="pointer-events-none absolute inset-x-4 top-3 h-22 w-[calc(100%-2rem)] object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24"
                   />
-                  <span className="relative text-center text-sm font-bold leading-tight sm:text-base">{card.title}</span>
+                  <span className="relative text-center text-sm font-bold leading-tight sm:text-base">
+                    {card.title}
+                  </span>
                 </Link>
               </Reveal>
             ))}
@@ -283,7 +239,6 @@ function Home() {
           ))}
         </div>
       </section>
-
 
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -377,7 +332,8 @@ function Home() {
                 What used vehicles sell for in Bangalore
               </h2>
               <p className="mt-4 text-muted-foreground">
-                Indicative price bands by body type. Your final offer depends on year, kilometres, variant and condition.
+                Indicative price bands by body type. Your final offer depends on year, kilometres,
+                variant and condition.
               </p>
             </div>
             <Button asChild variant="outline" size="lg">
@@ -392,10 +348,16 @@ function Home() {
             {materials.map((m, i) => (
               <Reveal key={m.name} delay={(i % 4) * 0.05}>
                 <div className="group h-full rounded-2xl border border-border bg-card p-4 transition-all hover:border-primary/40 hover:shadow-soft sm:p-6">
-                  <h3 className="whitespace-nowrap text-sm font-bold leading-tight sm:text-base">{m.name}</h3>
+                  <h3 className="whitespace-nowrap text-sm font-bold leading-tight sm:text-base">
+                    {m.name}
+                  </h3>
                   <div className="mt-4 flex items-baseline gap-1">
-                    <span className="text-xl font-extrabold text-gradient sm:text-2xl">{m.price}</span>
-                    <span className="whitespace-nowrap text-[11px] text-muted-foreground sm:text-sm">{m.unit}</span>
+                    <span className="text-xl font-extrabold text-gradient sm:text-2xl">
+                      {m.price}
+                    </span>
+                    <span className="whitespace-nowrap text-[11px] text-muted-foreground sm:text-sm">
+                      {m.unit}
+                    </span>
                   </div>
                   <p className="mt-3 text-sm text-muted-foreground">{m.blurb}</p>
                 </div>
@@ -415,7 +377,8 @@ function Home() {
               Serving All Areas of <span className="text-primary">Bangalore</span>
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Free doorstep vehicle inspection and pickup across every major Bangalore neighbourhood.
+              Free doorstep vehicle inspection and pickup across every major Bangalore
+              neighbourhood.
             </p>
           </Reveal>
 
@@ -479,7 +442,9 @@ function Home() {
       <section className="bg-background py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <Reveal className="mx-auto max-w-2xl text-center">
-            <h2 className="text-3xl font-bold sm:text-4xl">Trusted by Bangalore buyers and sellers</h2>
+            <h2 className="text-3xl font-bold sm:text-4xl">
+              Trusted by Bangalore buyers and sellers
+            </h2>
           </Reveal>
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
             {testimonials.map((t, i) => (

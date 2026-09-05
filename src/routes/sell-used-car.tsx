@@ -63,7 +63,7 @@ const pricingFactors = [
   "Valid insurance, PUC and pending challans or loan hypothecation",
 ];
 
-const faqs = [
+const existingFaqs = [
   {
     question: "How do I sell my used car in Bangalore with ZAPIBOO?",
     answer:
@@ -99,6 +99,123 @@ const faqs = [
 const title = "Sell Used Car in Bangalore — Best Price, Free Doorstep Inspection | ZAPIBOO";
 const description =
   "Sell your used car in Bangalore at the best price. Free doorstep inspection, instant same-day payment, free RC transfer and NOC. Cars, SUVs, EVs and commercial vehicles.";
+
+const additionalFaqs = [
+  {
+    question: "How do I find the resale value of my used car in Bangalore?",
+    answer:
+      "Share the brand, model, variant, registration year, fuel type and kilometres driven. Service history, ownership count, accident repairs and inspection findings help refine the estimate. Request a free inspection for a vehicle-specific offer.",
+  },
+  {
+    question: "Which documents should I prepare to sell my car?",
+    answer:
+      "Keep the registration certificate, insurance certificate, valid PUC certificate, identity and address proofs ready. Ownership transfer uses Forms 29 and 30. Financed or interstate vehicles may need additional paperwork; confirm the applicable documents before handover.",
+  },
+  {
+    question: "Can I request a valuation if my car still has a loan?",
+    answer:
+      "Tell the team about the outstanding loan when requesting a valuation. Ask for the lender settlement amount and the documents needed to clear the finance entry before agreeing on the sale and payment arrangement.",
+  },
+  {
+    question: "Does my Bangalore neighbourhood change the offer?",
+    answer:
+      "Location helps us arrange inspection and understand the local buyer pool, but there is no fixed neighbourhood premium. The model, age, condition, kilometres and available buyer interest determine the vehicle-specific offer.",
+  },
+  {
+    question: "Do I have to buy another car to sell through Zapiboo?",
+    answer:
+      "No. You can request a standalone sale and free valuation without buying a replacement vehicle. Compare the final offer and terms with any dealer or exchange quote before deciding.",
+  },
+  {
+    question: "When will I receive payment and RC transfer support?",
+    answer:
+      "Payment is arranged after you accept the offer and the vehicle and documents are verified. Same-day payment depends on completing those checks and bank processing. The team supports RC transfer; confirm the handover records and how transfer progress will be shared.",
+  },
+];
+
+const valuationChecklist = [
+  [
+    "Model, variant and age",
+    "Have the exact variant, registration year, fuel type and transmission ready. Comparing the same specification gives a more useful starting point than comparing brand names alone.",
+  ],
+  [
+    "Kilometres and ownership",
+    "Record the odometer reading and number of previous owners. Share how the car has been used, including personal, company or commercial use.",
+  ],
+  [
+    "Service and repair history",
+    "Gather service invoices and disclose accident, flood or major mechanical repairs. A clear history helps the evaluator understand the car and explain the offer.",
+  ],
+  [
+    "Condition and equipment",
+    "Check tyres, battery, air conditioning, warning lights and bodywork. Keep spare keys and accessory details ready; ask before spending on repairs solely to improve the sale price.",
+  ],
+];
+
+const areaGroups = [
+  [
+    "Whitefield, Marathahalli and Sarjapur Road",
+    "For a car used on a daily commute, share fuel economy records, transmission details and service history. These help buyers assess running costs and suitability for their own commute.",
+  ],
+  [
+    "Hebbal, Yelahanka and Thanisandra",
+    "For a family car or SUV, highlight seating, luggage space and highway use. Tyre condition, safety equipment and maintenance records help explain what the vehicle offers.",
+  ],
+  [
+    "HSR Layout, Koramangala and Indiranagar",
+    "For a city hatchback, sedan or automatic, describe parking wear, air-conditioning performance and kilometres driven. For an EV, include battery health and charging equipment details.",
+  ],
+  [
+    "JP Nagar, Jayanagar and Banashankari",
+    "For a long-owned family car, prepare ownership records, service bills and details of any major replacements. A documented history gives buyers more context than age alone.",
+  ],
+];
+
+const comparisons = [
+  [
+    "Buying a replacement",
+    "Standalone sale; no replacement purchase needed",
+    "Ask whether the offer is for an outright purchase",
+    "Usually linked to buying a replacement vehicle",
+  ],
+  [
+    "Inspection",
+    "Free doorstep inspection",
+    "Confirm location and any inspection charge",
+    "Confirm appraisal arrangements with the showroom",
+  ],
+  [
+    "Comparing the price",
+    "Review the vehicle-specific offer after inspection",
+    "Ask for the final amount after deductions",
+    "Separate car value, exchange bonus and new-car discount",
+  ],
+  [
+    "Payment and handover",
+    "Agree payment and handover after verification",
+    "Confirm payment method and timing in writing",
+    "Check how the value is adjusted against your purchase",
+  ],
+  [
+    "RC transfer",
+    "Transfer support; confirm tracking and records",
+    "Ask who handles transfer and follow-up",
+    "Ask who takes responsibility after exchange",
+  ],
+];
+
+function SectionCta({ children }: { children: string }) {
+  return (
+    <Button asChild variant="hero" size="lg" className="mt-8 h-auto whitespace-normal py-3">
+      <Link to="/pickup">
+        {children}
+        <ArrowRight className="shrink-0" />
+      </Link>
+    </Button>
+  );
+}
+
+const faqs = [...existingFaqs, ...additionalFaqs];
 
 export const Route = createFileRoute("/sell-used-car")({
   head: () => ({
@@ -187,7 +304,8 @@ function SellUsedCar() {
             <div className="rounded-3xl border border-white/15 bg-white/[0.06] p-6 backdrop-blur-sm sm:p-8">
               <h2 className="text-lg font-bold">Used car price bands in Bangalore</h2>
               <p className="mt-1 text-sm text-navy-foreground/70">
-                Indicative resale ranges. Your final offer depends on year, kilometres and condition.
+                Indicative resale ranges. Your final offer depends on year, kilometres and
+                condition.
               </p>
               <div className="mt-6 space-y-3">
                 {priceBands.slice(0, 4).map((band) => (
@@ -197,7 +315,9 @@ function SellUsedCar() {
                   >
                     <div className="min-w-0">
                       <div className="text-sm font-semibold">{band.name}</div>
-                      <div className="truncate text-xs text-navy-foreground/60">{band.examples}</div>
+                      <div className="truncate text-xs text-navy-foreground/60">
+                        {band.examples}
+                      </div>
                     </div>
                     <span className="whitespace-nowrap text-sm font-extrabold text-primary">
                       {band.band}
@@ -215,7 +335,7 @@ function SellUsedCar() {
           <Reveal>
             <h2 className="text-3xl font-bold sm:text-4xl">Start with your vehicle</h2>
             <p className="mt-3 max-w-2xl text-lg text-muted-foreground">
-              Choose a category and the valuation flow opens with your vehicle type already selected.
+              Start a free valuation for your car, SUV, electric or commercial vehicle.
             </p>
           </Reveal>
           <div className="mt-9 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
@@ -237,6 +357,7 @@ function SellUsedCar() {
               </Link>
             ))}
           </div>
+          <SectionCta>Request my free car valuation</SectionCta>
         </div>
       </section>
 
@@ -351,6 +472,153 @@ function SellUsedCar() {
               </Link>
             ))}
           </div>
+          <SectionCta>Request my free car valuation</SectionCta>
+        </div>
+      </section>
+
+      <section className="border-t border-border bg-secondary/30 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Used car valuation checklist: what affects your resale price?
+          </h2>
+          <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
+            Before you sell a second-hand car in Bangalore, collect the details that make your quote
+            specific to your vehicle. An online estimate is a starting point; the inspected
+            condition and current buyer interest shape the final offer.
+          </p>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            {valuationChecklist.map(([title, text]) => (
+              <article key={title} className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="text-xl font-bold">{title}</h3>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{text}</p>
+              </article>
+            ))}
+          </div>
+          <SectionCta>Get my car valued for free</SectionCta>
+        </div>
+      </section>
+      <section className="bg-background py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Documents needed to sell a used car in Bangalore
+          </h2>
+          <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
+            Prepare these records before inspection so the team can identify any missing paperwork
+            early.
+          </p>
+          <ul className="mt-6 space-y-4 text-muted-foreground">
+            <li>
+              <strong className="text-foreground">Vehicle records:</strong> Registration certificate
+              (RC), insurance certificate and valid Pollution Under Control (PUC) certificate.
+            </li>
+            <li>
+              <strong className="text-foreground">Seller details:</strong> Identity and address
+              proofs, with details matching the registered owner.
+            </li>
+            <li>
+              <strong className="text-foreground">Transfer paperwork:</strong> Forms 29 and 30 for
+              the ownership transfer process. Confirm any additional RTO requirements for your
+              vehicle.
+            </li>
+            <li>
+              <strong className="text-foreground">Finance or interstate cases:</strong> Disclose an
+              active loan or out-of-state registration so the team can confirm lender clearance or
+              NOC requirements.
+            </li>
+            <li>
+              <strong className="text-foreground">Helpful sale records:</strong> Service invoices,
+              spare keys and bank details for the agreed payout. Keep copies of the signed handover
+              and transfer records.
+            </li>
+          </ul>
+          <p className="mt-5 text-sm text-muted-foreground">
+            See the{" "}
+            <a
+              href="https://mparivahan.parivahan.gov.in/mstatic/english/rc-info-ownership.html"
+              target="_blank"
+              rel="noreferrer"
+              className="text-primary underline"
+            >
+              official Parivahan ownership transfer guidance
+            </a>{" "}
+            for the applicable process.
+          </p>
+          <SectionCta>Arrange an inspection and document review</SectionCta>
+        </div>
+      </section>
+      <section className="bg-secondary/30 py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Area-wise used car demand in Bangalore: what to highlight
+          </h2>
+          <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
+            Buyer needs vary by commute, family size and budget. These area-based selling tips help
+            you prepare your enquiry; they are not measured demand rankings or promises of a higher
+            price. Ask for a current offer for your exact model.
+          </p>
+          <div className="mt-8 grid gap-5 md:grid-cols-2">
+            {areaGroups.map(([title, text]) => (
+              <article key={title} className="rounded-2xl border border-border bg-card p-6">
+                <h3 className="text-xl font-bold">{title}</h3>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{text}</p>
+              </article>
+            ))}
+          </div>
+          <p className="mt-6 text-muted-foreground">
+            Also selling from HBR Layout, Nagawara, Electronic City or another Bangalore
+            neighbourhood? Share your pincode in the booking flow to arrange a suitable inspection
+            slot.
+          </p>
+          <SectionCta>Request a valuation in my area</SectionCta>
+        </div>
+      </section>
+      <section className="bg-background py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold sm:text-4xl">
+            Zapiboo vs a used car dealer vs showroom exchange
+          </h2>
+          <p className="mt-4 max-w-3xl text-lg text-muted-foreground">
+            Compare the final amount you receive, the effort involved and the transfer arrangements.
+            Dealer and exchange terms vary, so request a written breakdown for each offer.
+          </p>
+          <div
+            className="mt-8 overflow-x-auto rounded-2xl border border-border"
+            role="region"
+            aria-label="Car selling options comparison"
+            tabIndex={0}
+          >
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <caption className="sr-only">
+                Compare selling your car through Zapiboo, a dealer or a showroom exchange
+              </caption>
+              <thead className="bg-secondary">
+                <tr>
+                  {["What to compare", "Zapiboo", "Used car dealer", "Showroom exchange"].map(
+                    (heading) => (
+                      <th key={heading} scope="col" className="p-4 font-bold">
+                        {heading}
+                      </th>
+                    ),
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {comparisons.map(([label, ...cells]) => (
+                  <tr key={label} className="border-t border-border">
+                    <th scope="row" className="p-4 font-semibold">
+                      {label}
+                    </th>
+                    {cells.map((cell) => (
+                      <td key={cell} className="p-4 align-top text-muted-foreground">
+                        {cell}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <SectionCta>Get an offer to compare</SectionCta>
         </div>
       </section>
 
@@ -371,6 +639,7 @@ function SellUsedCar() {
               </Reveal>
             ))}
           </div>
+          <SectionCta>Request my free car valuation</SectionCta>
         </div>
       </section>
 
@@ -380,8 +649,8 @@ function SellUsedCar() {
             Ready to sell your car at the best price?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-navy-foreground/75">
-            Book a free doorstep inspection today and get paid the same day, with RC transfer handled
-            for you.
+            Book a free doorstep inspection today and get paid the same day, with RC transfer
+            handled for you.
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <Button asChild variant="hero" size="xl">

@@ -5,6 +5,8 @@ import {
   CheckCircle2,
   MapPin,
   Quote,
+  ShieldCheck,
+
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Reveal } from "@/components/Reveal";

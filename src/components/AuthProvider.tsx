@@ -12,6 +12,7 @@ export function AuthProvider({ initialUser, children }: { initialUser: User | nu
     setUser(initialUser);
   }, [initialUser]);
   useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
     const { data } = supabase.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null));
     return () => data.subscription.unsubscribe();
   }, []);

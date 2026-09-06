@@ -10,6 +10,7 @@ import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
 import { FloatingWhatsApp } from '@/components/FloatingWhatsApp';
 import { Toaster } from '@/components/ui/sonner';
+import { NavigationLoader } from '@/components/NavigationLoader';
 
 export function Providers({ children, initialUser }: { children: ReactNode; initialUser: User | null }) {
   return <AuthProvider initialUser={initialUser}><DataProvider>{children}</DataProvider></AuthProvider>;
@@ -34,6 +35,7 @@ function SiteShell({ children }: { children: ReactNode }) {
       {!chromeless && <SiteFooter />}
       {!hideFloatingWhatsApp && <FloatingWhatsApp />}
     </div>
+    <NavigationLoader />
     <Toaster position="top-center" richColors />
   </>;
 }

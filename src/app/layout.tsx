@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Providers } from './providers';
-import { getCurrentUser } from '@/integrations/supabase/server';
 import { siteUrl, organizationSchema, websiteSchema } from '@/lib/seo';
 import { JsonLd } from '@/components/JsonLd';
 import { pageMetadata } from '@/lib/metadata';
@@ -19,8 +18,7 @@ export const metadata: Metadata = {
 };
 export const viewport: Viewport = { width: 'device-width', initialScale: 1 };
 
-export default async function RootLayout({ children }: { children: ReactNode }) {
-  const user = await getCurrentUser();
+export default function RootLayout({ children }: { children: ReactNode }) {
   return <html lang="en"><head>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -28,6 +26,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   </head><body>
     <noscript><style>{'[data-ssr-reveal], main [style*="opacity:0"], main [style*="opacity: 0"] { opacity: 1 !important; transform: none !important; }'}</style></noscript>
     <JsonLd data={[organizationSchema('/'), websiteSchema()]} />
-    <Providers initialUser={user}>{children}</Providers>
+    <Providers initialUser={null}>{children}</Providers>
   </body></html>;
 }

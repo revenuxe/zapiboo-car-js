@@ -102,6 +102,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const { data: availability } = useServiceAvailability();
   const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
+  const [stepLoading, setStepLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const draftRestored = useRef(false);
@@ -485,6 +486,15 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const addressTooShort = address.trim().length > 0 && !addressOk;
   const addressStepReady = pincodeOk && addressOk;
 
+  const moveToStep = (nextStep: number) => {
+    setStepLoading(true);
+    window.requestAnimationFrame(() => {
+      setStep(nextStep);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.setTimeout(() => setStepLoading(false), 220);
+    });
+  };
+
   const goNext = () => {
     if (step === 1) {
       if (!vehicleType) return toast.error("Tell us what vehicle you're selling.");
@@ -506,15 +516,14 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
         return toast.error("Address looks too short — add your flat, street and a landmark.");
     }
     if (step === 1) {
-      setStep(2);
+      moveToStep(2);
     } else if (step === 2) {
-      setStep(3);
+      moveToStep(3);
     } else if (step === 3) {
-      setStep(user ? 5 : 4);
+      moveToStep(user ? 5 : 4);
     } else if (step === 5) {
-      setStep(6);
+      moveToStep(6);
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const goBack = () => {
@@ -729,7 +738,8 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
             })}
           </div>
 
-            <div className="rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-8">
+            <div className="relative rounded-3xl border border-border bg-card p-4 shadow-soft sm:p-8">
+            {stepLoading && <div className="absolute inset-0 z-20 grid place-items-center rounded-3xl bg-background/75 backdrop-blur-sm"><div className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-sm font-semibold shadow-soft"><Loader2 className="size-4 animate-spin text-primary" /> Preparing next step</div></div>}
             <AnimatePresence mode="wait">
               {/* STEP 1 */}
               {step === 1 && (
@@ -806,7 +816,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                     Pick the exact vehicle type — the next step asks for the brand.
                   </p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setVehicleModel(""); setStep(3); window.scrollTo({ top: 0, behavior: "smooth" }); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
+                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setVehicleModel(""); moveToStep(3); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
                   </div>
 
 

@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { optimizedImageUrl } from "@/lib/image-delivery";
 
 export type CachedVehicleOption = {
   id: string;
@@ -18,6 +19,7 @@ const cacheKey = "zapiboo-vehicle-catalogue-v1";
 const maxAge = 5 * 60 * 1000;
 let memoryCache: CatalogueCache | null = null;
 let warmup: Promise<CatalogueCache | null> | null = null;
+const preloadedImages = new Set<string>();
 
 function isFresh(cache: CatalogueCache | null): cache is CatalogueCache {
   return Boolean(cache && Date.now() - cache.savedAt < maxAge);
@@ -46,6 +48,23 @@ function saveCache(cache: CatalogueCache) {
   }
 }
 
+function preloadCardImages(cache: CatalogueCache) {
+  if (typeof window === "undefined") return;
+  // These are small, card-sized Cloudinary derivatives. They are fetched in
+  // the background so the vehicle-type screen can paint without image delay.
+  window.setTimeout(() => {
+    [...cache.categories, ...cache.subcategories].forEach((option) => {
+      if (!option.image_url) return;
+      const url = optimizedImageUrl(option.image_url, 480);
+      if (!url || preloadedImages.has(url)) return;
+      preloadedImages.add(url);
+      const image = new Image();
+      image.decoding = "async";
+      image.src = url;
+    });
+  }, 0);
+}
+
 export function getCachedVehicleOptions(table: string, categoryId?: string) {
   const cache = readCache();
   if (!cache) return undefined;
@@ -58,7 +77,10 @@ export function getCachedVehicleOptions(table: string, categoryId?: string) {
 /** Starts once per browser session and makes the vehicle handoff instant after a homepage tap. */
 export function warmVehicleCatalogue() {
   const cached = readCache();
-  if (cached) return Promise.resolve(cached);
+  if (cached) {
+    preloadCardImages(cached);
+    return Promise.resolve(cached);
+  }
   if (warmup) return warmup;
 
   warmup = Promise.all([
@@ -78,6 +100,7 @@ export function warmVehicleCatalogue() {
         brands: brands.data as CachedVehicleOption[],
       };
       saveCache(cache);
+      preloadCardImages(cache);
       return cache;
     })
     .catch(() => null)

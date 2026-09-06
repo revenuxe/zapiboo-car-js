@@ -62,6 +62,7 @@ type Lead = {
   items: string[];
   brand_name: string | null;
   model_name: string | null;
+  manufacture_year: number | null;
   registration_number: string | null;
   has_photo: boolean;
   photo_url: string | null;
@@ -356,7 +357,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                       <>
                         {selected.pickup_id && <Row icon={Boxes} label="Pickup ID" sub={selected.pickup_id} />}
                         <Row icon={Boxes} label={selected.items.length ? selected.items.join(", ") : selected.vehicle_type} />
-                        {selected.brand_name && <Row icon={Boxes} label="Vehicle" sub={`${selected.brand_name}${selected.model_name ? ` · ${selected.model_name}` : ""}`} />}
+                        {selected.brand_name && <Row icon={Boxes} label="Vehicle" sub={`${selected.brand_name}${selected.model_name ? ` · ${selected.model_name}` : ""}${selected.manufacture_year ? ` · ${selected.manufacture_year}` : ""}`} />}
                         {selected.registration_number && <Row icon={Boxes} label="Registration" sub={selected.registration_number} />}
                         <Row icon={MapPin} label={`${selected.locality ?? "-"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
                         <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />

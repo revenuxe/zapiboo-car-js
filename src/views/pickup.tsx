@@ -32,13 +32,13 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PickupMap } from "@/components/PickupMap";
 import { PageLoader } from "@/components/PageLoader";
 import { GoogleIcon } from "@/components/GoogleIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
 import { compressImageToWebp } from "@/lib/client-image";
-import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { getCachedVehicleOptions } from "@/lib/vehicle-catalogue-cache";
@@ -76,6 +76,7 @@ type PickupSearch = {
 const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "Evening (5–8)"];
 const todayStr = new Date().toISOString().split("T")[0];
 const pickupDraftKey = "zapiboo-pickup-draft";
+const modelYears = Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (_, index) => String(new Date().getFullYear() - index));
 type VehicleOption = { id: string; name: string; image_url?: string | null };
 const catalogueDb = supabase as unknown as { from: (table: string) => any };
 
@@ -103,7 +104,6 @@ function useVehicleOptions(table: string, foreignKey?: string, parentId?: string
 
 export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch }) {
 
-  const { data: availability } = useServiceAvailability();
   const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
   const [stepLoading, setStepLoading] = useState(false);
@@ -121,6 +121,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const [vehicleBrandId, setVehicleBrandId] = useState("");
   const [brandPickerOpen, setBrandPickerOpen] = useState(false);
   const [vehicleModel, setVehicleModel] = useState("");
+  const [manufactureYear, setManufactureYear] = useState("");
   const [vehicleCategoryId, setVehicleCategoryId] = useState("");
   const [vehicleSubcategoryId, setVehicleSubcategoryId] = useState("");
   const [photo, setPhoto] = useState<PickupPhoto | null>(null);
@@ -242,6 +243,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
         vehicleType,
         vehicleBrandId,
         vehicleModel,
+        manufactureYear,
         vehicleCategoryId,
         vehicleSubcategoryId,
         pincode,
@@ -277,6 +279,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
           vehicleType?: string;
           vehicleBrandId?: string;
           vehicleModel?: string;
+          manufactureYear?: string;
           vehicleCategoryId?: string;
           vehicleSubcategoryId?: string;
           pincode?: string;
@@ -292,6 +295,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
         if (draft.vehicleType) setVehicleType(draft.vehicleType);
         if (draft.vehicleBrandId) setVehicleBrandId(draft.vehicleBrandId);
         if (draft.vehicleModel) setVehicleModel(draft.vehicleModel);
+        if (draft.manufactureYear) setManufactureYear(draft.manufactureYear);
         if (draft.vehicleCategoryId) setVehicleCategoryId(draft.vehicleCategoryId);
         if (draft.vehicleSubcategoryId) setVehicleSubcategoryId(draft.vehicleSubcategoryId);
         if (draft.pincode) setPincode(draft.pincode);
@@ -347,7 +351,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     if (!hydrated || submitted) return;
     savePickupDraft();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hydrated, submitted, step, vehicleType, registrationNumber, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, vehicleModel, pincode, address, geo, date, slot, name, phone, photo]);
+  }, [hydrated, submitted, step, vehicleType, registrationNumber, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, vehicleModel, manufactureYear, pincode, address, geo, date, slot, name, phone, photo]);
 
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {
@@ -488,8 +492,8 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     }
   };
 
-  const pincodeOk = pincode.length === 6 && isPincodeAvailable(pincode, availability);
-  const pincodeBad = pincode.length === 6 && !pincodeOk;
+  const pincodeOk = pincode.length === 6;
+  const pincodeBad = false;
   const addressOk = address.trim().length >= 10;
   const addressTooShort = address.trim().length > 0 && !addressOk;
   const addressStepReady = pincodeOk && addressOk;
@@ -514,11 +518,11 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     if (step === 3) {
       if (!selectedBrand) return toast.error("Choose your vehicle brand.");
       if (!vehicleModel.trim()) return toast.error("Add your vehicle model.");
+      if (!manufactureYear) return toast.error("Select your vehicle model year.");
     }
     if (step === 5) {
-      if (!pincode.trim()) return toast.error("Add your pincode so we can check coverage.");
+      if (!pincode.trim()) return toast.error("Add your Bengaluru pincode.");
       if (pincode.length !== 6) return toast.error("Pincode must be 6 digits.");
-      if (!pincodeOk) return toast.error("We don't pick up at this pincode yet.");
       if (!address.trim()) return toast.error("Add your flat / house address.");
       if (!addressOk)
         return toast.error("Address looks too short — add your flat, street and a landmark.");
@@ -587,6 +591,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       model_id: null,
       model_name: vehicleModel.trim() || null,
       vehicle_model_name: vehicleModel.trim() || null,
+      manufacture_year: manufactureYear ? Number(manufactureYear) : null,
       variant_id: null,
       variant_name: null,
       has_photo: !!photoUrl,
@@ -901,7 +906,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                   <p className="mt-1 text-sm text-muted-foreground">Choose the brand and enter the exact model. You can add a photo below.</p>
                   <div className="mt-5">
                     <Label htmlFor="vehicle-brand">Vehicle brand</Label>
-                    <Popover open={brandPickerOpen} onOpenChange={setBrandPickerOpen}>
+                      <Popover open={brandPickerOpen} onOpenChange={setBrandPickerOpen}>
                       <PopoverTrigger asChild>
                         <Button id="vehicle-brand" type="button" variant="outline" role="combobox" className="mt-2 h-12 w-full justify-between rounded-xl px-3 text-base font-normal">
                           {selectedBrand?.name ?? "Search or select a brand"}<ChevronsUpDown className="size-4 shrink-0 opacity-50" />
@@ -910,7 +915,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                       <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
                         <Command>
                           <CommandInput placeholder="Search brands…" />
-                          <CommandList><CommandEmpty>No matching brand found.</CommandEmpty>{vehicleBrands.map((brand) => <CommandItem key={brand.id} value={brand.name} onSelect={() => { setVehicleBrandId(brand.id); setVehicleModel(""); setBrandPickerOpen(false); }}><Check className={cn("mr-2 size-4", vehicleBrandId === brand.id ? "opacity-100" : "opacity-0")} />{brand.name}</CommandItem>)}</CommandList>
+                          <CommandList><CommandEmpty>No matching brand found.</CommandEmpty>{vehicleBrands.map((brand) => <CommandItem key={brand.id} value={brand.name} onSelect={() => { setVehicleBrandId(brand.id); setVehicleModel(""); setManufactureYear(""); setBrandPickerOpen(false); }}><Check className={cn("mr-2 size-4", vehicleBrandId === brand.id ? "opacity-100" : "opacity-0")} />{brand.name}</CommandItem>)}</CommandList>
                         </Command>
                       </PopoverContent>
                     </Popover>
@@ -931,6 +936,14 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                     />
                     <p className="mt-2 text-xs text-muted-foreground">Enter the model shown on your RC or service records.</p>
                   </div>
+                  <div className="mt-4 rounded-2xl border border-border bg-card p-4">
+                    <Label htmlFor="vehicle-year" className="flex items-center justify-between font-bold text-foreground">Select model year <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-foreground">Required</span></Label>
+                    <Select value={manufactureYear} onValueChange={setManufactureYear}>
+                      <SelectTrigger id="vehicle-year" className="mt-3 h-12 rounded-xl bg-background text-base"><SelectValue placeholder="Choose year" /></SelectTrigger>
+                      <SelectContent>{modelYears.map((year) => <SelectItem key={year} value={year}>{year}</SelectItem>)}</SelectContent>
+                    </Select>
+                    <p className="mt-2 text-xs text-muted-foreground">Choose the manufacturing year shown on your RC.</p>
+                  </div>
                   <h3 className="mt-8 font-bold">Add a photo <span className="font-normal text-muted-foreground">(optional)</span></h3>
                   <p className="mt-1 text-sm text-muted-foreground">A clear photo helps our evaluator arrive prepared.</p>
                   <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={onPhoto} />
@@ -949,7 +962,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                 >
                   <h2 className="text-xl font-bold">Where in Bengaluru?</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    We'll check that we cover your area.
+                    We provide doorstep inspections across Bengaluru.
                   </p>
 
                   {user && profileStatus === "loading" && (
@@ -988,13 +1001,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                       />
                       {pincodeOk && (
                         <p className="flex items-center gap-1.5 text-sm font-medium text-primary">
-                          <CheckCircle2 className="size-4" /> Great — we pick up here!
-                        </p>
-                      )}
-                      {pincodeBad && (
-                        <p className="flex items-center gap-1.5 text-sm font-medium text-destructive">
-                          <Info className="size-4" /> Not live here yet. Try a nearby locality —
-                          we're expanding fast.
+                          <CheckCircle2 className="size-4" /> Great — we provide doorstep pickup across Bengaluru.
                         </p>
                       )}
                       {pincode.length > 0 && pincode.length < 6 && (

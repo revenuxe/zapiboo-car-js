@@ -17,7 +17,6 @@ import { Logo } from "@/components/Logo";
 import { PageLoader } from "@/components/PageLoader";
 import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { UsersPanel } from "@/components/admin/UsersPanel";
-import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";
 import { VehiclesPanel } from "@/components/admin/VehiclesPanel";
 import { CatalogueTaxonomyPanel } from "@/components/admin/CatalogueTaxonomyPanel";
 
@@ -79,7 +78,7 @@ export default function AdminDashboard() {
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-8">
         <h1 className="text-2xl font-bold sm:text-3xl">Dashboard</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Manage vehicle bookings, availability and customer enquiries.
+          Manage vehicle bookings, catalogue cards and customer enquiries.
         </p>
 
         <Tabs defaultValue="bookings" className="mt-6">
@@ -87,7 +86,6 @@ export default function AdminDashboard() {
             <TabsTrigger value="bookings" className="gap-1.5">
               <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Bookings</span>
             </TabsTrigger>
-            <TabsTrigger value="availability">Availability</TabsTrigger>
             <TabsTrigger value="vehicles" className="gap-1.5">
               <CarFront className="size-4" /> <span className="hidden sm:inline">Brands</span>
             </TabsTrigger>
@@ -104,7 +102,6 @@ export default function AdminDashboard() {
           <TabsContent value="bookings" className="mt-5">
             <LeadsPanel scope="bookings" />
           </TabsContent>
-          <TabsContent value="availability" className="mt-5"><AvailabilityPanel /></TabsContent>
           <TabsContent value="vehicles" className="mt-5"><VehiclesPanel /></TabsContent>
           <TabsContent value="categories" className="mt-5"><CatalogueTaxonomyPanel kind="categories" /></TabsContent>
           <TabsContent value="types" className="mt-5"><CatalogueTaxonomyPanel kind="subcategories" /></TabsContent>

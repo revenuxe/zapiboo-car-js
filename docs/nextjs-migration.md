@@ -26,7 +26,7 @@ Each page has server metadata, an absolute canonical URL, Open Graph and Twitter
 
 Use Node.js 22 or 24, `npm ci`, `npm run build`, and `npm start`. On Vercel select the Next.js framework preset and remove any previous project-level build command or output-directory overrides. Keep the existing cron configuration.
 
-Set `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` before building. Only native Next.js public variable names are supported. Local credentials are stored in ignored `.env.local`; `.env.example` documents the supported values. Never expose service-role or AWS secrets through public variables.
+Set `NEXT_SUPABASE_URL` and `NEXT_SUPABASE_PUBLISHABLE_KEY` before building. The Next.js configuration explicitly exposes only these two browser-safe Supabase values to the client; local credentials are stored in ignored `.env.local`, while `.env.example` documents the supported values. Never expose service-role or AWS secrets through these variables.
 
 Add `https://www.zapiboo.com/auth/callback` and the appropriate preview/local callback URLs to the Supabase Auth redirect allowlist. The Google provider callback configured at Google remains Supabase's callback. Verify confirmation email and Google OAuth with a real test account before release.
 

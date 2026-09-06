@@ -77,6 +77,7 @@ const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "
 const todayStr = new Date().toISOString().split("T")[0];
 const pickupDraftKey = "zapiboo-pickup-draft";
 const postAuthRedirectKey = "zapiboo-post-auth-redirect";
+const pickupPhotoBucket = "pickup-photos";
 const modelYears = Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (_, index) => String(new Date().getFullYear() - index));
 type VehicleOption = { id: string; name: string; image_url?: string | null };
 const catalogueDb = supabase as unknown as { from: (table: string) => any };
@@ -191,6 +192,33 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   }, [step]);
 
   const uploadPickupPhoto = async (snapshot: PickupPhoto): Promise<string> => {
+    if (!s3UploadsEnabled) {
+      try {
+        const response = await fetch(snapshot.previewUrl);
+        const image = await response.blob();
+        const ownerId = user?.id;
+        if (!ownerId) throw new Error("Please sign in before uploading a photo.");
+
+        const { error } = await supabase.storage
+          .from(pickupPhotoBucket)
+          .upload(`${ownerId}/${snapshot.id}.webp`, image, {
+            contentType: "image/webp",
+            upsert: false,
+          });
+        if (error) throw error;
+
+        const { data } = supabase.storage
+          .from(pickupPhotoBucket)
+          .getPublicUrl(`${ownerId}/${snapshot.id}.webp`);
+        if (!data.publicUrl) throw new Error("Couldn't create a photo URL.");
+        return data.publicUrl;
+      } catch {
+        // Keep a compressed fallback with the lead if storage is temporarily
+        // unavailable, so the dashboard can still render the uploaded photo.
+        return snapshot.previewUrl;
+      }
+    }
+
     try {
       if (snapshot.file) {
         return await uploadImageToS3(snapshot.file, "pickups", { maxDim: 1200, quality: 0.78 });
@@ -209,9 +237,6 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
   const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> => {
     if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
-    // Keep the compressed WebP with the lead when external image storage is
-    // unavailable. This makes the photo available in the admin order view.
-    if (!s3UploadsEnabled) return Promise.resolve(snapshot.previewUrl);
     if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
       return photoUploadPromiseRef.current;
     }
@@ -702,24 +727,24 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
             Thank you, {name.split(" ")[0] || "friend"}!
           </motion.h1>
           <p className="mt-4 text-navy-foreground/80">
-            Your pickup is booked. Our nearest Bengaluru agent will confirm your slot on WhatsApp,
-            arrive with a certified weighing scale, bag everything for you, and pay you on the spot.
+            Your vehicle valuation visit is booked. A Zapiboo expert will confirm your slot on WhatsApp,
+            inspect your vehicle, and share the final offer with you.
           </p>
           {pickupId && <p className="mx-auto mt-5 w-fit rounded-full bg-navy-foreground/10 px-4 py-2 text-xs font-bold tracking-wider text-navy-foreground">Pickup ID: {pickupId}</p>}
 
-          <motion.blockquote
+          <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25 }}
-            className="mx-auto mt-8 max-w-md rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-6"
+            className="mx-auto mt-8 max-w-md rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-6 text-left"
           >
-            <p className="text-lg font-semibold italic leading-relaxed text-gradient">
-              “The greatest threat to our planet is the belief that someone else will save it.”
-            </p>
-            <footer className="mt-3 text-sm text-navy-foreground/60">
-              You just took your turn — every kilo you recycle keeps Bengaluru cleaner. 🌱
-            </footer>
-          </motion.blockquote>
+            <p className="text-sm font-bold uppercase tracking-[0.18em] text-primary">What happens next</p>
+            <ol className="mt-4 space-y-3 text-sm text-navy-foreground/80">
+              <li className="flex gap-3"><span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">1</span><span>We confirm your selected pickup time on WhatsApp.</span></li>
+              <li className="flex gap-3"><span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">2</span><span>Our expert inspects the vehicle at your chosen address.</span></li>
+              <li className="flex gap-3"><span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">3</span><span>You receive a transparent final offer and can decide with no obligation.</span></li>
+            </ol>
+          </motion.div>
 
           <div className="mt-8 rounded-2xl border border-navy-foreground/15 bg-navy-foreground/5 p-5 text-left text-sm">
             <p className="flex items-center gap-2">
@@ -741,10 +766,10 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                 setStep(1);
               }}
             >
-              Book another pickup
+              Book another valuation
             </Button>
             <Button asChild variant="outlineLight" size="lg">
-              <Link href="/materials">See ₹ rates</Link>
+              <Link href="/orders">View pickup orders</Link>
             </Button>
           </div>
         </div>

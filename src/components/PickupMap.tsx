@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import "leaflet/dist/leaflet.css";
-import { LocateFixed, Loader2 } from "lucide-react";
+import { Check, LocateFixed, Loader2, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -13,17 +13,25 @@ const BLR_CENTER: LatLng = { lat: 12.9716, lng: 77.5946 };
 export function PickupMap({
   value,
   onChange,
+  interactive,
+  onEdit,
+  onDone,
   className,
 }: {
   value: LatLng | null;
   onChange: (v: LatLng) => void;
+  interactive: boolean;
+  onEdit: () => void;
+  onDone: () => void;
   className?: string;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const onChangeRef = useRef(onChange);
+  const interactiveRef = useRef(interactive);
   onChangeRef.current = onChange;
+  interactiveRef.current = interactive;
 
   const [locating, setLocating] = useState(false);
   const [ready, setReady] = useState(false);
@@ -55,14 +63,16 @@ export function PickupMap({
 
       const marker = L.marker([start.lat, start.lng], {
         icon: pin,
-        draggable: true,
+        draggable: interactiveRef.current,
       }).addTo(map);
 
       marker.on("dragend", () => {
+        if (!interactiveRef.current) return;
         const p = marker.getLatLng();
         onChangeRef.current({ lat: p.lat, lng: p.lng });
       });
       map.on("click", (e: { latlng: { lat: number; lng: number } }) => {
+        if (!interactiveRef.current) return;
         marker.setLatLng(e.latlng);
         onChangeRef.current({ lat: e.latlng.lat, lng: e.latlng.lng });
       });
@@ -91,6 +101,16 @@ export function PickupMap({
     mapRef.current.setView([value.lat, value.lng], 16);
   }, [value, ready]);
 
+  useEffect(() => {
+    if (!ready || !mapRef.current || !markerRef.current) return;
+    const map = mapRef.current;
+    const marker = markerRef.current;
+    const methods = [map.dragging, map.touchZoom, map.doubleClickZoom, map.scrollWheelZoom, map.boxZoom, map.keyboard];
+    methods.forEach((method) => interactive ? method.enable() : method.disable());
+    if (interactive) marker.dragging.enable();
+    else marker.dragging.disable();
+  }, [interactive, ready]);
+
   const useMyLocation = () => {
     if (!("geolocation" in navigator)) {
       toast.error("Location isn't supported on this device.");
@@ -115,17 +135,12 @@ export function PickupMap({
     <div className={cn("overflow-hidden rounded-2xl border border-border bg-card", className)}>
       <div className="relative">
         <div ref={containerRef} className="h-48 w-full" />
-        <button
-          type="button"
-          onClick={useMyLocation}
-          className="absolute right-3 top-3 z-[400] inline-flex items-center gap-1.5 rounded-full bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-soft backdrop-blur transition-colors hover:bg-background"
-        >
-          {locating ? <Loader2 className="size-3.5 animate-spin" /> : <LocateFixed className="size-3.5 text-primary" />}
-          Use my location
-        </button>
+        <div className="absolute right-3 top-3 z-[400] flex gap-2">
+          {interactive ? <><button type="button" onClick={useMyLocation} className="inline-flex items-center gap-1.5 rounded-full bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-soft backdrop-blur transition-colors hover:bg-background">{locating ? <Loader2 className="size-3.5 animate-spin" /> : <LocateFixed className="size-3.5 text-primary" />} Use my location</button><button type="button" onClick={onDone} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground shadow-soft"><Check className="size-3.5" /> Done</button></> : <button type="button" onClick={onEdit} className="inline-flex items-center gap-1.5 rounded-full bg-background/95 px-3 py-1.5 text-xs font-semibold text-foreground shadow-soft backdrop-blur transition-colors hover:bg-background"><Pencil className="size-3.5 text-primary" /> Edit location</button>}
+        </div>
       </div>
       <div className="flex items-center justify-between gap-2 px-3 py-2 text-xs text-muted-foreground">
-        <span>Tap the map or drag the pin to set your exact spot.</span>
+        <span>{interactive ? "Tap the map or drag the pin to set your exact spot." : "Location is locked. Choose Edit location to move the pin."}</span>
         {value && (
           <span className="shrink-0 font-medium text-foreground">
             {value.lat.toFixed(4)}, {value.lng.toFixed(4)}

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { ArrowLeft, Chrome, Loader2, Recycle } from "lucide-react";
+import { ArrowLeft, Loader2, Recycle } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { GoogleIcon } from "@/components/GoogleIcon";
 
 
 const emailSchema = z.string().trim().email("Enter a valid email").max(255);
@@ -72,10 +73,11 @@ export default function AuthPage({ redirectPath }: { redirectPath: string }) {
   };
 
   const signInWithGoogle = async () => {
+    if (!redirectTo) return toast.error("Couldn't prepare the Google sign-in redirect. Please refresh and try again.");
     setBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo },
+      options: { redirectTo, scopes: "email profile", queryParams: { prompt: "select_account" } },
     });
     if (error) {
       setBusy(false);
@@ -148,9 +150,10 @@ export default function AuthPage({ redirectPath }: { redirectPath: string }) {
                   {busy ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (
-                    <Chrome className="size-4" />
+                    <GoogleIcon className="size-5" />
                   )}
                   {googleLabel}
+                  {!busy && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</span>}
                 </Button>
                 <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="h-px flex-1 bg-border" />
@@ -206,9 +209,10 @@ export default function AuthPage({ redirectPath }: { redirectPath: string }) {
                   {busy ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : (
-                    <Chrome className="size-4" />
+                    <GoogleIcon className="size-5" />
                   )}
                   {googleLabel}
+                  {!busy && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</span>}
                 </Button>
                 <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                   <span className="h-px flex-1 bg-border" />

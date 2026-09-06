@@ -20,7 +20,6 @@ import {
   Boxes,
   Info,
   Phone,
-  Chrome,
   Loader2,
   ChevronsUpDown,
   Car,
@@ -35,6 +34,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
 import { PageLoader } from "@/components/PageLoader";
+import { GoogleIcon } from "@/components/GoogleIcon";
 import { supabase } from "@/integrations/supabase/client";
 import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
 import { compressImageToWebp } from "@/lib/client-image";
@@ -42,6 +42,7 @@ import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availa
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
 import { getCachedVehicleOptions } from "@/lib/vehicle-catalogue-cache";
+import { optimizedImageUrl } from "@/lib/image-delivery";
 import carImgAsset from "@/assets/vehicle-car.webp";
 const carImg = carImgAsset.src;
 import bikeImgAsset from "@/assets/vehicle-bike.webp";
@@ -132,6 +133,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const [pincode, setPincode] = useState(pickupSearch.pincode ?? "");
   const [address, setAddress] = useState("");
   const [geo, setGeo] = useState<{ lat: number; lng: number } | null>(null);
+  const [mapEditing, setMapEditing] = useState(false);
 
   // step 3 auth gate
   const [authTab, setAuthTab] = useState<"signin" | "signup">("signin");
@@ -333,6 +335,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       url.searchParams.delete("vehicle");
       window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
     }
+    if (pickupSearch.bookingAuth === "1") setStep(5);
     setHydrated(true);
     // Apply the landing-page handoff only when this booking flow mounts.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -417,10 +420,11 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
   const signInWithGoogleDuringBooking = async () => {
     savePickupDraft();
+    if (!bookingRedirectTo) return toast.error("Couldn't prepare the Google sign-in redirect. Please refresh and try again.");
     setAuthBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: bookingRedirectTo },
+      options: { redirectTo: bookingRedirectTo, scopes: "email profile", queryParams: { prompt: "select_account" } },
     });
     if (error) {
       setAuthBusy(false);
@@ -799,7 +803,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                           )}
                         >
                           <div className="relative flex h-20 items-center justify-center sm:h-28">
-                            <img src={category.image_url || ({ Car: carImg, Bike: bikeImg, Scooter: scooterImg, "Commercial vehicle": commercialImg }[category.name] ?? carImg)} alt="" className="h-full w-full object-contain pt-3" />
+                            <img src={optimizedImageUrl(category.image_url, 480) || ({ Car: carImg, Bike: bikeImg, Scooter: scooterImg, "Commercial vehicle": commercialImg }[category.name] ?? carImg)} alt="" className="h-full w-full object-contain pt-3" />
                           </div>
                           <div
                             className={cn(
@@ -834,7 +838,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                     Pick the exact vehicle type — the next step asks for the brand.
                   </p>
                   <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setVehicleModel(""); moveToStep(3); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = subcategoryFallbackImage(item.name, null); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
+                    <div className="sm:col-span-2"><Label className="text-sm font-semibold">{selectedCategory ? `${selectedCategory.name} type` : "Vehicle type"}</Label><div className="mt-3 grid grid-cols-2 gap-2.5">{vehicleSubcategories.map((item) => <button type="button" key={item.id} onClick={() => { setVehicleSubcategoryId(item.id); setVehicleBrandId(""); setVehicleModel(""); moveToStep(3); }} className={cn("relative min-h-36 overflow-hidden rounded-2xl border-2 p-3 transition-all sm:p-5", vehicleSubcategoryId === item.id ? "border-primary bg-accent shadow-soft" : "border-border hover:border-primary/40")}><div className="flex h-20 items-center justify-center sm:h-28"><img src={optimizedImageUrl(item.image_url || subcategoryFallbackImage(item.name, selectedCategory?.image_url), 480)} alt="" className="h-full w-full object-contain pt-3" onError={(event) => { event.currentTarget.src = optimizedImageUrl(subcategoryFallbackImage(item.name, null), 480); }} /></div><div className="mt-1 text-center text-base font-bold sm:mt-2 sm:text-lg">{item.name}</div></button>)}</div></div>
                   </div>
 
 
@@ -1023,7 +1027,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                       <Label className="flex items-center gap-1.5">
                         <MapPin className="size-4 text-primary" /> Pin your location (optional)
                       </Label>
-                      <PickupMap value={geo} onChange={setGeo} />
+                      <PickupMap value={geo} onChange={setGeo} interactive={mapEditing} onEdit={() => setMapEditing(true)} onDone={() => setMapEditing(false)} />
                     </div>
                   </div>
                 </motion.div>
@@ -1067,9 +1071,10 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                         {authBusy ? (
                           <Loader2 className="size-4 animate-spin" />
                         ) : (
-                          <Chrome className="size-4" />
+                          <GoogleIcon className="size-5" />
                         )}
                         Continue with Google
+                        {!authBusy && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</span>}
                       </Button>
                       <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
                         <span className="h-px flex-1 bg-border" />

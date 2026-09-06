@@ -20,7 +20,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         hero: "bg-gradient-brand text-primary-foreground font-semibold shadow-green hover:brightness-105 hover:-translate-y-0.5 transition-all",
         google:
-          "bg-navy text-navy-foreground font-semibold shadow-elevated hover:bg-navy-muted hover:-translate-y-0.5 transition-all",
+          "border border-border bg-background text-foreground font-semibold shadow-sm hover:bg-secondary hover:-translate-y-0.5 transition-all",
         navy: "bg-navy text-navy-foreground hover:bg-navy-muted transition-colors",
         outlineLight:
           "border border-navy-foreground/30 bg-transparent text-navy-foreground hover:bg-navy-foreground/10 transition-colors",

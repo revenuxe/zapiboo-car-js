@@ -34,7 +34,9 @@ export default function OrdersPage() {
   const [selected, setSelected] = useState<PickupOrder | null>(null);
   const [cancelling, setCancelling] = useState(false);
   const { data, isLoading, mutate } = useSWR(user ? ["customer-pickups", user.id] : null, async () => {
-    const { data, error } = await supabase.from("leads").select("id,pickup_id,status,vehicle_type,items,brand_name,model_name,manufacture_year,registration_number,preferred_date,slot,address,locality,pincode,created_at").eq("user_id", user!.id).order("created_at", { ascending: false });
+    // `select()` stays compatible with environments that have not yet applied
+    // the pickup-id migration; the ID is shown automatically once it exists.
+    const { data, error } = await supabase.from("leads").select().eq("user_id", user!.id).order("created_at", { ascending: false });
     if (error) throw error;
     return (data as PickupOrder[]).filter((order) => order.vehicle_type !== "query");
   });

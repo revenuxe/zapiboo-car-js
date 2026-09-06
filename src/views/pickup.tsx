@@ -76,6 +76,7 @@ type PickupSearch = {
 const timeSlots = ["Morning (8–11)", "Midday (11–2)", "Afternoon (2–5)", "Evening (5–8)"];
 const todayStr = new Date().toISOString().split("T")[0];
 const pickupDraftKey = "zapiboo-pickup-draft";
+const postAuthRedirectKey = "zapiboo-post-auth-redirect";
 const modelYears = Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (_, index) => String(new Date().getFullYear() - index));
 type VehicleOption = { id: string; name: string; image_url?: string | null };
 const catalogueDb = supabase as unknown as { from: (table: string) => any };
@@ -106,11 +107,14 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
   const { user, loading: authLoading } = useAuth();
   const [step, setStep] = useState(1);
+  const currentStepRef = useRef(step);
+  currentStepRef.current = step;
   const [stepLoading, setStepLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [pickupId, setPickupId] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const draftRestored = useRef(false);
+  const flowHistoryReady = useRef(false);
   const [profileStatus, setProfileStatus] = useState<"idle" | "loading" | "filled" | "missing">(
     "idle",
   );
@@ -353,6 +357,21 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hydrated, submitted, step, vehicleType, registrationNumber, vehicleCategoryId, vehicleSubcategoryId, vehicleBrandId, vehicleModel, manufactureYear, pincode, address, geo, date, slot, name, phone, photo]);
 
+  useEffect(() => {
+    if (!hydrated || flowHistoryReady.current || typeof window === "undefined") return;
+    flowHistoryReady.current = true;
+    window.history.replaceState({ ...window.history.state, pickupFlow: true, pickupStep: currentStepRef.current }, "", window.location.href);
+    const restoreStep = (event: PopStateEvent) => {
+      const previousStep = event.state?.pickupFlow ? event.state.pickupStep : null;
+      if (typeof previousStep === "number" && previousStep >= 1 && previousStep <= 6) {
+        setStep(previousStep);
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+    };
+    window.addEventListener("popstate", restoreStep);
+    return () => window.removeEventListener("popstate", restoreStep);
+  }, [hydrated]);
+
   // Strip the bookingAuth flag out of the URL after returning from OAuth.
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -425,6 +444,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const signInWithGoogleDuringBooking = async () => {
     savePickupDraft();
     if (!bookingRedirectTo) return toast.error("Couldn't prepare the Google sign-in redirect. Please refresh and try again.");
+    window.sessionStorage.setItem(postAuthRedirectKey, "/pickup?bookingAuth=1");
     setAuthBusy(true);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
@@ -444,6 +464,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     if (authPassword.length < 6) return toast.error("Password must be at least 6 characters.");
 
     savePickupDraft();
+    window.sessionStorage.setItem(postAuthRedirectKey, "/pickup?bookingAuth=1");
     setAuthBusy(true);
     const { data, error } = await supabase.auth.signUp({
       email: authEmail.trim(),
@@ -501,6 +522,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const moveToStep = (nextStep: number) => {
     setStepLoading(true);
     window.requestAnimationFrame(() => {
+      window.history.pushState({ ...window.history.state, pickupFlow: true, pickupStep: nextStep }, "", window.location.href);
       setStep(nextStep);
       window.scrollTo({ top: 0, behavior: "smooth" });
       window.setTimeout(() => setStepLoading(false), 220);
@@ -606,7 +628,9 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       lat: geo?.lat ?? null,
       lng: geo?.lng ?? null,
       status: "new",
-    }).select("pickup_id").single();
+    // Select all available columns rather than naming pickup_id so bookings
+    // remain live while older Supabase environments apply the new migration.
+    }).select().single();
     setSaving(false);
 
     if (error) {
@@ -1080,7 +1104,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                         ) : (
                           <GoogleIcon className="size-5" />
                         )}
-                        Continue with Google
+                        <span className="whitespace-nowrap">Continue with Google</span>
                         {!authBusy && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</span>}
                       </Button>
                       <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">

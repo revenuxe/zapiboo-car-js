@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { ArrowLeft, Loader2, Recycle } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { GoogleIcon } from "@/components/GoogleIcon";
+import logoAsset from "@/assets/zapiboo-final-logo-transparent.png";
+const logo = logoAsset.src;
 
 
 const emailSchema = z.string().trim().email("Enter a valid email").max(255);
@@ -92,9 +94,7 @@ export default function AuthPage({ redirectPath }: { redirectPath: string }) {
       <div className="mx-auto flex min-h-[calc(100vh-2rem)] w-full max-w-md flex-col">
         <div className="mb-4 flex items-center justify-between gap-4">
           <Link href="/" className="flex min-w-0 items-center gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gradient-brand text-primary-foreground shadow-green">
-              <Recycle className="size-5" />
-            </div>
+            <img src={logo} alt="Zapiboo" width={1774} height={887} className="h-10 w-20 shrink-0 object-contain object-left" />
             <div className="min-w-0">
               <p className="text-sm font-extrabold leading-tight">Zapiboo</p>
               <p className="truncate text-xs text-navy-foreground/65">Bengaluru used vehicles</p>
@@ -152,7 +152,7 @@ export default function AuthPage({ redirectPath }: { redirectPath: string }) {
                   ) : (
                     <GoogleIcon className="size-5" />
                   )}
-                  {googleLabel}
+                  <span className="whitespace-nowrap">{googleLabel}</span>
                   {!busy && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</span>}
                 </Button>
                 <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">
@@ -211,7 +211,7 @@ export default function AuthPage({ redirectPath }: { redirectPath: string }) {
                   ) : (
                     <GoogleIcon className="size-5" />
                   )}
-                  {googleLabel}
+                  <span className="whitespace-nowrap">{googleLabel}</span>
                   {!busy && <span className="ml-auto rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary">Recommended</span>}
                 </Button>
                 <div className="mb-3 flex items-center gap-3 text-xs text-muted-foreground">

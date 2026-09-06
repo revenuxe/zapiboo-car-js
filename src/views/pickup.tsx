@@ -113,6 +113,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const [vehicleType, setVehicleType] = useState<string>(pickupSearch.vehicle ?? "");
   const [registrationNumber, setRegistrationNumber] = useState("");
   const [vehicleBrandId, setVehicleBrandId] = useState("");
+  const [brandPickerOpen, setBrandPickerOpen] = useState(false);
   const [vehicleModel, setVehicleModel] = useState("");
   const [vehicleCategoryId, setVehicleCategoryId] = useState("");
   const [vehicleSubcategoryId, setVehicleSubcategoryId] = useState("");
@@ -151,7 +152,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
   const { data: vehicleCategories = [] } = useVehicleOptions("vehicle_categories");
   const { data: vehicleSubcategories = [] } = useVehicleOptions("vehicle_subcategories", "category_id", vehicleCategoryId);
-  const { data: vehicleBrands = [] } = useVehicleOptions("vehicle_brands", "subcategory_id", vehicleSubcategoryId);
+  const { data: vehicleBrands = [] } = useVehicleOptions("vehicle_brands", "category_id", vehicleCategoryId);
   const selectedBrand = vehicleBrands.find((item) => item.id === vehicleBrandId);
   const selectedCategory = vehicleCategories.find((item) => item.id === vehicleCategoryId);
   const selectedSubcategory = vehicleSubcategories.find((item) => item.id === vehicleSubcategoryId);
@@ -868,18 +869,19 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                   <p className="mt-1 text-sm text-muted-foreground">Choose the brand and enter the exact model. You can add a photo below.</p>
                   <div className="mt-5">
                     <Label htmlFor="vehicle-brand">Vehicle brand</Label>
-                    <select
-                      id="vehicle-brand"
-                      value={vehicleBrandId}
-                      onChange={(event) => {
-                        setVehicleBrandId(event.target.value);
-                        setVehicleModel("");
-                      }}
-                      className="mt-2 h-12 w-full rounded-xl border border-input bg-background px-3 text-base text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      <option value="">Select a brand</option>
-                      {vehicleBrands.map((brand) => <option key={brand.id} value={brand.id}>{brand.name}</option>)}
-                    </select>
+                    <Popover open={brandPickerOpen} onOpenChange={setBrandPickerOpen}>
+                      <PopoverTrigger asChild>
+                        <Button id="vehicle-brand" type="button" variant="outline" role="combobox" className="mt-2 h-12 w-full justify-between rounded-xl px-3 text-base font-normal">
+                          {selectedBrand?.name ?? "Search or select a brand"}<ChevronsUpDown className="size-4 shrink-0 opacity-50" />
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                        <Command>
+                          <CommandInput placeholder="Search brands…" />
+                          <CommandList><CommandEmpty>No matching brand found.</CommandEmpty>{vehicleBrands.map((brand) => <CommandItem key={brand.id} value={brand.name} onSelect={() => { setVehicleBrandId(brand.id); setVehicleModel(""); setBrandPickerOpen(false); }}><Check className={cn("mr-2 size-4", vehicleBrandId === brand.id ? "opacity-100" : "opacity-0")} />{brand.name}</CommandItem>)}</CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
                     {!vehicleBrands.length && <p className="mt-3 text-sm text-muted-foreground">No brands are available yet. You can continue and confirm the brand during inspection.</p>}
                   </div>
                   <div className="mt-5 rounded-2xl border-2 border-primary bg-primary/5 p-4 shadow-sm">

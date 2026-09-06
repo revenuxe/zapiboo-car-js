@@ -8,7 +8,6 @@ import { AuthProvider } from '@/components/AuthProvider';
 import { useAuthContext } from '@/components/AuthProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
-import { FloatingWhatsApp } from '@/components/FloatingWhatsApp';
 import { Toaster } from '@/components/ui/sonner';
 import { NavigationLoader } from '@/components/NavigationLoader';
 
@@ -27,13 +26,11 @@ function DataProvider({ children }: { children: ReactNode }) {
 function SiteShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const chromeless = pathname.startsWith('/admin') || pathname.startsWith('/auth');
-  const hideFloatingWhatsApp = chromeless || pathname === '/pickup';
   return <>
     <div className="flex min-h-screen flex-col">
       {!chromeless && <SiteHeader />}
       <main className="flex-1">{children}</main>
       {!chromeless && <SiteFooter />}
-      {!hideFloatingWhatsApp && <FloatingWhatsApp />}
     </div>
     <NavigationLoader />
     <Toaster position="top-center" richColors />

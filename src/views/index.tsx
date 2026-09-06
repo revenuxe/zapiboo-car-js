@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import { HomeHero } from "@/components/HomeHero";
+import { VehicleSelectionLink } from "@/components/VehicleSelectionLink";
 import {
   ArrowRight,
   CheckCircle2,
@@ -105,25 +106,12 @@ export default function Home() {
 
           <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
             {vehicleSelectionCards.map((card) => (
-              <div key={card.title}>
-                <Link
-                  href={`/pickup?vehicle=${card.vehicle}`}
-                  className="group relative flex h-full min-h-40 flex-col justify-end overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 p-4 text-foreground shadow-soft transition-all hover:-translate-y-1 hover:bg-primary/10 hover:shadow-elevated sm:p-5 xl:px-3"
-                >
-                  <span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary/10 to-transparent"
-                  />
-                  <img
-                    src={card.image}
-                    alt=""
-                    width={1536}
-                    height={1024}
-                    className="pointer-events-none absolute inset-x-4 top-3 h-22 w-[calc(100%-2rem)] object-contain transition-transform duration-300 group-hover:scale-105 sm:h-24"
-                  />
-                  <span className="relative text-center text-sm font-bold leading-tight sm:text-base xl:whitespace-nowrap xl:text-sm">{card.title}</span>
-                </Link>
-              </div>
+              <VehicleSelectionLink
+                key={card.title}
+                href={`/pickup?vehicle=${card.vehicle}`}
+                image={card.image}
+                title={card.title}
+              />
             ))}
           </div>
         </div>

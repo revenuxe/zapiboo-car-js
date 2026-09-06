@@ -34,6 +34,7 @@ import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PickupMap } from "@/components/PickupMap";
+import { PageLoader } from "@/components/PageLoader";
 import { supabase } from "@/integrations/supabase/client";
 import { s3UploadsEnabled, uploadDataUrlToS3, uploadImageToS3 } from "@/lib/s3-upload";
 import { compressImageToWebp } from "@/lib/client-image";
@@ -151,8 +152,8 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const bookingRedirectTo =
     typeof window !== "undefined" ? `${window.location.origin}/auth/callback?next=${encodeURIComponent("/pickup?bookingAuth=1")}` : undefined;
 
-  const { data: vehicleCategories = [] } = useVehicleOptions("vehicle_categories");
-  const { data: vehicleSubcategories = [] } = useVehicleOptions("vehicle_subcategories", "category_id", vehicleCategoryId);
+  const { data: vehicleCategories = [], isLoading: categoriesLoading } = useVehicleOptions("vehicle_categories");
+  const { data: vehicleSubcategories = [], isLoading: subcategoriesLoading } = useVehicleOptions("vehicle_subcategories", "category_id", vehicleCategoryId);
   const { data: vehicleBrands = [] } = useVehicleOptions("vehicle_brands", "category_id", vehicleCategoryId);
   const selectedBrand = vehicleBrands.find((item) => item.id === vehicleBrandId);
   const selectedCategory = vehicleCategories.find((item) => item.id === vehicleCategoryId);
@@ -624,6 +625,18 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  const loadingVehicleOptions =
+    !hydrated ||
+    (step === 2 &&
+      Boolean(vehicleType) &&
+      (categoriesLoading ||
+        (vehicleCategories.length > 0 && !selectedCategory) ||
+        (Boolean(selectedCategory) && subcategoriesLoading)));
+
+  if (loadingVehicleOptions) {
+    return <PageLoader label="Preparing your vehicle options..." />;
+  }
 
   if (submitted) {
     return (

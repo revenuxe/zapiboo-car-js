@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { CarValuationForm } from "@/components/CarValuationForm";
 import { JsonLd } from "@/components/JsonLd";
+import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { businessContact, siteUrl } from "@/lib/seo";
 import car from "@/assets/vehicle-car.webp";
 import inspection from "@/assets/doorstep-inspection.webp";
@@ -248,12 +249,28 @@ export default function SellUsedCar() {
                 );
               })}
             </div>
-            <a
-              href="#car-valuation"
-              className="mt-7 inline-flex items-center gap-2 text-sm font-semibold text-white underline underline-offset-4"
-            >
-              Get Started With Your Registration <ArrowRight className="size-4" />
-            </a>
+            <div className="mt-8 flex flex-col items-stretch gap-3 lg:flex-row lg:flex-wrap lg:items-center">
+              <a
+                href="#car-valuation"
+                className="inline-flex min-h-14 w-full items-center justify-center gap-3 rounded-lg bg-[#c72b2e] px-6 text-sm font-bold transition-colors hover:bg-[#ac2326] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:w-auto"
+              >
+                Get free valuation <ArrowRight className="size-4" />
+              </a>
+              <div className="flex w-full items-center gap-3 text-xs font-semibold text-white/60 lg:hidden">
+                <span className="h-px flex-1 bg-white/20" />
+                OR
+                <span className="h-px flex-1 bg-white/20" />
+              </div>
+              <a
+                href={`https://wa.me/${businessContact.phone.replace(/\D/g, "")}?text=${encodeURIComponent("Hi Zapiboo, I want a free valuation for my used car in Bangalore.")}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-lg border border-white/25 px-5 text-sm font-bold transition-colors hover:border-[#00C875] hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:w-auto"
+              >
+                <WhatsAppIcon className="size-5 text-[#00C875]" />
+                Sell instantly on WhatsApp
+              </a>
+            </div>
           </div>
           <div className="hidden min-w-0 lg:block">
             <div className="relative overflow-hidden rounded-3xl border border-white/10">

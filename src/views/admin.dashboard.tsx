@@ -19,6 +19,7 @@ import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { UsersPanel } from "@/components/admin/UsersPanel";
 import { AvailabilityPanel } from "@/components/admin/AvailabilityPanel";
 import { VehiclesPanel } from "@/components/admin/VehiclesPanel";
+import { CatalogueTaxonomyPanel } from "@/components/admin/CatalogueTaxonomyPanel";
 
 
 export default function AdminDashboard() {
@@ -90,6 +91,8 @@ export default function AdminDashboard() {
             <TabsTrigger value="vehicles" className="gap-1.5">
               <CarFront className="size-4" /> <span className="hidden sm:inline">Brands</span>
             </TabsTrigger>
+            <TabsTrigger value="categories">Categories</TabsTrigger>
+            <TabsTrigger value="types">Vehicle types</TabsTrigger>
             <TabsTrigger value="leads" className="gap-1.5">
               <Inbox className="size-4" /> <span className="hidden sm:inline">Leads</span>
             </TabsTrigger>
@@ -103,6 +106,8 @@ export default function AdminDashboard() {
           </TabsContent>
           <TabsContent value="availability" className="mt-5"><AvailabilityPanel /></TabsContent>
           <TabsContent value="vehicles" className="mt-5"><VehiclesPanel /></TabsContent>
+          <TabsContent value="categories" className="mt-5"><CatalogueTaxonomyPanel kind="categories" /></TabsContent>
+          <TabsContent value="types" className="mt-5"><CatalogueTaxonomyPanel kind="subcategories" /></TabsContent>
 
           <TabsContent value="leads" className="mt-5">
             <LeadsPanel scope="queries" />

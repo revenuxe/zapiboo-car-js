@@ -604,7 +604,10 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       }
     }
 
-    const { data: createdPickup, error } = await supabase.from("leads").insert({
+    const { error } = await supabase.from("leads").insert({
+      // Set ownership explicitly so the customer's row-level permissions apply
+      // immediately, including on Supabase projects with older trigger state.
+      user_id: user.id,
       registration_number: registrationNumber.trim() || null,
       vehicle_type: selectedCategory?.name ?? vehicleType ?? "car",
       items: [selectedCategory?.name, selectedSubcategory?.name, selectedBrand?.name, vehicleModel.trim()].filter(Boolean) as string[],
@@ -628,9 +631,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       lat: geo?.lat ?? null,
       lng: geo?.lng ?? null,
       status: "new",
-    // Select all available columns rather than naming pickup_id so bookings
-    // remain live while older Supabase environments apply the new migration.
-    }).select().single();
+    });
     setSaving(false);
 
     if (error) {
@@ -658,7 +659,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       window.sessionStorage.removeItem(carRegistrationKey);
     }
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
-    setPickupId(createdPickup?.pickup_id ?? null);
+    setPickupId(null);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

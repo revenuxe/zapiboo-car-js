@@ -81,7 +81,9 @@ const modelYears = Array.from({ length: new Date().getFullYear() - 2010 + 1 }, (
 type VehicleOption = { id: string; name: string; image_url?: string | null };
 const catalogueDb = supabase as unknown as { from: (table: string) => any };
 
-function imageToDataUrl(file: File): Promise<string> { return compressImageToWebp(file, 1200, 0.78); }
+// This version is small enough to store safely with a booking when external
+// object storage is not configured, while still being clear for an evaluator.
+function imageToDataUrl(file: File): Promise<string> { return compressImageToWebp(file, 960, 0.7); }
 
 type PickupPhoto = {
   id: string;
@@ -207,8 +209,9 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
   const beginPhotoUpload = (snapshot: PickupPhoto, notify = false): Promise<string> => {
     if (snapshot.uploadedUrl) return Promise.resolve(snapshot.uploadedUrl);
-    // Cloud image storage is temporarily disabled — keep the photo local only.
-    if (!s3UploadsEnabled) return Promise.resolve("");
+    // Keep the compressed WebP with the lead when external image storage is
+    // unavailable. This makes the photo available in the admin order view.
+    if (!s3UploadsEnabled) return Promise.resolve(snapshot.previewUrl);
     if (photoUploadPromiseRef.current && photoUploadIdRef.current === snapshot.id) {
       return photoUploadPromiseRef.current;
     }
@@ -592,8 +595,8 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
     setSaving(true);
 
-    // Upload the (optional) compressed photo to S3 so we store a URL, not the
-    // full base64 blob, in the database.
+    // Prefer an object-storage URL where configured. Otherwise retain the
+    // compressed WebP data URL with the booking for the admin order view.
     let photoUrl: string | null = null;
     if (photo) {
       try {

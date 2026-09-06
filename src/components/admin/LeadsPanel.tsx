@@ -307,6 +307,9 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                   <p className="truncate font-semibold">{lead.name}</p>
                   <LeadTypeChip lead={lead} />
                   <StatusChip status={lead.status} />
+                  {lead.has_photo && (
+                    <Camera className="size-3.5 shrink-0 text-primary" aria-label="Photo attached" />
+                  )}
                 </div>
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {isQueryLead(lead)

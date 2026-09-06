@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 // Dependency-free fade/slide-in-on-scroll. This used to wrap framer-motion,
@@ -35,6 +37,7 @@ export function Reveal({
   return (
     <div
       ref={ref}
+      data-ssr-reveal
       className={className}
       style={{
         opacity: visible ? 1 : 0,

@@ -1,5 +1,9 @@
+"use client";
+
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useSWR from "swr";
+import { useCommand } from "@/hooks/use-command";
+import { useDataCache } from "@/hooks/use-data-cache";
 import { ArrowDown, ArrowUp, Loader2, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -15,7 +19,7 @@ const makeSlug = (value: string) =>
 
 /** Admin: manage the brands shown inside each category → vehicle type. */
 export function VehiclesPanel() {
-  const qc = useQueryClient();
+  const qc = useDataCache();
   const [categoryId, setCategoryId] = useState("");
   const [subcategoryId, setSubcategoryId] = useState("");
   const [brandName, setBrandName] = useState("");
@@ -24,10 +28,10 @@ export function VehiclesPanel() {
   const { data: categories = [], isLoading } = useCatalogue("vehicle_categories");
   const { data: subcategories = [] } = useCatalogue("vehicle_subcategories", "category_id", categoryId);
   const { data: brands = [] } = useCatalogue("vehicle_brands", "subcategory_id", subcategoryId);
-  const refresh = () => qc.invalidateQueries({ queryKey: ["admin", "vehicle-catalogue"] });
+  const refresh = () => qc.refresh(["admin", "vehicle-catalogue"]);
 
-  const add = useMutation({
-    mutationFn: async (name: string) => {
+  const add = useCommand({
+    execute: async (name: string) => {
       const highest = brands.reduce((max, item) => Math.max(max, item.sort_order), 0);
       const { error } = await db.from("vehicle_brands").insert({
         name: name.trim(),
@@ -46,8 +50,8 @@ export function VehiclesPanel() {
     onError: (error: Error) => toast.error(error.message || "Couldn’t save this brand."),
   });
 
-  const reorder = useMutation({
-    mutationFn: async ({ index, direction }: { index: number; direction: -1 | 1 }) => {
+  const reorder = useCommand({
+    execute: async ({ index, direction }: { index: number; direction: -1 | 1 }) => {
       const target = brands[index + direction];
       const current = brands[index];
       if (!target || !current) return;
@@ -130,14 +134,14 @@ export function VehiclesPanel() {
                 placeholder={subcategoryId ? "e.g. Maruti Suzuki" : "Choose a vehicle type first"}
                 onChange={(event) => setBrandName(event.target.value)}
                 onKeyDown={(event) => {
-                  if (event.key === "Enter" && brandName.trim()) add.mutate(brandName);
+                  if (event.key === "Enter" && brandName.trim()) add.run(brandName);
                 }}
               />
               <Button
                 size="icon"
                 variant="hero"
                 disabled={!subcategoryId || !brandName.trim() || add.isPending}
-                onClick={() => add.mutate(brandName)}
+                onClick={() => add.run(brandName)}
               >
                 {add.isPending ? <Loader2 className="size-4 animate-spin" /> : <Plus className="size-4" />}
               </Button>
@@ -166,7 +170,7 @@ export function VehiclesPanel() {
                       position={index + 1}
                       canMoveUp={index > 0}
                       canMoveDown={index < brands.length - 1}
-                      onMove={(direction) => reorder.mutate({ index, direction })}
+                      onMove={(direction) => reorder.run({ index, direction })}
                       onChanged={refresh}
                     />
                   );
@@ -185,16 +189,13 @@ export function VehiclesPanel() {
 }
 
 function useCatalogue(table: string, foreignKey?: string, parentId?: string) {
-  return useQuery({
-    queryKey: ["admin", "vehicle-catalogue", table, parentId],
-    queryFn: async () => {
+  return useSWR(["admin", "vehicle-catalogue", table, parentId], async () => {
       let query = db.from(table).select("id, name, active, sort_order").order("sort_order").order("name");
       if (foreignKey && parentId) query = query.eq(foreignKey, parentId);
       const { data, error } = await query;
       if (error) throw error;
       return data as CatalogueRow[];
-    },
-  });
+    });
 }
 
 function BrandRow({
@@ -212,16 +213,16 @@ function BrandRow({
   onMove: (direction: -1 | 1) => void;
   onChanged: () => void;
 }) {
-  const toggle = useMutation({
-    mutationFn: async () => {
+  const toggle = useCommand({
+    execute: async () => {
       const { error } = await db.from("vehicle_brands").update({ active: !brand.active }).eq("id", brand.id);
       if (error) throw error;
     },
     onSuccess: onChanged,
     onError: () => toast.error("Couldn’t update this brand."),
   });
-  const remove = useMutation({
-    mutationFn: async () => {
+  const remove = useCommand({
+    execute: async () => {
       const { error } = await db.from("vehicle_brands").delete().eq("id", brand.id);
       if (error) throw error;
     },
@@ -259,7 +260,7 @@ function BrandRow({
       </div>
       <Switch
         checked={brand.active}
-        onCheckedChange={() => toggle.mutate()}
+        onCheckedChange={() => toggle.run()}
         aria-label={`Set ${brand.name} active`}
       />
       <Button
@@ -267,7 +268,7 @@ function BrandRow({
         variant="ghost"
         className="size-8 shrink-0 text-destructive"
         aria-label={`Delete ${brand.name}`}
-        onClick={() => remove.mutate()}
+        onClick={() => remove.run()}
       >
         <Trash2 className="size-4" />
       </Button>

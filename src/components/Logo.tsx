@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import logo from "@/assets/zapiboo-final-logo-transparent.png";
+import Link from "next/link";
+import logoAsset from "@/assets/zapiboo-final-logo-transparent.png";
+const logo = logoAsset.src;
 import { cn } from "@/lib/utils";
 
 export function Logo({
@@ -12,10 +13,10 @@ export function Logo({
   invert?: boolean;
 }) {
   return (
-    <Link to="/" aria-label="ZAPIBOO home" className={cn("inline-flex items-center", className)}>
+    <Link href="/" aria-label="Zapiboo home" className={cn("inline-flex items-center", className)}>
       <img
         src={logo}
-        alt="ZAPIBOO — buy and sell used cars, bikes and scooters in Bangalore"
+        alt="Zapiboo — buy and sell used cars, bikes and scooters in Bangalore"
         width={1774}
         height={887}
         className={cn(

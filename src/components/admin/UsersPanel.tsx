@@ -1,5 +1,7 @@
+"use client";
+
 import { useMemo, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import useSWR from "swr";
 import { Loader2, Mail, MapPin, Phone, Search, User2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
@@ -19,9 +21,7 @@ type Customer = {
 export function UsersPanel() {
   const [q, setQ] = useState("");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin", "customers"],
-    queryFn: async (): Promise<Customer[]> => {
+  const { data, isLoading } = useSWR(["admin", "customers"], async (): Promise<Customer[]> => {
       const [profilesRes, leadsRes] = await Promise.all([
         supabase
           .from("user_profiles")
@@ -81,8 +81,7 @@ export function UsersPanel() {
       return [...map.values()].sort((a, b) =>
         (b.lastActivity ?? "").localeCompare(a.lastActivity ?? ""),
       );
-    },
-  });
+    });
 
   const filtered = useMemo(() => {
     const term = q.trim().toLowerCase();

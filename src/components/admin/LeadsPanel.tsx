@@ -1,5 +1,9 @@
+"use client";
+
 import { useMemo, useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useSWR from "swr";
+import { useCommand } from "@/hooks/use-command";
+import { useDataCache } from "@/hooks/use-data-cache";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Eye,
@@ -55,6 +59,9 @@ type Lead = {
   lead_type: string | null;
   vehicle_type: string;
   items: string[];
+  brand_name: string | null;
+  model_name: string | null;
+  registration_number: string | null;
   has_photo: boolean;
   photo_url: string | null;
   locality: string | null;
@@ -111,24 +118,23 @@ function LeadTypeChip({ lead }: { lead: Lead }) {
 export type LeadScope = "all" | "bookings" | "queries";
 
 export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
-  const qc = useQueryClient();
+  const qc = useDataCache();
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<string>("all");
   const [selected, setSelected] = useState<Lead | null>(null);
   const [draftStatus, setDraftStatus] = useState("new");
   const [draftNotes, setDraftNotes] = useState("");
 
-  const { data: leads = [], isLoading } = useQuery({
-    queryKey: ["admin", "leads"],
-    queryFn: async () => {
+  const { data: leadData, isLoading: loading } = useSWR(["admin", "leads"], async () => {
       const { data, error } = await supabase
         .from("leads")
         .select("*")
         .order("created_at", { ascending: false });
       if (error) throw error;
       return data as unknown as Lead[];
-    },
-  });
+    });
+  const leads = useMemo(() => leadData ?? [], [leadData]);
+  const isLoading = loading && leadData === undefined;
 
   const spamIds = useMemo(
     () => leads.filter((l) => isQueryLead(l) && isSpamLead(l)).map((l) => l.id),
@@ -168,8 +174,8 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
     setDraftNotes(lead.notes ?? "");
   };
 
-  const saveMutation = useMutation({
-    mutationFn: async () => {
+  const saveMutation = useCommand({
+    execute: async () => {
       if (!selected) return;
       const { error } = await supabase
         .from("leads")
@@ -178,34 +184,34 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin", "leads"] });
+      qc.refresh(["admin", "leads"]);
       toast.success("Lead updated.");
       setSelected(null);
     },
     onError: () => toast.error("Couldn't update the lead."),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
+  const deleteMutation = useCommand({
+    execute: async (id: string) => {
       const { error } = await supabase.from("leads").delete().eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin", "leads"] });
+      qc.refresh(["admin", "leads"]);
       toast.success("Lead deleted.");
       setSelected(null);
     },
     onError: () => toast.error("Couldn't delete the lead."),
   });
 
-  const purgeSpam = useMutation({
-    mutationFn: async () => {
+  const purgeSpam = useCommand({
+    execute: async () => {
       if (!spamIds.length) return;
       const { error } = await supabase.from("leads").delete().in("id", spamIds);
       if (error) throw error;
     },
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["admin", "leads"] });
+      qc.refresh(["admin", "leads"]);
       toast.success("Spam leads deleted.");
     },
     onError: () => toast.error("Couldn't delete spam leads."),
@@ -262,7 +268,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                  onClick={() => purgeSpam.mutate()}
+                  onClick={() => purgeSpam.run()}
                 >
                   Delete
                 </AlertDialogAction>
@@ -303,7 +309,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {isQueryLead(lead)
                     ? `${lead.email ?? lead.phone} - ${lead.subject ?? "Contact query"}`
-                    : `${lead.phone} - ${lead.locality ?? "-"} - ${lead.preferred_date ?? "no date"}`}
+                    : `${lead.phone} - ${lead.model_name ?? lead.brand_name ?? lead.vehicle_type} - ${lead.preferred_date ?? "no date"}`}
                 </p>
               </div>
               <Button
@@ -348,6 +354,8 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                     ) : (
                       <>
                         <Row icon={Boxes} label={selected.items.length ? selected.items.join(", ") : selected.vehicle_type} />
+                        {selected.brand_name && <Row icon={Boxes} label="Vehicle" sub={`${selected.brand_name}${selected.model_name ? ` · ${selected.model_name}` : ""}`} />}
+                        {selected.registration_number && <Row icon={Boxes} label="Registration" sub={selected.registration_number} />}
                         <Row icon={MapPin} label={`${selected.locality ?? "-"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
                         <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />
                         <Row icon={Phone} label={selected.phone} />
@@ -410,7 +418,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                     <Button
                       variant="hero"
                       className="h-10 flex-1 rounded-2xl"
-                      onClick={() => saveMutation.mutate()}
+                      onClick={() => saveMutation.run()}
                       disabled={saveMutation.isPending}
                     >
                       {saveMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : "Save changes"}
@@ -432,7 +440,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction
                             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            onClick={() => deleteMutation.mutate(selected.id)}
+                            onClick={() => deleteMutation.run(selected.id)}
                           >
                             Delete
                           </AlertDialogAction>

@@ -79,7 +79,7 @@ export const steps = [
   {
     icon: Truck,
     title: "Free doorstep inspection",
-    text: "A ZAPIBOO evaluator visits your home or office, checks the vehicle and paperwork, and confirms a fair market price on the spot.",
+    text: "A Zapiboo evaluator visits your home or office, checks the vehicle and paperwork, and confirms a fair market price on the spot.",
   },
   {
     icon: Wallet,
@@ -137,7 +137,7 @@ export const testimonials = [
   },
   {
     quote:
-      "I was worried about the RC transfer after selling my Activa in Whitefield. ZAPIBOO handled the paperwork and sent me the confirmation without a single RTO visit.",
+      "I was worried about the RC transfer after selling my Activa in Whitefield. Zapiboo handled the paperwork and sent me the confirmation without a single RTO visit.",
     name: "Ananya Shetty",
     role: "Sold a Honda Activa, Whitefield",
   },
@@ -157,5 +157,6 @@ export const navLinks = [
 // Trimmed set shown in the site header (the rest live only in the footer).
 export const headerNavLinks = [
   { to: "/sell-used-car", label: "Sell Used Car" },
+  { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },
 ] as const;

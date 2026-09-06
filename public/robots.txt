@@ -4,5 +4,7 @@ Allow: /
 Disallow: /admin
 Disallow: /account
 Disallow: /auth
+Disallow: /auth/callback
+Disallow: /api/
 
 Sitemap: https://www.zapiboo.com/sitemap.xml

@@ -1,5 +1,9 @@
+"use client";
+
 import { useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import useSWR from "swr";
+import { useCommand } from "@/hooks/use-command";
+import { useDataCache } from "@/hooks/use-data-cache";
 import { Loader2, MapPin, Plus, Save, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -21,15 +25,13 @@ type ServiceLocation = {
 const cleanPincode = (value: string) => value.replace(/\D/g, "").slice(0, 6);
 
 export function AvailabilityPanel() {
-  const qc = useQueryClient();
+  const qc = useDataCache();
   const [newPincode, setNewPincode] = useState("");
   const [newPincodeArea, setNewPincodeArea] = useState("");
   const [newArea, setNewArea] = useState("");
   const [newAreaPincode, setNewAreaPincode] = useState("");
 
-  const { data: locations = [], isLoading } = useQuery({
-    queryKey: ["admin", "service-locations"],
-    queryFn: async () => {
+  const { data: locations = [], isLoading } = useSWR(["admin", "service-locations"], async () => {
       const { data, error } = await supabase
         .from("service_locations")
         .select("id, location_type, pincode, area, active, sort_order")
@@ -37,16 +39,15 @@ export function AvailabilityPanel() {
         .order("pincode", { ascending: true });
       if (error) throw error;
       return data as ServiceLocation[];
-    },
-  });
+    });
 
   const invalidate = () => {
-    qc.invalidateQueries({ queryKey: ["admin", "service-locations"] });
-    qc.invalidateQueries({ queryKey: ["service-availability", "active"] });
+    qc.refresh(["admin", "service-locations"]);
+    qc.refresh(["service-availability", "active"]);
   };
 
-  const addPincode = useMutation({
-    mutationFn: async () => {
+  const addPincode = useCommand({
+    execute: async () => {
       const { error } = await supabase.from("service_locations").insert({
         location_type: "pincode",
         pincode: cleanPincode(newPincode),
@@ -64,8 +65,8 @@ export function AvailabilityPanel() {
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't add pincode."),
   });
 
-  const addArea = useMutation({
-    mutationFn: async () => {
+  const addArea = useCommand({
+    execute: async () => {
       const { error } = await supabase.from("service_locations").insert({
         location_type: "area",
         area: newArea.trim(),
@@ -124,7 +125,7 @@ export function AvailabilityPanel() {
               <Button
                 variant="hero"
                 disabled={newPincode.length !== 6 || addPincode.isPending}
-                onClick={() => addPincode.mutate()}
+                onClick={() => addPincode.run()}
               >
                 {addPincode.isPending ? <Loader2 className="size-4 animate-spin" /> : "Add"}
               </Button>
@@ -148,7 +149,7 @@ export function AvailabilityPanel() {
                 value={newAreaPincode}
                 onChange={(e) => setNewAreaPincode(cleanPincode(e.target.value))}
               />
-              <Button variant="hero" disabled={!newArea.trim() || addArea.isPending} onClick={() => addArea.mutate()}>
+              <Button variant="hero" disabled={!newArea.trim() || addArea.isPending} onClick={() => addArea.run()}>
                 {addArea.isPending ? <Loader2 className="size-4 animate-spin" /> : "Add"}
               </Button>
             </div>
@@ -203,8 +204,8 @@ function LocationRow({ location, onChanged }: { location: ServiceLocation; onCha
   const [active, setActive] = useState(location.active);
   const dirty = pincode !== (location.pincode ?? "") || area !== (location.area ?? "") || active !== location.active;
 
-  const save = useMutation({
-    mutationFn: async () => {
+  const save = useCommand({
+    execute: async () => {
       const cleaned = cleanPincode(pincode);
       const { error } = await supabase
         .from("service_locations")
@@ -223,8 +224,8 @@ function LocationRow({ location, onChanged }: { location: ServiceLocation; onCha
     onError: (e) => toast.error(e instanceof Error ? e.message : "Couldn't save changes."),
   });
 
-  const del = useMutation({
-    mutationFn: async () => {
+  const del = useCommand({
+    execute: async () => {
       const { error } = await supabase.from("service_locations").delete().eq("id", location.id);
       if (error) throw error;
     },
@@ -257,7 +258,7 @@ function LocationRow({ location, onChanged }: { location: ServiceLocation; onCha
           <Switch checked={active} onCheckedChange={setActive} aria-label="Active" />
           Active
         </div>
-        <Button size="sm" variant="hero" disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
+        <Button size="sm" variant="hero" disabled={!dirty || save.isPending} onClick={() => save.run()}>
           {save.isPending ? <Loader2 className="size-4 animate-spin" /> : <><Save className="size-4" /> Save</>}
         </Button>
         <Button
@@ -265,7 +266,7 @@ function LocationRow({ location, onChanged }: { location: ServiceLocation; onCha
           variant="ghost"
           className="size-9 text-destructive"
           disabled={del.isPending}
-          onClick={() => del.mutate()}
+          onClick={() => del.run()}
         >
           <Trash2 className="size-4" />
         </Button>

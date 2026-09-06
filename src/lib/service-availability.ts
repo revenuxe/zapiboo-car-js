@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import useSWR from "swr";
 import { supabase } from "@/integrations/supabase/client";
 import { serviceLocalities } from "@/lib/bangalore-data";
 
@@ -43,9 +43,7 @@ export function isPincodeAvailable(pincode: string, availability = fallbackAvail
 }
 
 export function useServiceAvailability() {
-  return useQuery({
-    queryKey: ["service-availability", "active"],
-    queryFn: async () => {
+  return useSWR(["service-availability", "active"], async () => {
       const { data, error } = await supabase
         .from("service_locations")
         .select("id, location_type, pincode, area, active, sort_order")
@@ -54,8 +52,5 @@ export function useServiceAvailability() {
         .order("pincode", { ascending: true });
       if (error) throw error;
       return toAvailability(data as ServiceLocation[]);
-    },
-    placeholderData: fallbackAvailability,
-    staleTime: 60_000,
-  });
+    }, { fallbackData: fallbackAvailability, dedupingInterval: 60_000 });
 }

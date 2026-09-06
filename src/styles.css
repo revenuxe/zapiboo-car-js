@@ -5,8 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * ZAPIBOO design system - used cars, bikes and scooters in Bangalore
- * Jet black + signal red from the ZAPIBOO logo. Bold, automotive, high-trust.
+ * Zapiboo design system - used cars, bikes and scooters in Bangalore
+ * Jet black + signal red from the Zapiboo logo. Bold, automotive, high-trust.
  * All colors use oklch. Tokens map to Tailwind utilities via @theme inline.
  */
 

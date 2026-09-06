@@ -3,16 +3,16 @@ import { serviceLocalities } from "@/lib/bangalore-data";
 export const siteUrl = "https://www.zapiboo.com";
 
 export const businessContact = {
-  name: "ZAPIBOO",
-  phone: "9886285028",
-  phoneHref: "tel:+919886285028",
+  name: "Zapiboo",
+  phone: "+91 9886579923",
+  phoneHref: "tel:+919886579923",
   email: "zapiboo.com@gmail.com",
   emailHref: "mailto:zapiboo.com@gmail.com",
-  address: "HBR Layout, Bangalore, 560043",
-  locality: "HBR Layout",
+  address: "No 6, 1st Cross, Umar Nagar, Nagawara Main Road, Bangalore 560045",
+  locality: "Nagawara",
   city: "Bangalore",
   region: "Karnataka",
-  postalCode: "560043",
+  postalCode: "560045",
   country: "IN",
 };
 
@@ -111,20 +111,28 @@ export function absoluteUrl(path = "/") {
 export function organizationSchema(path = "/") {
   return {
     "@context": "https://schema.org",
-    "@type": "Organization",
+    "@type": ["Organization", "LocalBusiness"],
     "@id": `${siteUrl}/#organization`,
     name: businessContact.name,
     url: siteUrl,
-    logo: `${siteUrl}/favicon-hm.png`,
+    logo: `${siteUrl}/favicon.png`,
     email: businessContact.email,
-    telephone: `+91${businessContact.phone}`,
+    telephone: businessContact.phoneHref.replace("tel:", ""),
     address: {
       "@type": "PostalAddress",
-      streetAddress: businessContact.locality,
+      streetAddress: "No 6, 1st Cross, Umar Nagar, Nagawara Main Road",
       addressLocality: businessContact.city,
       addressRegion: businessContact.region,
       postalCode: businessContact.postalCode,
       addressCountry: businessContact.country,
+    },
+    contactPoint: {
+      "@type": "ContactPoint",
+      telephone: businessContact.phoneHref.replace("tel:", ""),
+      email: businessContact.email,
+      contactType: "customer service",
+      areaServed: "IN",
+      availableLanguage: ["en", "hi", "kn"],
     },
     areaServed: serviceAreas.map((area) => ({
       "@type": "Place",
@@ -137,6 +145,28 @@ export function organizationSchema(path = "/") {
         name: "Used vehicle buying and selling in Bangalore",
       },
     },
+  };
+}
+
+export function localBusinessSchema(path: string) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "@id": `${absoluteUrl(path)}#localbusiness`,
+    name: businessContact.name,
+    url: absoluteUrl(path),
+    parentOrganization: { "@id": `${siteUrl}/#organization` },
+    telephone: businessContact.phoneHref.replace("tel:", ""),
+    email: businessContact.email,
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: "No 6, 1st Cross, Umar Nagar, Nagawara Main Road",
+      addressLocality: businessContact.city,
+      addressRegion: businessContact.region,
+      postalCode: businessContact.postalCode,
+      addressCountry: businessContact.country,
+    },
+    areaServed: { "@type": "City", name: "Bangalore" },
   };
 }
 export function websiteSchema() {
@@ -230,7 +260,7 @@ export function blogPostingSchema(input: {
       url: siteUrl,
       logo: {
         "@type": "ImageObject",
-        url: `${siteUrl}/favicon-hm.png`,
+        url: `${siteUrl}/favicon.png`,
       },
     },
   };
@@ -260,7 +290,7 @@ export function howToSchema(input: {
       { "@type": "HowToSupply", name: "Vehicle registration certificate" },
       { "@type": "HowToSupply", name: "Government photo ID" },
     ],
-    tool: [{ "@type": "HowToTool", name: "ZAPIBOO doorstep pickup" }],
+    tool: [{ "@type": "HowToTool", name: "Zapiboo doorstep pickup" }],
     step: input.steps.map((step, index) => ({
       "@type": "HowToStep",
       position: index + 1,

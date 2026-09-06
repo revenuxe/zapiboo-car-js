@@ -1,24 +1,27 @@
-# zapiboo drive
+# Zapiboo
 
-*ok this is the logo i want you to create an amazing webapp appliacation use tanstack and more best seo best techniolgy, very very veery best ui and ux, with very easy navigate sscrap doorstep pickup and more.
+Next.js App Router website for buying and selling used vehicles in Bangalore. All page routes render on the server, with Supabase cookie authentication and interactive booking and administration tools.
 
-This project was built with [Lovable](https://lovable.dev).
+The original design and content are preserved from commit `bc9b500`.
 
-## Build with Lovable
+## Setup
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/73e476fe-df7e-4d1f-9892-b7ea759f76e1).
-
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Use Node.js 22 or 24. Copy `.env.example` to `.env.local`, supply the public Supabase credentials, then run:
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm ci
 npm run dev
 ```
+
+## Production and validation
+
+Build and run the production server:
+
+```sh
+npm run build
+npm start
+```
+
+Validation: `npm run typecheck`, `npm run lint`, `npm run test:unit`, `npm run test:e2e`, and `node scripts/verify-preservation.mjs`. Browser tests require `npx playwright install chromium`.
+
+See [migration and deployment notes](docs/nextjs-migration.md) for the Supabase callback allowlist, environment-variable transition, SSR architecture, and integration-test limits.

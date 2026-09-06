@@ -2,8 +2,8 @@ import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Prepare an image for upload. Raster images are resized + recompressed on a
- * canvas; transparency-capable formats stay PNG so they never go black, JPEGs
- * stay JPEG. SVGs are uploaded verbatim (vector, tiny).
+ * canvas and encoded as WebP. SVGs are uploaded verbatim because they are
+ * vector assets rather than raster photos.
  */
 async function prepareImage(
   file: File,
@@ -13,7 +13,6 @@ async function prepareImage(
   const type = (file.type || "").toLowerCase();
   const name = (file.name || "").toLowerCase();
   const isSvg = type === "image/svg+xml" || name.endsWith(".svg");
-  const isJpeg = type === "image/jpeg" || type === "image/jpg";
 
   if (isSvg) {
     return { blob: file, contentType: "image/svg+xml", ext: "svg" };
@@ -51,8 +50,8 @@ async function prepareImage(
   ctx.clearRect(0, 0, w, h);
   ctx.drawImage(img, 0, 0, w, h);
 
-  const outType = isJpeg ? "image/jpeg" : "image/png";
-  const ext = isJpeg ? "jpg" : "png";
+  const outType = "image/webp";
+  const ext = "webp";
   const blob = await new Promise<Blob>((resolve, reject) => {
     canvas.toBlob(
       (b) => (b ? resolve(b) : reject(new Error("Could not encode the image."))),

@@ -1,7 +1,10 @@
+"use client";
+
 import { useState } from "react";
-import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, ArrowRight, User as UserIcon, LogOut, Car, LayoutDashboard } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useDataCache } from "@/hooks/use-data-cache";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import {
@@ -20,16 +23,15 @@ import { useAuth, displayName, initials } from "@/hooks/use-auth";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const navigate = useNavigate();
-  const qc = useQueryClient();
+  const pathname = usePathname();
+  const router = useRouter();
+  const qc = useDataCache();
   const { user } = useAuth();
 
   const signOut = async () => {
-    await qc.cancelQueries();
-    qc.clear();
+    await qc.clear();
     await supabase.auth.signOut();
-    navigate({ to: "/", replace: true });
+    router.replace("/");
   };
 
   return (
@@ -43,7 +45,7 @@ export function SiteHeader() {
             return (
               <Link
                 key={link.to}
-                to={link.to}
+                href={link.to}
                 className={cn(
                   "rounded-full px-4 py-2 text-sm font-medium transition-colors",
                   active
@@ -75,12 +77,12 @@ export function SiteHeader() {
                 <DropdownMenuLabel className="truncate">{user.email}</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link to="/account">
+                  <Link href="/account">
                     <UserIcon className="size-4" /> My account
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link to="/account">
+                  <Link href="/account">
                     <Car className="size-4" /> My vehicle bookings
                   </Link>
                 </DropdownMenuItem>
@@ -92,16 +94,16 @@ export function SiteHeader() {
             </DropdownMenu>
           ) : (
             <Button asChild variant="ghost" size="sm">
-              <Link to="/auth">Sign in</Link>
+              <Link href="/auth">Sign in</Link>
             </Button>
           )}
           <Button asChild variant="ghost" size="sm">
-            <Link to="/sell-used-car">
+            <Link href="/sell-used-car">
               Sell car
             </Link>
           </Button>
           <Button asChild variant="hero" size="sm">
-                  <Link to="/sell-used-car">
+                  <Link href="/sell-used-car">
               Book pickup
               <ArrowRight />
             </Link>
@@ -136,7 +138,7 @@ export function SiteHeader() {
               {navLinks.map((link) => (
                 <Link
                   key={link.to}
-                  to={link.to}
+                  href={link.to}
                   onClick={() => setOpen(false)}
                   className="rounded-lg px-3 py-3 text-base font-medium text-foreground hover:bg-secondary"
                 >
@@ -145,7 +147,7 @@ export function SiteHeader() {
               ))}
               {user && (
                 <Link
-                  to="/account"
+                  href="/account"
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-foreground hover:bg-secondary"
                 >
@@ -156,14 +158,9 @@ export function SiteHeader() {
 
             <div className="mt-6 flex flex-col gap-3">
               <Button asChild variant="hero" size="lg" onClick={() => setOpen(false)}>
-                <Link to="/pickup">
+                <Link href="/pickup">
                   Book pickup
                   <ArrowRight />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
-                <Link to="/pickup">
-                  Sell car
                 </Link>
               </Button>
               {user ? (
@@ -179,7 +176,7 @@ export function SiteHeader() {
                 </Button>
               ) : (
                 <Button asChild variant="outline" size="lg" onClick={() => setOpen(false)}>
-                  <Link to="/auth">Sign in</Link>
+                  <Link href="/auth">Sign in</Link>
                 </Button>
               )}
             </div>

@@ -1,30 +1,7 @@
-import { useEffect, useState } from "react";
-import type { Session, User } from "@supabase/supabase-js";
-import { supabase } from "@/integrations/supabase/client";
-
-/**
- * Client-side auth state for the public site (customer accounts).
- * Uses Supabase email/password auth; profile details live in user_metadata.
- */
-export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Register listener first, then hydrate the current session.
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setLoading(false);
-    });
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setLoading(false);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
-  return { session, user: session?.user ?? null, loading };
-}
+"use client";
+import type { User } from "@supabase/supabase-js";
+import { useAuthContext } from "@/components/AuthProvider";
+export const useAuth = useAuthContext;
 
 export function displayName(user: User | null): string {
   if (!user) return "";

@@ -38,6 +38,7 @@ export type Database = {
           notes: string | null
           phone: string
           photo_url: string | null
+          pickup_id: string | null
           pincode: string | null
           preferred_date: string | null
           registration_number: string | null
@@ -79,6 +80,7 @@ export type Database = {
           notes?: string | null
           phone: string
           photo_url?: string | null
+          pickup_id?: string | null
           pincode?: string | null
           preferred_date?: string | null
           registration_number?: string | null
@@ -120,6 +122,7 @@ export type Database = {
           notes?: string | null
           phone?: string
           photo_url?: string | null
+          pickup_id?: string | null
           pincode?: string | null
           preferred_date?: string | null
           registration_number?: string | null

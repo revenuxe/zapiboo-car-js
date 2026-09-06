@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
+import { warmVehicleCatalogue } from "@/lib/vehicle-catalogue-cache";
 
 type VehicleSelectionLinkProps = {
   href: string;
@@ -15,6 +16,11 @@ type VehicleSelectionLinkProps = {
 export function VehicleSelectionLink({ href, image, title }: VehicleSelectionLinkProps) {
   const router = useRouter();
   const [opening, setOpening] = useState(false);
+
+  useEffect(() => {
+    router.prefetch(href);
+    void warmVehicleCatalogue();
+  }, [href, router]);
 
   const openBooking = (event: React.MouseEvent<HTMLAnchorElement>) => {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -30,6 +36,8 @@ export function VehicleSelectionLink({ href, image, title }: VehicleSelectionLin
       href={href}
       prefetch
       onClick={openBooking}
+      onPointerEnter={() => void warmVehicleCatalogue()}
+      onTouchStart={() => void warmVehicleCatalogue()}
       aria-busy={opening}
       className="group relative flex h-full min-h-40 flex-col justify-end overflow-hidden rounded-2xl border border-primary/20 bg-primary/5 p-4 text-foreground shadow-soft transition-all hover:-translate-y-1 hover:bg-primary/10 hover:shadow-elevated sm:p-5 xl:px-3"
     >

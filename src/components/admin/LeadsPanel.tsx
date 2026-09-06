@@ -56,6 +56,7 @@ import { isSpamLead } from "@/lib/spam-filter";
 
 type Lead = {
   id: string;
+  pickup_id: string | null;
   lead_type: string | null;
   vehicle_type: string;
   items: string[];
@@ -309,7 +310,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {isQueryLead(lead)
                     ? `${lead.email ?? lead.phone} - ${lead.subject ?? "Contact query"}`
-                    : `${lead.phone} - ${lead.model_name ?? lead.brand_name ?? lead.vehicle_type} - ${lead.preferred_date ?? "no date"}`}
+                    : `${lead.pickup_id ?? lead.phone} - ${lead.model_name ?? lead.brand_name ?? lead.vehicle_type} - ${lead.preferred_date ?? "no date"}`}
                 </p>
               </div>
               <Button
@@ -353,6 +354,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                       </>
                     ) : (
                       <>
+                        {selected.pickup_id && <Row icon={Boxes} label="Pickup ID" sub={selected.pickup_id} />}
                         <Row icon={Boxes} label={selected.items.length ? selected.items.join(", ") : selected.vehicle_type} />
                         {selected.brand_name && <Row icon={Boxes} label="Vehicle" sub={`${selected.brand_name}${selected.model_name ? ` · ${selected.model_name}` : ""}`} />}
                         {selected.registration_number && <Row icon={Boxes} label="Registration" sub={selected.registration_number} />}

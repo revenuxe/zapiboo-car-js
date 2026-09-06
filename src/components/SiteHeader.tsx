@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, ArrowRight, User as UserIcon, LogOut, Car, LayoutDashboard } from "lucide-react";
+import { Menu, ArrowRight, User as UserIcon, LogOut, Car, LayoutDashboard, ClipboardList } from "lucide-react";
 import { useDataCache } from "@/hooks/use-data-cache";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -57,6 +57,17 @@ export function SiteHeader() {
               </Link>
             );
           })}
+          {user && (
+            <Link
+              href="/orders"
+              className={cn(
+                "rounded-full px-4 py-2 text-sm font-medium transition-colors",
+                pathname === "/orders" ? "bg-secondary text-foreground" : "text-muted-foreground hover:bg-secondary/60 hover:text-foreground",
+              )}
+            >
+              Pickup orders
+            </Link>
+          )}
         </nav>
 
         <div className="hidden items-center gap-3 lg:flex">
@@ -82,8 +93,8 @@ export function SiteHeader() {
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/account">
-                    <Car className="size-4" /> My vehicle bookings
+                  <Link href="/orders">
+                    <ClipboardList className="size-4" /> Pickup orders
                   </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
@@ -147,11 +158,11 @@ export function SiteHeader() {
               ))}
               {user && (
                 <Link
-                  href="/account"
+                  href="/orders"
                   onClick={() => setOpen(false)}
                   className="flex items-center gap-2 rounded-lg px-3 py-3 text-base font-medium text-foreground hover:bg-secondary"
                 >
-                  <LayoutDashboard className="size-4" /> My account
+                  <ClipboardList className="size-4" /> Pickup orders
                 </Link>
               )}
             </nav>

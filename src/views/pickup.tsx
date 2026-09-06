@@ -41,6 +41,7 @@ import { compressImageToWebp } from "@/lib/client-image";
 import { isPincodeAvailable, useServiceAvailability } from "@/lib/service-availability";
 import { displayName, useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { getCachedVehicleOptions } from "@/lib/vehicle-catalogue-cache";
 import carImgAsset from "@/assets/vehicle-car.webp";
 const carImg = carImgAsset.src;
 import bikeImgAsset from "@/assets/vehicle-bike.webp";
@@ -87,6 +88,7 @@ type PickupPhoto = {
 };
 
 function useVehicleOptions(table: string, foreignKey?: string, parentId?: string) {
+  const cache = getCachedVehicleOptions(table, parentId);
   return useSWR((!foreignKey || Boolean(parentId)) ? ["vehicle-catalogue", table, parentId] : null, async () => {
       const fields = table === "vehicle_categories" || table === "vehicle_subcategories" ? "id, name, image_url" : "id, name";
       let query = catalogueDb.from(table).select(fields).eq("active", true).order("sort_order").order("name");
@@ -94,7 +96,7 @@ function useVehicleOptions(table: string, foreignKey?: string, parentId?: string
       const { data, error } = await query;
       if (error) throw error;
       return data as VehicleOption[];
-    });
+    }, { fallbackData: cache, dedupingInterval: 60_000 });
 }
 
 
@@ -105,6 +107,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const [step, setStep] = useState(1);
   const [stepLoading, setStepLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [pickupId, setPickupId] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const draftRestored = useRef(false);
   const [profileStatus, setProfileStatus] = useState<"idle" | "loading" | "filled" | "missing">(
@@ -571,7 +574,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       }
     }
 
-    const { error } = await supabase.from("leads").insert({
+    const { data: createdPickup, error } = await supabase.from("leads").insert({
       registration_number: registrationNumber.trim() || null,
       vehicle_type: selectedCategory?.name ?? vehicleType ?? "car",
       items: [selectedCategory?.name, selectedSubcategory?.name, selectedBrand?.name, vehicleModel.trim()].filter(Boolean) as string[],
@@ -594,7 +597,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       lat: geo?.lat ?? null,
       lng: geo?.lng ?? null,
       status: "new",
-    });
+    }).select("pickup_id").single();
     setSaving(false);
 
     if (error) {
@@ -622,6 +625,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       window.sessionStorage.removeItem(carRegistrationKey);
     }
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
+    setPickupId(createdPickup?.pickup_id ?? null);
     setSubmitted(true);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -664,6 +668,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
             Your pickup is booked. Our nearest Bengaluru agent will confirm your slot on WhatsApp,
             arrive with a certified weighing scale, bag everything for you, and pay you on the spot.
           </p>
+          {pickupId && <p className="mx-auto mt-5 w-fit rounded-full bg-navy-foreground/10 px-4 py-2 text-xs font-bold tracking-wider text-navy-foreground">Pickup ID: {pickupId}</p>}
 
           <motion.blockquote
             initial={{ opacity: 0, y: 12 }}

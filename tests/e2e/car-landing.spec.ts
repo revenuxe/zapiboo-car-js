@@ -1,4 +1,4 @@
-﻿import { test, expect } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 test("car landing page renders its content and metadata without JavaScript", async ({
   browser,
@@ -6,25 +6,25 @@ test("car landing page renders its content and metadata without JavaScript", asy
 }) => {
   const context = await browser.newContext({ javaScriptEnabled: false, baseURL });
   const page = await context.newPage();
-  await page.goto("/sell-used-car");
+  await page.goto("/sell-used-car-bangalore");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Sell Your Used Car With Confidence.",
+    "Sell your used car in Bangalore",
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",
-    "https://www.zapiboo.com/sell-used-car",
+    "https://www.zapiboo.com/sell-used-car-bangalore",
   );
-  await expect(page.getByRole("heading", { name: "What Is My Car Worth?" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "What helps explain your hatchback or sedan's value?" })).toBeVisible();
   await page
-    .getByText("Will I Get an Instant Price From My Registration Number?", { exact: true })
+    .getByText("Does entering my car details give me an instant price?", { exact: true })
     .click();
-  await expect(page.getByText("No. The registration form starts", { exact: false })).toBeVisible();
+  await expect(page.getByText("No. Booking starts an inspection request.", { exact: false })).toBeVisible();
   await context.close();
 });
 
 test("registration validation, booking handoff and draft reload", async ({ page }) => {
-  await page.goto("/sell-used-car");
-  const submit = page.getByRole("button", { name: "Get My Car Value", exact: true }).first();
+  await page.goto("/sell-used-car-bangalore");
+  const submit = page.getByRole("button", { name: "Request My Car Inspection", exact: true }).first();
   await submit.click();
   await expect(page.getByText("Enter a registration such as", { exact: false })).toBeVisible();
   await page
@@ -55,7 +55,7 @@ test("registration validation, booking handoff and draft reload", async ({ page 
 });
 
 test("manual entry preserves the entered registration and selects car", async ({ page }) => {
-  await page.goto("/sell-used-car");
+  await page.goto("/sell-used-car-bangalore");
   await page.getByLabel("Enter Your Car Registration Number", { exact: true }).first().fill("KA 01 AB 1234");
   await page.getByRole("link", { name: "Enter Car Details Manually" }).first().click();
   await expect(page.getByLabel("Registration number (optional)")).toHaveValue("KA01AB1234");
@@ -69,19 +69,19 @@ test("manual entry preserves the entered registration and selects car", async ({
 });
 
 test("final form accepts BH registrations", async ({ page }) => {
-  await page.goto("/sell-used-car");
+  await page.goto("/sell-used-car-bangalore");
   await page
     .getByLabel("Enter Your Car Registration Number", { exact: true })
     .last()
     .fill("22 BH 1234 AA");
-  await page.getByRole("button", { name: "Get My Car Value", exact: true }).last().click();
+  await page.getByRole("button", { name: "Request My Car Inspection", exact: true }).last().click();
   await expect(page.getByLabel("Registration number (optional)")).toHaveValue("22BH1234AA");
 });
 
 for (const width of [360, 390, 768, 1024, 1440]) {
   test(`car landing has no horizontal overflow at ${width}px`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
-    await page.goto("/sell-used-car");
+    await page.goto("/sell-used-car-bangalore");
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
       true,
@@ -104,7 +104,7 @@ for (const [label, vehicle] of [['Sell your car', 'car'], ['Sell your bike', 'bi
 
 
 test('registration typed on the selling page prefills a later car category selection', async ({ page }) => {
-  await page.goto('/sell-used-car');
+  await page.goto('/sell-used-car-bangalore');
   await page.getByLabel('Enter Your Car Registration Number', { exact: true }).first().fill('KA 03 XY 4321');
   await page.goto('/');
   await page.getByRole('main').getByRole('link', { name: 'Sell your bike', exact: true }).click();

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 const publicPages = [
   '/',
-  '/sell-used-car',
+  '/sell-used-car-bangalore',
   '/pickup',
   '/materials',
   '/about',

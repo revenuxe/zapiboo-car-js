@@ -109,12 +109,12 @@ export function SiteHeader() {
             </Button>
           )}
           <Button asChild variant="ghost" size="sm">
-            <Link href="/sell-used-car">
+            <Link href="/sell-used-car-bangalore">
               Sell car
             </Link>
           </Button>
           <Button asChild variant="hero" size="sm">
-                  <Link href="/sell-used-car">
+                  <Link href="/sell-used-car-bangalore">
               Book pickup
               <ArrowRight />
             </Link>

@@ -8,6 +8,7 @@ import { AuthProvider } from '@/components/AuthProvider';
 import { useAuthContext } from '@/components/AuthProvider';
 import { SiteHeader } from '@/components/SiteHeader';
 import { SiteFooter } from '@/components/SiteFooter';
+import { SellByModel } from '@/components/SellByModel';
 import { Toaster } from '@/components/ui/sonner';
 import { NavigationLoader } from '@/components/NavigationLoader';
 
@@ -30,6 +31,7 @@ function SiteShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen flex-col">
       {!chromeless && <SiteHeader />}
       <main className="flex-1">{children}</main>
+      {!chromeless && <SellByModel />}
       {!chromeless && <SiteFooter />}
     </div>
     <NavigationLoader />

@@ -58,7 +58,7 @@ export function CarValuationForm() {
           type="submit"
           className="inline-flex min-h-14 items-center justify-center gap-3 rounded-xl bg-primary px-6 text-sm font-bold text-primary-foreground hover:bg-primary/90 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-primary"
         >
-          Get My Car Value <ArrowRight className="size-4" />
+          Request My Car Inspection <ArrowRight className="size-4" />
         </button>
       </div>
       {error && (

@@ -8,7 +8,7 @@ export default function NotFound() {
       <p className="mx-auto mt-4 max-w-lg leading-relaxed text-muted-foreground">The link may be out of date, or the page may have moved. You can continue with a valuation, learn how Zapiboo works, or contact our Bangalore team.</p>
       <nav aria-label="Helpful pages" className="mt-8 grid gap-3 sm:grid-cols-2">
         <Link href="/" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-primary px-5 text-sm font-bold text-primary-foreground transition-colors hover:bg-primary/90">Go to homepage</Link>
-        <Link href="/sell-used-car" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border px-5 text-sm font-bold text-foreground transition-colors hover:bg-muted">Sell your used car</Link>
+        <Link href="/sell-used-car-bangalore" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border px-5 text-sm font-bold text-foreground transition-colors hover:bg-muted">Sell your used car</Link>
         <Link href="/pickup" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border px-5 text-sm font-bold text-foreground transition-colors hover:bg-muted">Book free valuation</Link>
         <Link href="/contact" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-border px-5 text-sm font-bold text-foreground transition-colors hover:bg-muted">Contact Zapiboo</Link>
       </nav>

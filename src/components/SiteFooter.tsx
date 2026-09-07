@@ -70,6 +70,7 @@ export function SiteFooter() {
                   <li key={link.label}>
                     <Link
                       href={link.to}
+                      prefetch={false}
                       className="text-muted-foreground transition-colors hover:text-primary"
                     >
                       {link.label}

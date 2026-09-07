@@ -8,7 +8,7 @@ test("car landing page renders its content and metadata without JavaScript", asy
   const page = await context.newPage();
   await page.goto("/sell-used-car-bangalore");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Sell your used car in Bangalore",
+    "Sell Your Used Car With Confidence.",
   );
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
     "href",

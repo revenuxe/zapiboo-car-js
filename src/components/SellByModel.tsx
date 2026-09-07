@@ -60,6 +60,7 @@ export function SellByModel() {
                       <li key={model.slug}>
                         <Link
                           href={modelPath(model)}
+                          prefetch={false}
                           className="flex min-h-12 items-center justify-between gap-2 border-t border-border py-3 text-sm font-medium transition-colors hover:text-primary"
                         >
                           {model.shortName}

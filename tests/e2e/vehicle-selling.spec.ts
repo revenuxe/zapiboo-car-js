@@ -26,7 +26,7 @@ for (const { key, path } of vehicleSellingLinks) {
     const page = await context.newPage();
     const response = await page.goto(path);
     expect(response?.status()).toBe(200);
-    await expect(page.locator("h1")).toHaveText(content.heading);
+    await expect(page.locator("h1")).toHaveText(key === "car" ? "Sell Your Used Car With Confidence." : content.heading);
     await expect(page).toHaveTitle(content.title);
     await expect(page.locator('link[rel="canonical"]')).toHaveAttribute(
       "href",
@@ -79,7 +79,7 @@ for (const { key, path } of vehicleSellingLinks) {
         true,
       );
     }
-    const hero = page.getByAltText(content.imageAlt);
+    const hero = page.getByAltText(key === "car" ? "Doorstep vehicle inspection" : content.imageAlt);
     await expect(hero).toBeVisible();
     await expect
       .poll(() =>

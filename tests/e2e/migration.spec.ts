@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const pages = [
   ['/', /Sell your used car or bike in Bangalore/],
-  ['/sell-used-car-bangalore', /Sell your used car in Bangalore/],
+  ['/sell-used-car-bangalore', /Sell Your Used Car With Confidence\./],
   ['/materials', /Used vehicle price guide/],
   ['/pickup', /Booking/],
   ['/contact', /./],

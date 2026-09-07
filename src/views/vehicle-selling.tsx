@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, MapPin, Phone } from "lucide-react";
 import { JsonLd } from "@/components/JsonLd";
-import { CarValuationForm } from "@/components/CarValuationForm";
+import { CarSellingHero } from "@/components/CarSellingHero";
 import { WhatsAppIcon } from "@/components/WhatsAppIcon";
 import { absoluteUrl, breadcrumbSchema, businessContact, faqSchema, siteUrl } from "@/lib/seo";
 import { pageMetadata } from "@/lib/metadata";
@@ -67,69 +67,73 @@ export default function VehicleSelling({ vehicle }: { vehicle: SellingVehicle })
           faqSchema(content.faqs),
         ]}
       />
-      <section className="relative overflow-hidden bg-[#121112] py-10 text-white sm:py-16">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_80%_30%,rgba(31,89,104,0.4),transparent_65%)]"
-        />
-        <div className={`relative ${container}`}>
-          <nav aria-label="Breadcrumb" className="mb-8 text-sm text-white/70">
-            <ol className="flex flex-wrap gap-2">
-              <li>
-                <Link href="/" className="hover:text-white">
-                  Home
-                </Link>
-              </li>
-              <li aria-hidden="true">/</li>
-              <li aria-current="page">{route.label}</li>
-            </ol>
-          </nav>
-          <div className="grid items-center gap-10 lg:grid-cols-2">
-            <div>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#ff9292]">
-                {content.kicker}
-              </p>
-              <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.12] tracking-tight sm:text-5xl xl:text-6xl">
-                {content.heading}
-              </h1>
-              <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
-                {content.intro}
-              </p>
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-                <Link href={bookingHref} className={button}>
-                  {content.cta}
-                  <ArrowRight aria-hidden="true" className="size-4 shrink-0" />
-                </Link>
-                <a
-                  href={whatsappHref}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/30 px-5 py-3 text-sm font-bold hover:bg-white/10"
-                >
-                  <WhatsAppIcon className="size-5 text-[#00C875]" />
-                  Discuss on WhatsApp
-                </a>
+      {vehicle === "car" ? (
+        <CarSellingHero />
+      ) : (
+        <section className="relative overflow-hidden bg-[#121112] py-10 text-white sm:py-16">
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_80%_30%,rgba(31,89,104,0.4),transparent_65%)]"
+          />
+          <div className={`relative ${container}`}>
+            <nav aria-label="Breadcrumb" className="mb-8 text-sm text-white/70">
+              <ol className="flex flex-wrap gap-2">
+                <li>
+                  <Link href="/" className="hover:text-white">
+                    Home
+                  </Link>
+                </li>
+                <li aria-hidden="true">/</li>
+                <li aria-current="page">{route.label}</li>
+              </ol>
+            </nav>
+            <div className="grid items-center gap-10 lg:grid-cols-2">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#ff9292]">
+                  {content.kicker}
+                </p>
+                <h1 className="mt-4 text-balance text-4xl font-extrabold leading-[1.12] tracking-tight sm:text-5xl xl:text-6xl">
+                  {content.heading}
+                </h1>
+                <p className="mt-6 max-w-xl text-base leading-relaxed text-white/75 sm:text-lg">
+                  {content.intro}
+                </p>
+                <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                  <Link href={bookingHref} className={button}>
+                    {content.cta}
+                    <ArrowRight aria-hidden="true" className="size-4 shrink-0" />
+                  </Link>
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/30 px-5 py-3 text-sm font-bold hover:bg-white/10"
+                  >
+                    <WhatsAppIcon className="size-5 text-[#00C875]" />
+                    Discuss on WhatsApp
+                  </a>
+                </div>
+                <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/65">
+                  {content.bookingHint}
+                </p>
               </div>
-              <p className="mt-4 max-w-lg text-sm leading-relaxed text-white/65">
-                {content.bookingHint}
-              </p>
-            </div>
-            <div className="rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-8">
-              <Image
-                src={images[vehicle]}
-                alt={content.imageAlt}
-                priority
-                sizes="(min-width: 1024px) 550px, (min-width: 640px) 600px, 90vw"
-                className="aspect-[4/3] w-full object-contain"
-              />
-              <div className="flex items-center justify-center gap-2 border-t border-white/15 pt-5 text-sm font-semibold">
-                <MapPin aria-hidden="true" className="size-4 text-[#ff9292]" />
-                Doorstep inspection in Bangalore
+              <div className="hidden rounded-3xl border border-white/10 bg-white/5 p-5 sm:p-8 lg:block">
+                <Image
+                  src={images[vehicle]}
+                  alt={content.imageAlt}
+                  loading="lazy"
+                  sizes="550px"
+                  className="aspect-[4/3] w-full object-contain"
+                />
+                <div className="flex items-center justify-center gap-2 border-t border-white/15 pt-5 text-sm font-semibold">
+                  <MapPin aria-hidden="true" className="size-4 text-[#ff9292]" />
+                  Doorstep inspection in Bangalore
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
       <nav aria-label="On this page" className="border-b border-border bg-secondary/40">
         <div className={`${container} flex flex-wrap gap-x-6 gap-y-3 py-5 text-sm font-semibold`}>
           <a href="#valuation" className="hover:text-primary">
@@ -146,17 +150,6 @@ export default function VehicleSelling({ vehicle }: { vehicle: SellingVehicle })
           </a>
         </div>
       </nav>
-      {vehicle === "car" && (
-        <section
-          id="car-valuation"
-          aria-label="Car inspection request"
-          className={`${container} scroll-mt-24 pt-10`}
-        >
-          <div className="mx-auto max-w-4xl rounded-2xl border border-border bg-card p-5 shadow-lg sm:p-8">
-            <CarValuationForm />
-          </div>
-        </section>
-      )}
       <section className={`${container} py-14 sm:py-20`}>
         <div className="grid gap-6 lg:grid-cols-[1fr_1.3fr]">
           <h2 className="text-balance text-3xl font-bold tracking-tight">

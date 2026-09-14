@@ -114,6 +114,11 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   currentStepRef.current = step;
   const [stepLoading, setStepLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    // Reset after the next step or confirmation has committed to the DOM.
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [step, submitted]);
   const [pickupId, setPickupId] = useState<string | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const draftRestored = useRef(false);
@@ -393,7 +398,6 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       const previousStep = event.state?.pickupFlow ? event.state.pickupStep : null;
       if (typeof previousStep === "number" && previousStep >= 1 && previousStep <= 6) {
         setStep(previousStep);
-        window.scrollTo({ top: 0, behavior: "smooth" });
       }
     };
     window.addEventListener("popstate", restoreStep);
@@ -552,7 +556,6 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     window.requestAnimationFrame(() => {
       window.history.pushState({ ...window.history.state, pickupFlow: true, pickupStep: nextStep }, "", window.location.href);
       setStep(nextStep);
-      window.scrollTo({ top: 0, behavior: "smooth" });
       window.setTimeout(() => setStepLoading(false), 220);
     });
   };
@@ -597,7 +600,6 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
       if (s === 2) return 1;
       return 1;
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -609,7 +611,6 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     }
     if (!pincodeOk || !addressOk) {
       setStep(5);
-      window.scrollTo({ top: 0, behavior: "smooth" });
       return toast.error("Please complete your pickup address and a serviceable pincode.");
     }
     if (!date) return toast.error("Pick a date.");
@@ -689,7 +690,6 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     toast.success("Pickup booked! We'll confirm on WhatsApp shortly.");
     setPickupId(null);
     setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const loadingVehicleOptions =

@@ -1,5 +1,7 @@
 import RepairHome from "@/views/repair";
 import { pageMetadata } from "@/lib/metadata";
+import { JsonLd } from "@/components/JsonLd";
+import { repairHomepageSchema } from "@/lib/repair-seo";
 
 export const metadata = pageMetadata(
   "/repair",
@@ -8,5 +10,10 @@ export const metadata = pageMetadata(
 );
 
 export default function Page() {
-  return <RepairHome />;
+  return (
+    <>
+      <JsonLd data={repairHomepageSchema()} />
+      <RepairHome />
+    </>
+  );
 }

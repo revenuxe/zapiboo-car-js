@@ -211,7 +211,7 @@ export function breadcrumbSchema(items: Array<{ name: string; path: string }>) {
   };
 }
 
-export function faqSchema(items: Array<{ question: string; answer: string }>) {
+export function faqSchema(items: ReadonlyArray<{ question: string; answer: string }>) {
   return {
     "@context": "https://schema.org",
     "@type": "FAQPage",

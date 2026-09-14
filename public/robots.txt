@@ -3,6 +3,7 @@ Allow: /
 
 Disallow: /admin
 Disallow: /account
+Disallow: /orders
 Disallow: /auth
 Disallow: /auth/callback
 Disallow: /api/

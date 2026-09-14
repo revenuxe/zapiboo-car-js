@@ -27,12 +27,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
@@ -105,9 +100,21 @@ function StatusChip({ status }: { status: string }) {
   );
 }
 
-function isQueryLead(lead: Lead) { return lead.lead_type === "query" || lead.vehicle_type === "query"; }
+function isQueryLead(lead: Lead) {
+  return lead.lead_type === "query" || lead.vehicle_type === "query";
+}
+function isRepairLead(lead: Lead) {
+  return lead.lead_type === "repair_booking";
+}
 
 function LeadTypeChip({ lead }: { lead: Lead }) {
+  if (isRepairLead(lead)) {
+    return (
+      <span className="inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wide text-primary">
+        repair
+      </span>
+    );
+  }
   if (!isQueryLead(lead)) return null;
 
   return (
@@ -117,7 +124,7 @@ function LeadTypeChip({ lead }: { lead: Lead }) {
   );
 }
 
-export type LeadScope = "all" | "bookings" | "queries";
+export type LeadScope = "all" | "bookings" | "queries" | "repair-bookings";
 
 export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
   const qc = useDataCache();
@@ -128,13 +135,13 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
   const [draftNotes, setDraftNotes] = useState("");
 
   const { data: leadData, isLoading: loading } = useSWR(["admin", "leads"], async () => {
-      const { data, error } = await supabase
-        .from("leads")
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as unknown as Lead[];
-    });
+    const { data, error } = await supabase
+      .from("leads")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (error) throw error;
+    return data as unknown as Lead[];
+  });
   const leads = useMemo(() => leadData ?? [], [leadData]);
   const isLoading = loading && leadData === undefined;
 
@@ -146,8 +153,9 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
 
   const filtered = useMemo(() => {
     return leads.filter((l) => {
-      if (scope === "bookings" && isQueryLead(l)) return false;
+      if (scope === "bookings" && (isQueryLead(l) || isRepairLead(l))) return false;
       if (scope === "queries" && !isQueryLead(l)) return false;
+      if (scope === "repair-bookings" && !isRepairLead(l)) return false;
       if (filter === "spam") {
         if (!spamSet.has(l.id)) return false;
       } else if (filter === "all") {
@@ -168,7 +176,6 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
       );
     });
   }, [leads, query, filter, spamSet, scope]);
-
 
   const openLead = (lead: Lead) => {
     setSelected(lead);
@@ -251,7 +258,8 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
       {spamIds.length > 0 && (
         <div className="mt-3 flex flex-col gap-2 rounded-2xl border border-dashed border-border bg-secondary/40 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
           <p className="text-muted-foreground">
-            {spamIds.length} bot-looking {spamIds.length === 1 ? "submission is" : "submissions are"} hidden from the main list.
+            {spamIds.length} bot-looking{" "}
+            {spamIds.length === 1 ? "submission is" : "submissions are"} hidden from the main list.
           </p>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -280,7 +288,6 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
         </div>
       )}
 
-
       {/* list */}
       {isLoading ? (
         <div className="flex justify-center py-16">
@@ -308,13 +315,16 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                   <LeadTypeChip lead={lead} />
                   <StatusChip status={lead.status} />
                   {lead.has_photo && (
-                    <Camera className="size-3.5 shrink-0 text-primary" aria-label="Photo attached" />
+                    <Camera
+                      className="size-3.5 shrink-0 text-primary"
+                      aria-label="Photo attached"
+                    />
                   )}
                 </div>
                 <p className="mt-0.5 truncate text-xs text-muted-foreground">
                   {isQueryLead(lead)
                     ? `${lead.email ?? lead.phone} - ${lead.subject ?? "Contact query"}`
-                    : `${lead.pickup_id ?? lead.phone} - ${lead.model_name ?? lead.brand_name ?? lead.vehicle_type} - ${lead.preferred_date ?? "no date"}`}
+                    : `${isRepairLead(lead) ? "Repair" : (lead.pickup_id ?? lead.phone)} - ${lead.subject ?? lead.model_name ?? lead.brand_name ?? lead.vehicle_type} - ${lead.preferred_date ?? "no date"}`}
                 </p>
               </div>
               <Button
@@ -343,7 +353,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                     <LeadTypeChip lead={selected} />
                   </div>
                   <p className="text-xs text-primary-foreground/80 sm:text-sm">
-                    {isQueryLead(selected) ? selected.email ?? selected.phone : selected.phone}
+                    {isQueryLead(selected) ? (selected.email ?? selected.phone) : selected.phone}
                   </p>
                 </DialogHeader>
 
@@ -351,19 +361,66 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                   <div className="grid gap-2 text-sm sm:gap-2.5">
                     {isQueryLead(selected) ? (
                       <>
-                        <Row icon={Boxes} label="Contact query" sub={selected.subject ?? undefined} />
+                        <Row
+                          icon={Boxes}
+                          label="Contact query"
+                          sub={selected.subject ?? undefined}
+                        />
                         <Row icon={Mail} label={selected.email ?? "No email"} />
                         <Row icon={Phone} label={selected.phone} />
-                        <Row icon={MessageSquareText} label={selected.subject ?? "No subject"} sub={selected.notes ?? undefined} />
+                        <Row
+                          icon={MessageSquareText}
+                          label={selected.subject ?? "No subject"}
+                          sub={selected.notes ?? undefined}
+                        />
                       </>
                     ) : (
                       <>
-                        {selected.pickup_id && <Row icon={Boxes} label="Pickup ID" sub={selected.pickup_id} />}
-                        <Row icon={Boxes} label={selected.items.length ? selected.items.join(", ") : selected.vehicle_type} />
-                        {selected.brand_name && <Row icon={Boxes} label="Vehicle" sub={`${selected.brand_name}${selected.model_name ? ` · ${selected.model_name}` : ""}${selected.manufacture_year ? ` · ${selected.manufacture_year}` : ""}`} />}
-                        {selected.registration_number && <Row icon={Boxes} label="Registration" sub={selected.registration_number} />}
-                        <Row icon={MapPin} label={`${selected.locality ?? "-"} ${selected.pincode ?? ""}`} sub={selected.address ?? undefined} />
-                        <Row icon={Calendar} label={`${selected.preferred_date ?? "No date"}`} sub={selected.slot ?? undefined} />
+                        {isRepairLead(selected) && (
+                          <Row
+                            icon={Boxes}
+                            label="Repair booking ID"
+                            sub={`REP-${selected.id.slice(0, 8).toUpperCase()}`}
+                          />
+                        )}
+                        {selected.pickup_id && (
+                          <Row icon={Boxes} label="Pickup ID" sub={selected.pickup_id} />
+                        )}
+                        {isRepairLead(selected) && (
+                          <Row icon={Boxes} label="Service" sub={selected.subject ?? undefined} />
+                        )}
+                        <Row
+                          icon={Boxes}
+                          label={
+                            selected.items.length
+                              ? selected.items.join(", ")
+                              : selected.vehicle_type
+                          }
+                        />
+                        {selected.brand_name && (
+                          <Row
+                            icon={Boxes}
+                            label="Vehicle"
+                            sub={`${selected.brand_name}${selected.model_name ? ` · ${selected.model_name}` : ""}${selected.manufacture_year ? ` · ${selected.manufacture_year}` : ""}`}
+                          />
+                        )}
+                        {selected.registration_number && (
+                          <Row
+                            icon={Boxes}
+                            label="Registration"
+                            sub={selected.registration_number}
+                          />
+                        )}
+                        <Row
+                          icon={MapPin}
+                          label={`${selected.locality ?? "-"} ${selected.pincode ?? ""}`}
+                          sub={selected.address ?? undefined}
+                        />
+                        <Row
+                          icon={Calendar}
+                          label={`${selected.preferred_date ?? "No date"}`}
+                          sub={selected.slot ?? undefined}
+                        />
                         <Row icon={Phone} label={selected.phone} />
                       </>
                     )}
@@ -372,7 +429,12 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                         <p className="flex items-center gap-2 text-sm font-medium text-foreground">
                           <Camera className="size-4 text-primary" /> Uploaded photo
                         </p>
-                        <a href={selected.photo_url} target="_blank" rel="noreferrer" className="block">
+                        <a
+                          href={selected.photo_url}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="block"
+                        >
                           <img
                             src={selected.photo_url}
                             alt="Uploaded vehicle"
@@ -427,11 +489,19 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                       onClick={() => saveMutation.run()}
                       disabled={saveMutation.isPending}
                     >
-                      {saveMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : "Save changes"}
+                      {saveMutation.isPending ? (
+                        <Loader2 className="size-4 animate-spin" />
+                      ) : (
+                        "Save changes"
+                      )}
                     </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
-                        <Button variant="outline" size="icon" className="size-10 shrink-0 rounded-2xl text-destructive">
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="size-10 shrink-0 rounded-2xl text-destructive"
+                        >
                           <Trash2 className="size-4" />
                         </Button>
                       </AlertDialogTrigger>
@@ -439,7 +509,8 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                         <AlertDialogHeader>
                           <AlertDialogTitle>Delete this lead?</AlertDialogTitle>
                           <AlertDialogDescription>
-                            This permanently removes {selected.name}'s booking. This can't be undone.
+                            This permanently removes {selected.name}'s booking. This can't be
+                            undone.
                           </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
@@ -464,15 +535,7 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
   );
 }
 
-function Row({
-  icon: Icon,
-  label,
-  sub,
-}: {
-  icon: LucideIcon;
-  label: string;
-  sub?: string;
-}) {
+function Row({ icon: Icon, label, sub }: { icon: LucideIcon; label: string; sub?: string }) {
   return (
     <div className="flex items-start gap-2.5">
       <Icon className="mt-0.5 size-4 shrink-0 text-primary" />

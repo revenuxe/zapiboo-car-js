@@ -11,6 +11,8 @@ import {
 import { pageMetadata } from "@/lib/metadata";
 import { ServiceIcon } from "@/components/repair/ServiceIcon";
 import { ServiceBookingForm } from "@/components/repair/ServiceBookingForm";
+import { JsonLd } from "@/components/JsonLd";
+import { repairServiceFaqs, repairServiceSchema } from "@/lib/repair-seo";
 
 export function generateStaticParams() {
   return repairServices.map(({ slug }) => ({ slug }));
@@ -30,24 +32,43 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   if (!service) notFound();
   const category = repairCategories.find((item) => item.id === service.vehicleCategory)!;
   return (
-    <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-      <Link
-        href="/repair#repair-vehicles"
-        className="inline-flex min-h-11 items-center gap-2 rounded text-sm font-semibold text-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-      >
-        <ArrowLeft aria-hidden="true" className="size-4" />
-        All vehicle services
-      </Link>
-      <div className="mt-6 grid items-start gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
-        <div>
-          <span className="mb-5 grid size-12 place-items-center rounded-xl bg-primary/10 text-primary">
-            <ServiceIcon name={service.icon} />
-          </span>
-          <p className="text-sm font-semibold text-primary">{category.label}</p>
-          <h1 className="mt-3 text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
-            {service.serviceName}
-          </h1>
-          <p className="mt-5 text-base leading-7 text-muted-foreground">{service.description}</p>
+    <>
+      <JsonLd data={repairServiceSchema(service)} />
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 sm:py-14 lg:px-8">
+        <Link
+          href="/repair#repair-vehicles"
+          className="inline-flex min-h-9 items-center gap-2 rounded-lg px-1 text-sm font-semibold text-primary transition-colors hover:bg-primary/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+        >
+          <ArrowLeft aria-hidden="true" className="size-4" />
+          All vehicle services
+        </Link>
+        <div className="mt-4 max-w-3xl">
+          <header className="flex items-start gap-3 sm:gap-4">
+            <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-primary/10 text-primary sm:size-12">
+              <ServiceIcon name={service.icon} />
+            </span>
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-primary">{category.label}</p>
+              <h1 className="mt-1 text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+                {service.serviceName}
+              </h1>
+              <p className="mt-2 text-sm leading-6 text-muted-foreground sm:mt-4 sm:text-base sm:leading-7">
+                {service.description}
+              </p>
+            </div>
+          </header>
+          <section
+            aria-label="Booking enquiry"
+            className="mt-6 rounded-2xl border border-border bg-card p-4 shadow-soft sm:mt-8 sm:p-8"
+          >
+            <h2 className="text-xl font-bold">Request this service</h2>
+            <ServiceBookingForm
+              serviceName={service.serviceName}
+              category={category.label}
+              startingPrice={formatRepairPrice(service.startingPrice)}
+              priceDisclaimer={repairPriceDisclaimer}
+            />
+          </section>
           <section className="mt-8 rounded-2xl border border-border p-6">
             <h2 className="text-xl font-bold">Service scope</h2>
             <ul className="mt-5 space-y-3">
@@ -106,20 +127,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           </section>
           <section className="mt-8">
             <h2 className="mb-3 text-xl font-bold">Common questions</h2>
-            {[
-              [
-                "Is the starting price my final price?",
-                "Your model, engine capacity, condition and required parts can change the total. Review the final estimate before approving the work.",
-              ],
-              [
-                "Are parts and consumables included?",
-                "Do not assume parts, oil, filters or other consumables are included. The team will confirm these items and charges in your estimate.",
-              ],
-              [
-                "How long will it take?",
-                "Timing depends on the vehicle, diagnosis and parts availability. Confirm the appointment and expected completion time with the team.",
-              ],
-            ].map(([question, answer]) => (
+            {repairServiceFaqs.map(({ question, answer }) => (
               <details key={question} className="group border-b border-border">
                 <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 py-4 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
                   {question}
@@ -133,19 +141,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
             ))}
           </section>
         </div>
-        <aside
-          aria-label="Booking enquiry"
-          className="rounded-2xl border border-border bg-card p-6 shadow-soft sm:p-8"
-        >
-          <p className="text-sm text-muted-foreground">Starting at</p>
-          <p className="mt-1 text-4xl font-extrabold tracking-tight">
-            {formatRepairPrice(service.startingPrice)}
-          </p>
-          <p className="mt-4 text-xs leading-6 text-muted-foreground">{repairPriceDisclaimer}</p>
-          <h2 className="mt-7 text-xl font-bold">Request this service</h2>
-          <ServiceBookingForm serviceName={service.serviceName} category={category.label} />
-        </aside>
       </div>
-    </div>
+    </>
   );
 }

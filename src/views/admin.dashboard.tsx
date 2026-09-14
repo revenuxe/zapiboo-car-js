@@ -3,13 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDataCache } from "@/hooks/use-data-cache";
-import {
-  LogOut,
-  LayoutDashboard,
-  Inbox,
-  Users,
-  CarFront,
-} from "lucide-react";
+import { LogOut, LayoutDashboard, Inbox, Users, CarFront, Wrench } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -19,7 +13,6 @@ import { LeadsPanel } from "@/components/admin/LeadsPanel";
 import { UsersPanel } from "@/components/admin/UsersPanel";
 import { VehiclesPanel } from "@/components/admin/VehiclesPanel";
 import { CatalogueTaxonomyPanel } from "@/components/admin/CatalogueTaxonomyPanel";
-
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -47,7 +40,9 @@ export default function AdminDashboard() {
       }
       if (active) setChecking(false);
     })();
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, [router]);
   const signOut = async () => {
     await qc.clear();
@@ -56,7 +51,11 @@ export default function AdminDashboard() {
   };
 
   if (checking) {
-    return <div className="flex min-h-screen items-center justify-center bg-background"><PageLoader label="Opening dashboard" /></div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <PageLoader label="Opening dashboard" />
+      </div>
+    );
   }
 
   return (
@@ -84,7 +83,8 @@ export default function AdminDashboard() {
         <Tabs defaultValue="bookings" className="mt-6">
           <TabsList className="flex w-full max-w-full flex-nowrap justify-start gap-1 overflow-x-auto p-1 sm:w-auto">
             <TabsTrigger value="bookings" className="gap-1.5">
-              <LayoutDashboard className="size-4" /> <span className="hidden sm:inline">Bookings</span>
+              <LayoutDashboard className="size-4" />{" "}
+              <span className="hidden sm:inline">Bookings</span>
             </TabsTrigger>
             <TabsTrigger value="vehicles" className="gap-1.5">
               <CarFront className="size-4" /> <span className="hidden sm:inline">Brands</span>
@@ -94,6 +94,9 @@ export default function AdminDashboard() {
             <TabsTrigger value="leads" className="gap-1.5">
               <Inbox className="size-4" /> <span className="hidden sm:inline">Leads</span>
             </TabsTrigger>
+            <TabsTrigger value="repair" className="gap-1.5">
+              <Wrench className="size-4" /> <span className="hidden sm:inline">Repair</span>
+            </TabsTrigger>
             <TabsTrigger value="users" className="gap-1.5">
               <Users className="size-4" /> <span className="hidden sm:inline">Users</span>
             </TabsTrigger>
@@ -102,18 +105,33 @@ export default function AdminDashboard() {
           <TabsContent value="bookings" className="mt-5">
             <LeadsPanel scope="bookings" />
           </TabsContent>
-          <TabsContent value="vehicles" className="mt-5"><VehiclesPanel /></TabsContent>
-          <TabsContent value="categories" className="mt-5"><CatalogueTaxonomyPanel kind="categories" /></TabsContent>
-          <TabsContent value="types" className="mt-5"><CatalogueTaxonomyPanel kind="subcategories" /></TabsContent>
+          <TabsContent value="vehicles" className="mt-5">
+            <VehiclesPanel />
+          </TabsContent>
+          <TabsContent value="categories" className="mt-5">
+            <CatalogueTaxonomyPanel kind="categories" />
+          </TabsContent>
+          <TabsContent value="types" className="mt-5">
+            <CatalogueTaxonomyPanel kind="subcategories" />
+          </TabsContent>
 
           <TabsContent value="leads" className="mt-5">
             <LeadsPanel scope="queries" />
+          </TabsContent>
+          <TabsContent value="repair" className="mt-5">
+            <Tabs defaultValue="repair-bookings">
+              <TabsList>
+                <TabsTrigger value="repair-bookings">Bookings</TabsTrigger>
+              </TabsList>
+              <TabsContent value="repair-bookings" className="mt-5">
+                <LeadsPanel scope="repair-bookings" />
+              </TabsContent>
+            </Tabs>
           </TabsContent>
           <TabsContent value="users" className="mt-5">
             <UsersPanel />
           </TabsContent>
         </Tabs>
-
       </main>
     </div>
   );

@@ -22,7 +22,7 @@ export function HomeServiceNav({ active = "sell" }: { active?: "repair" | "sell"
           </span>
           <span className="min-w-0">
             <span className="block text-base font-extrabold leading-tight sm:text-lg">Repair</span>
-            <span className="mt-1 block text-[11px] font-medium leading-tight sm:text-xs">
+            <span className="mt-0.5 block text-[10px] font-medium leading-[1.15] sm:mt-1 sm:text-xs sm:leading-tight">
               Fix your vehicle
             </span>
           </span>
@@ -37,7 +37,7 @@ export function HomeServiceNav({ active = "sell" }: { active?: "repair" | "sell"
           </span>
           <span className="min-w-0">
             <span className="block text-base font-extrabold leading-tight sm:text-lg">Sell</span>
-            <span className="mt-1 block text-[11px] font-medium leading-tight sm:text-xs">
+            <span className="mt-0.5 block text-[10px] font-medium leading-[1.15] sm:mt-1 sm:text-xs sm:leading-tight">
               Get a free valuation
             </span>
           </span>

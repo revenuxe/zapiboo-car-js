@@ -31,7 +31,7 @@ function SiteShell({ children }: { children: ReactNode }) {
     <div className="flex min-h-screen flex-col">
       {!chromeless && <SiteHeader />}
       <main className="flex-1">{children}</main>
-      {!chromeless && <SellByModel />}
+      {!chromeless && pathname !== '/repair' && <SellByModel />}
       {!chromeless && <SiteFooter />}
     </div>
     <NavigationLoader />

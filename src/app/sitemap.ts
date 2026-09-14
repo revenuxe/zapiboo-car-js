@@ -5,6 +5,7 @@ import { sellingModels, modelPath } from '@/lib/selling-models';
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { path: '/', priority: 1, changeFrequency: 'weekly' as const },
+    { path: '/repair', priority: 0.9, changeFrequency: 'weekly' as const },
     ...vehicleSellingLinks.map(({ path }) => ({ path, priority: 0.9, changeFrequency: 'monthly' as const })),
     ...sellingModels.map((model) => ({ path: modelPath(model), priority: 0.8, changeFrequency: 'monthly' as const })),
     { path: '/pickup', priority: 0.9, changeFrequency: 'weekly' as const },

@@ -156,6 +156,7 @@ export const navLinks = [
 
 // Trimmed set shown in the site header (the rest live only in the footer).
 export const headerNavLinks = [
+  { to: "/repair", label: "Repair" },
   { to: "/sell-used-car-bangalore", label: "Sell Used Car" },
   { to: "/about", label: "About" },
   { to: "/contact", label: "Contact" },

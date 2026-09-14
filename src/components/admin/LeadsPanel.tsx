@@ -57,6 +57,7 @@ type Lead = {
   items: string[];
   brand_name: string | null;
   model_name: string | null;
+  vehicle_model_name?: string | null;
   manufacture_year: number | null;
   registration_number: string | null;
   has_photo: boolean;
@@ -388,6 +389,13 @@ export function LeadsPanel({ scope = "all" }: { scope?: LeadScope } = {}) {
                         )}
                         {isRepairLead(selected) && (
                           <Row icon={Boxes} label="Service" sub={selected.subject ?? undefined} />
+                        )}
+                        {isRepairLead(selected) && (
+                          <Row
+                            icon={Boxes}
+                            label="Vehicle model"
+                            sub={selected.model_name || selected.vehicle_model_name || "Not provided"}
+                          />
                         )}
                         <Row
                           icon={Boxes}

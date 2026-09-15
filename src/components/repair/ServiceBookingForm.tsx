@@ -96,7 +96,8 @@ export function ServiceBookingForm({
       setMessage("We couldn't save your booking. Please try again.");
       return;
     }
-    router.push(`/repair/booking-confirmed?id=${encodeURIComponent(id)}`);
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    router.push(`/repair/booking-confirmed?id=${encodeURIComponent(id)}`, { scroll: true });
   }
   return (
     <form onSubmit={submit} className="mt-6 space-y-5">

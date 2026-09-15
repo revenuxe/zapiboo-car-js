@@ -1,12 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle2, CalendarDays, ArrowRight } from "lucide-react";
 
 export function BookingConfirmation() {
   const id = useSearchParams().get("id");
   const bookingId = id ? `REP-${id.slice(0, 8).toUpperCase()}` : "REP-BOOKING";
+
+  useEffect(() => {
+    const resetScroll = () => window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    const frame = window.requestAnimationFrame(resetScroll);
+    const timeout = window.setTimeout(resetScroll, 100);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.clearTimeout(timeout);
+    };
+  }, []);
+
   return (
     <main className="mx-auto flex min-h-[65vh] max-w-2xl items-center px-4 py-12 sm:px-6">
       <section className="w-full rounded-3xl border border-border bg-card p-6 text-center shadow-soft sm:p-10">

@@ -28,6 +28,7 @@ for (const viewport of [{ width: 1440, height: 900 }, { width: 390, height: 844 
       expect(await page.evaluate(() => window.scrollY)).toBeGreaterThan(0);
       await page.getByRole('button', { name: 'Book now' }).click();
       await expect(page).toHaveURL(/\/repair\/booking-confirmed\?id=/);
+      await page.waitForTimeout(150);
       await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
     });
 

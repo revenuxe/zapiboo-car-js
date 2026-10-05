@@ -1,5 +1,7 @@
 "use client";
 
+import { servicesPaused, showOpeningSoon } from "@/lib/launch-status";
+
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -53,6 +55,7 @@ export function ServiceBookingForm({
   const [saving, setSaving] = useState(false);
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (servicesPaused) { showOpeningSoon(); return; }
     if (saving) return;
     const data = new FormData(event.currentTarget);
     const name = String(data.get("name") ?? "").trim();
@@ -100,7 +103,7 @@ export function ServiceBookingForm({
     router.push(`/repair/booking-confirmed?id=${encodeURIComponent(id)}`, { scroll: true });
   }
   return (
-    <form onSubmit={submit} className="mt-6 space-y-5">
+    <form data-service-form={servicesPaused ? "" : undefined} onSubmit={submit} className="mt-6 space-y-5">
       <div className="flex items-center justify-between rounded-xl border border-primary/15 bg-primary/[0.04] px-4 py-3">
         <div>
           <p className="text-sm font-bold">Reserve your preferred slot</p>

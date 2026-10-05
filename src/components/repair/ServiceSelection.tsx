@@ -1,5 +1,7 @@
 "use client";
 
+import { servicesPaused, openingSoonHref } from "@/lib/launch-status";
+
 import { useState } from "react";
 import { Bike, Car, Zap, ArrowRight, ClipboardCheck } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -13,7 +15,7 @@ export function ServiceSelection() {
   const [category, setCategory] = useState<string>(repairCategories[0].id);
   const label = repairCategories.find((item) => item.id === category)!.label;
   const enquiry = (request: string) =>
-    `https://wa.me/${businessContact.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi Zapiboo, I would like ${request} for my vehicle (${label}) in Bangalore.\nModel: \nLocality: \nIssue: `)}`;
+    servicesPaused ? openingSoonHref : `https://wa.me/${businessContact.phone.replace(/\D/g, "")}?text=${encodeURIComponent(`Hi Zapiboo, I would like ${request} for my vehicle (${label}) in Bangalore.\nModel: \nLocality: \nIssue: `)}`;
   return (
     <section
       id="repair-vehicles"

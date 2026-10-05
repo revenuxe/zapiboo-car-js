@@ -1,3 +1,4 @@
+import { servicesPaused, openingSoonHref } from "@/lib/launch-status";
 ﻿import Image from "next/image";
 import Link from "next/link";
 import {
@@ -262,7 +263,7 @@ export default function SellUsedCar() {
                 <span className="h-px flex-1 bg-white/20" />
               </div>
               <a
-                href={`https://wa.me/${businessContact.phone.replace(/\D/g, "")}?text=${encodeURIComponent("Hi Zapiboo, I want a free valuation for my used car in Bangalore.")}`}
+                href={servicesPaused ? openingSoonHref : `https://wa.me/${businessContact.phone.replace(/\D/g, "")}?text=${encodeURIComponent("Hi Zapiboo, I want a free valuation for my used car in Bangalore.")}`}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex min-h-14 w-full items-center justify-center gap-2 rounded-lg border border-white/25 px-5 text-sm font-bold transition-colors hover:border-[#00C875] hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white lg:w-auto"

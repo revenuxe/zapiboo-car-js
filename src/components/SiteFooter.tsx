@@ -1,3 +1,4 @@
+import { servicesPaused, openingSoonHref } from "@/lib/launch-status";
 import Link from "next/link";
 import { Instagram, Youtube } from "lucide-react";
 import { Logo } from "@/components/Logo";
@@ -43,7 +44,7 @@ export function SiteFooter() {
             </p>
             <div className="mt-6 flex items-center gap-4">
               <a
-                href="https://www.instagram.com/zapiboo/"
+                href={servicesPaused ? openingSoonHref : "https://www.instagram.com/zapiboo/"}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Zapiboo on Instagram"
@@ -52,7 +53,7 @@ export function SiteFooter() {
                 <Instagram className="size-5" />
               </a>
               <a
-                href="https://www.youtube.com/@Zapiboo"
+                href={servicesPaused ? openingSoonHref : "https://www.youtube.com/@Zapiboo"}
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Zapiboo on YouTube"

@@ -1,5 +1,7 @@
 "use client";
 
+import { servicesPaused, openingSoonHref, showOpeningSoon } from "@/lib/launch-status";
+
 import { useState } from "react";
 
 import { Mail, Phone, MapPin, Send } from "lucide-react";
@@ -19,6 +21,7 @@ export default function Contact() {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (servicesPaused) { showOpeningSoon(); return; }
     const form = e.currentTarget;
     const formData = new FormData(form);
 
@@ -82,9 +85,9 @@ export default function Contact() {
         <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[1fr_1.4fr] lg:px-8">
           <div className="space-y-5">
             {[
-              { icon: Mail, label: "Email", value: businessContact.email, href: businessContact.emailHref },
-              { icon: Phone, label: "Phone", value: businessContact.phone, href: businessContact.phoneHref },
-              { icon: MapPin, label: "Visit us", value: businessContact.address, href: "https://www.google.com/maps/search/?api=1&query=No%206%2C%201st%20Cross%2C%20Umar%20Nagar%2C%20Nagawara%20Main%20Road%2C%20Bangalore%20560045" },
+              { icon: Mail, label: "Email", value: servicesPaused ? "Email support opening soon" : businessContact.email, href: servicesPaused ? openingSoonHref : businessContact.emailHref },
+              { icon: Phone, label: "Phone", value: servicesPaused ? "Phone support opening soon" : businessContact.phone, href: servicesPaused ? openingSoonHref : businessContact.phoneHref },
+              { icon: MapPin, label: "Visit us", value: businessContact.address, href: servicesPaused ? openingSoonHref : "https://www.google.com/maps/search/?api=1&query=No%206%2C%201st%20Cross%2C%20Umar%20Nagar%2C%20Nagawara%20Main%20Road%2C%20Bangalore%20560045" },
             ].map((c) => (
               <div key={c.label} className="flex items-start gap-4 rounded-2xl border border-border bg-card p-6 shadow-soft">
                 <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-accent text-primary">
@@ -108,7 +111,7 @@ export default function Contact() {
             </aside>
           </div>
 
-          <form
+          <form data-service-form={servicesPaused ? "" : undefined}
             onSubmit={onSubmit}
             className="rounded-3xl border border-border bg-card p-6 shadow-soft sm:p-10"
           >

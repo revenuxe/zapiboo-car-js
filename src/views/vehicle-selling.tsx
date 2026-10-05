@@ -1,3 +1,4 @@
+import { servicesPaused, openingSoonHref } from "@/lib/launch-status";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Check, ChevronDown, MapPin, Phone } from "lucide-react";
@@ -104,7 +105,7 @@ export default function VehicleSelling({ vehicle }: { vehicle: SellingVehicle })
                     <ArrowRight aria-hidden="true" className="size-4 shrink-0" />
                   </Link>
                   <a
-                    href={whatsappHref}
+                    href={servicesPaused ? openingSoonHref : whatsappHref}
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/30 px-5 py-3 text-sm font-bold hover:bg-white/10"

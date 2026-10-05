@@ -11,6 +11,7 @@ import { SiteFooter } from '@/components/SiteFooter';
 import { SellByModel } from '@/components/SellByModel';
 import { Toaster } from '@/components/ui/sonner';
 import { NavigationLoader } from '@/components/NavigationLoader';
+import { ServiceAvailability } from '@/components/ServiceAvailability';
 import { ScrollToTop } from '@/components/ScrollToTop';
 
 export function Providers({ children, initialUser }: { children: ReactNode; initialUser: User | null }) {
@@ -36,6 +37,7 @@ function SiteShell({ children }: { children: ReactNode }) {
       {!chromeless && pathname !== '/repair' && <SellByModel />}
       {!chromeless && <SiteFooter />}
     </div>
+    <ServiceAvailability />
     <NavigationLoader />
     <Toaster position="top-center" richColors />
   </>;

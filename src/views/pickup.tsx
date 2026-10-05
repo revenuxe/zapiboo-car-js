@@ -1,5 +1,9 @@
-﻿"use client";
+"use client";
 
+import { servicesPaused, showOpeningSoon } from "@/lib/launch-status";
+
+
+import { OpeningSoonMessage } from "@/components/ServiceAvailability";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
 import Link from "next/link";
@@ -164,7 +168,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   const [saving, setSaving] = useState(false);
 
   // Flow order: category, vehicle details, optional photo, sign in (if needed), address, schedule.
-  const progressSteps = user ? [1, 2, 3, 5, 6] : [1, 2, 3, 4, 5, 6];
+  const progressSteps = servicesPaused ? (user ? [1, 5] : [1, 4, 5]) : user ? [1, 2, 3, 5, 6] : [1, 2, 3, 4, 5, 6];
   const currentProgress = Math.max(1, progressSteps.indexOf(step) + 1);
 
   const bookingRedirectTo =
@@ -382,6 +386,32 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Guard OAuth returns, old drafts and browser history during prelaunch.
+  useEffect(() => {
+    if (!servicesPaused || !user) return;
+    // Keep prelaunch customers visible in the existing admin customer list,
+    // without creating a pickup order or replacing an existing profile.
+    const saveCustomer = async () => {
+      const { data, error } = await supabase.from("user_profiles")
+        .select("user_id").eq("user_id", user.id).maybeSingle();
+      if (error || data) return;
+      const metadata = user.user_metadata as { phone?: string };
+      const { error: saveError } = await supabase.from("user_profiles").upsert({
+        user_id: user.id,
+        full_name: displayName(user),
+        whatsapp: metadata.phone ?? null,
+      }, { onConflict: "user_id", ignoreDuplicates: true });
+      if (saveError) toast.error("Your account is saved, but we couldn't save your customer profile. Please try signing in again.");
+    };
+    void saveCustomer();
+  }, [user]);
+
+  useEffect(() => {
+    if (!servicesPaused || !hydrated || authLoading) return;
+    if (step !== 1 && step !== 4 && step !== 5) setStep(user ? 5 : 4);
+    if (step === 5 && !user) setStep(4);
+  }, [hydrated, authLoading, step, user]);
+
   // Persist the draft on every meaningful change (once hydrated) so the flow
   // survives reloads/remounts and always resumes from the right step.
   useEffect(() => {
@@ -469,7 +499,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     });
     setAuthBusy(false);
     if (error) return toast.error(error.message);
-    toast.success("Signed in. Your saved address is filled in.");
+    toast.success(servicesPaused ? "Signed in successfully." : "Signed in. Your saved address is filled in.");
     setStep(5);
   };
 
@@ -512,7 +542,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
     setName(authName.trim());
     setPhone(authPhone.trim());
     if (data.session) {
-      toast.success("Account created. Let's add your pickup address.");
+      toast.success(servicesPaused ? "Account created successfully." : "Account created. Let's add your pickup address.");
       setStep(5);
     } else {
       toast.success("Account created. Please verify your email, then sign in here.");
@@ -581,7 +611,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
         return toast.error("Address looks too short — add your flat, street and a landmark.");
     }
     if (step === 1) {
-      moveToStep(2);
+      moveToStep(servicesPaused ? (user ? 5 : 4) : 2);
     } else if (step === 2) {
       moveToStep(3);
     } else if (step === 3) {
@@ -592,6 +622,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
   };
 
   const goBack = () => {
+    if (servicesPaused) { setStep(1); return; }
     setStep((s) => {
       if (s === 6) return 5;
       if (s === 5) return user ? 3 : 4;
@@ -604,6 +635,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (servicesPaused) { showOpeningSoon(); return; }
     if (!user) {
       toast.error("Please sign in before confirming your pickup.");
       setStep(4);
@@ -832,7 +864,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                 >
                   <h2 className="text-xl font-bold">What are you selling?</h2>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Pick your vehicle type — then choose the body style that matches it.
+                    Pick your vehicle type, then sign in to save your details for when we open.
                   </p>
 
                   <div className="mt-3 grid grid-cols-2 gap-2.5">
@@ -1005,7 +1037,8 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
               )}
 
               {/* STEP 5 */}
-              {step === 5 && (
+              {step === 5 && servicesPaused && <div className="py-4"><OpeningSoonMessage saved={!!user} /><Button asChild variant="outline" className="mt-6 w-full"><Link href="/">Back to home</Link></Button></div>}
+              {step === 5 && !servicesPaused && (
                 <motion.div
                   key="s5-address"
                   initial={{ opacity: 0, x: 16 }}
@@ -1110,7 +1143,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
                       {authTab === "signin" ? "Sign in to continue" : "Create your account"}
                     </h2>
                     <p className="mt-1 text-sm text-muted-foreground">
-                      Save your address and WhatsApp number for faster pickups.
+                      Create an account so your details are ready when pickups open.
                     </p>
                   </div>
 
@@ -1362,7 +1395,7 @@ export default function Pickup({ pickupSearch }: { pickupSearch: PickupSearch })
             </AnimatePresence>
 
             {/* nav buttons (vehicle + address steps) */}
-            {step !== 2 && step !== 4 && step !== 6 && (
+            {step !== 2 && step !== 4 && step !== 6 && !(servicesPaused && step === 5) && (
               <div className="mt-4 flex items-center justify-between gap-3">
                 {step > 1 ? (
                   <Button type="button" variant="ghost" onClick={goBack}>

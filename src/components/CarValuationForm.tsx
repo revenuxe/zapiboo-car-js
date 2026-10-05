@@ -1,5 +1,7 @@
 "use client";
 
+import { servicesPaused, showOpeningSoon } from "@/lib/launch-status";
+
 import { useId, useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -14,6 +16,7 @@ export function CarValuationForm() {
   const [error, setError] = useState("");
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (servicesPaused) { showOpeningSoon(); return; }
     const value = registration.toUpperCase().replace(/[\s-]/g, "");
     if (!/^(?:[A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{1,4}|[0-9]{2}BH[0-9]{4}[A-Z]{1,2})$/.test(value)) {
       setError("Enter a registration such as KA 01 AB 1234, or continue manually below.");
@@ -27,7 +30,7 @@ export function CarValuationForm() {
     }
   }
   return (
-    <form onSubmit={submit} className="text-foreground">
+    <form data-service-form={servicesPaused ? "" : undefined} onSubmit={submit} className="text-foreground">
       <label htmlFor={id} className="block text-base font-bold sm:text-lg">
         Enter Your Car Registration Number
       </label>
